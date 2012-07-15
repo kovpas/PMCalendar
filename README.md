@@ -7,6 +7,10 @@ UI is inspired by [ocrickard](https://github.com/ocrickard)'s [OCCalendarControl
 
 What you see here is an alpha version, quite basic implementation of a calendar component.
 
+Screenshots
+----------
+![Screenshot 1](screenshots/screenshot_1.png) ![Screenshot 2](screenshots/screenshot_2.png)
+
 Usage
 ----------
 

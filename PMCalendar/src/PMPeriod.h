@@ -17,5 +17,6 @@
 + (id) periodWithStartDate:(NSDate *) startDate endDate:(NSDate *) endDate;
 
 - (NSInteger) lengthInDays;
+- (PMPeriod *) normalizedPeriod;
 
 @end

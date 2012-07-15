@@ -12,74 +12,51 @@
 
 - (NSDate *)dateWithoutTime
 {
-	NSCalendar *cal = [NSCalendar currentCalendar];
-	NSDateComponents *comps = [cal components:(NSYearCalendarUnit 
-											   | NSMonthCalendarUnit 
-											   | NSDayCalendarUnit ) 
-									 fromDate:self];
+	NSCalendar *calendar = [NSCalendar currentCalendar];
+	NSDateComponents *components = [calendar components:(NSYearCalendarUnit 
+                                                          | NSMonthCalendarUnit 
+                                                          | NSDayCalendarUnit ) 
+                                                fromDate:self];
 	
-	return [cal dateFromComponents:comps];
+	return [calendar dateFromComponents:components];
 }
 
-- (NSDate *) dateByAddingDays:(NSInteger) days
+- (NSDate *) dateByAddingDays:(NSInteger) days months:(NSInteger) months years:(NSInteger) years
 {
 	NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
 	dateComponents.day = days;
-	
-    return [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents
-                                                         toDate:self
-                                                        options:0];
-}
-
-- (NSDate *) dateByAddingMonths:(NSInteger) months
-{
-	NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
 	dateComponents.month = months;
-	
-    return [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents
-                                                         toDate:self
-                                                        options:0];
-}
-
-- (NSDate *) dateByAddingYears:(NSInteger) years
-{
-	NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
 	dateComponents.year = years;
 	
     return [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents
                                                          toDate:self
-                                                        options:0];
+                                                        options:0];    
 }
 
-- (NSDate *)startDateWithUnit:(int)calendarUnit withOffset:(NSInteger)offset
+- (NSDate *) dateByAddingDays:(NSInteger) days
 {
-	NSDate *beginningOfDate = nil;
-	[[NSCalendar currentCalendar] rangeOfUnit:calendarUnit startDate:&beginningOfDate interval:NULL forDate:self];
-	NSDateComponents *date = [[NSDateComponents alloc] init];
-	switch ( calendarUnit ) {
-		case NSMonthCalendarUnit:
-			[date setMonth:offset];
-			break;
-		case NSYearCalendarUnit:
-			[date setYear:offset];
-			break;
-		default:
-			break;
-	}
-    
-	NSDate *startDateWithOffset = [[NSCalendar currentCalendar] dateByAddingComponents:date toDate:beginningOfDate options:0];
-	
-	return startDateWithOffset;
+    return [self dateByAddingDays:days months:0 years:0];
+}
+
+- (NSDate *) dateByAddingMonths:(NSInteger) months
+{
+    return [self dateByAddingDays:0 months:months years:0];
+}
+
+- (NSDate *) dateByAddingYears:(NSInteger) years
+{
+    return [self dateByAddingDays:0 months:0 years:years];
 }
 
 - (NSDate *) monthStartDate 
 {
-	return [self monthStartDateWithOffset:0];
-}
+    NSDate *monthStartDate = nil;
+	[[NSCalendar currentCalendar] rangeOfUnit:NSMonthCalendarUnit
+                                    startDate:&monthStartDate 
+                                     interval:NULL
+                                      forDate:self];
 
-- (NSDate *) monthStartDateWithOffset:(NSInteger)monthOffset
-{
-	return [self startDateWithUnit:NSMonthCalendarUnit withOffset:monthOffset];
+	return monthStartDate;
 }
 
 - (NSInteger) numberOfDaysInMonth
@@ -96,6 +73,14 @@
     NSDateComponents *weekdayComponents = [gregorian components:NSWeekdayCalendarUnit fromDate:self];
     
     return [weekdayComponents weekday];
+}
+
+- (NSString *) dateStringWithFormat:(NSString *) format
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:format];
+		
+	return [formatter stringFromDate:self];
 }
 
 @end

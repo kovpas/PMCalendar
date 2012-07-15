@@ -12,3 +12,4 @@
 extern CGFloat headerHeight;
 extern CGSize innerPadding;
 extern CGFloat outerPadding;
+extern NSString *kPMCalendarRedrawNotification;

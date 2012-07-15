@@ -175,6 +175,8 @@ static UIImage* bgImage;
     self.backgroundColor = [UIColor clearColor];
     self.clipsToBounds = NO;
     
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
     return self;
 }
 

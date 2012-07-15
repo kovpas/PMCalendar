@@ -23,5 +23,6 @@
 @protocol PMCalendarViewDelegate <NSObject>
 
 - (void) currentDateChanged: (NSDate *)currentDate;
+- (void) periodChanged: (PMPeriod *)newPeriod;
 
 @end

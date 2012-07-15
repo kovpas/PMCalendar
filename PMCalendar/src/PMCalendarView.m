@@ -62,6 +62,11 @@
 @synthesize daysView = _daysView;
 @synthesize selectionView = _selectionView;
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     if (!(self = [super initWithFrame:frame])) 
@@ -70,6 +75,7 @@
     }
     
     self.backgroundColor = [UIColor clearColor];
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.mondayFirstDayOfWeek = NO;
     
     self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandling:)];
@@ -95,7 +101,17 @@
     self.daysView = [[PMDaysView alloc] initWithFrame:self.bounds];
     [self addSubview:self.daysView];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(redrawComponent)
+                                                 name:kPMCalendarRedrawNotification
+                                               object:nil];
+    
     return self;
+}
+
+- (void)redrawComponent
+{
+    [self setNeedsDisplay];
 }
 
 - (void)drawRect:(CGRect)rect
@@ -111,7 +127,9 @@
     CGFloat shadow2BlurRadius = 1;
 
     CGFloat width = self.frame.size.width - outerPadding * 2;
-    CGFloat hDiff = (width - innerPadding.width * 2) / 7;
+    CGFloat height = self.frame.size.height - outerPadding * 2;
+    CGFloat hDiff  = (width - innerPadding.width * 2) / 7;
+    CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
     UIFont *calendarFont = self.font;
     UIFont *monthFont = [UIFont fontWithName:@"Helvetica-Bold" size:calendarFont.pointSize];
 
@@ -123,7 +141,7 @@
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
         CGRect dayHeaderFrame = CGRectMake(innerPadding.width + outerPadding + i * hDiff + 2
-                                           , innerPadding.height + outerPadding + headerHeight
+                                           , innerPadding.height + outerPadding + headerHeight + (vDiff - self.font.pointSize) / 2
                                            , hDiff
                                            , 30);
         [[UIColor whiteColor] setFill];
@@ -249,7 +267,6 @@
 {
     NSInteger index = [self indexForDate:_period.startDate];
     NSInteger length = [_period lengthInDays];
-    NSLog(@"%d - %d", index, length);
     
     int numDaysInMonth      = [_currentDate numberOfDaysInMonth];
     NSDate *monthStartDate  = [_currentDate monthStartDate];
@@ -278,6 +295,11 @@
         if (!_currentDate)
         {
             self.currentDate = period.startDate;
+        }
+        
+        if ([self.delegate respondsToSelector:@selector(periodChanged:)])
+        {
+            [self.delegate periodChanged:_period];
         }
 
         [self periodUpdated];
@@ -502,6 +524,16 @@
 @synthesize currentDate = _currentDate;
 @synthesize mondayFirstDayOfWeek = _mondayFirstDayOfWeek;
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)redrawComponent
+{
+    [self setNeedsDisplay];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     if (!(self = [super initWithFrame:frame])) 
@@ -510,7 +542,13 @@
     }
     
     self.backgroundColor = [UIColor clearColor];
-    
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(redrawComponent)
+                                                 name:kPMCalendarRedrawNotification
+                                               object:nil];
+
     return self;
 }
 
@@ -552,7 +590,7 @@
         
         NSString *string = [NSString stringWithFormat:@"%d", day];
         CGRect dayHeader2Frame = CGRectMake(ceil(outerPadding + innerPadding.width + i * hDiff) + 2
-                                            , (int)(outerPadding + innerPadding.height + vDiff + headerHeight)
+                                            , (int)(outerPadding + innerPadding.height + vDiff + headerHeight + (vDiff - self.font.pointSize) / 2)
                                             , (int)(hDiff), 14);        
         UIColor *color = [UIColor colorWithWhite:0.6f alpha:1.0f];
         
@@ -577,7 +615,7 @@
 			if(dayNumber >= (weekdayOfFirst-1) && day <= numDaysInMonth) {
                 NSString *string = [NSString stringWithFormat:@"%d", day];
                 CGRect dayHeader2Frame = CGRectMake(ceil(outerPadding + innerPadding.width + j * hDiff) + 2
-                                                    , (int)(outerPadding + innerPadding.height + headerHeight + (i + 1) * vDiff)
+                                                    , (int)(outerPadding + innerPadding.height + headerHeight + (i + 1) * vDiff + (vDiff - self.font.pointSize) / 2)
                                                     , (int)(hDiff), 14); 
                 UIColor *color = nil;
                 
@@ -615,7 +653,7 @@
             int day = i - weekdayOfNextFirst + 1;
             NSString *string = [NSString stringWithFormat:@"%d", day];
             CGRect dayHeader2Frame = CGRectMake(ceil(outerPadding + innerPadding.width + i * hDiff) + 2
-                                                , (int)(outerPadding + innerPadding.height + headerHeight + (finalRow + 1) * vDiff)
+                                                , (int)(outerPadding + innerPadding.height + headerHeight + (finalRow + 1) * vDiff + (vDiff - self.font.pointSize) / 2)
                                                 , (int)(hDiff), 14);        
             UIColor *color = [UIColor colorWithWhite:0.6f alpha:1.0f];
             drawString( string, dayHeader2Frame, color );

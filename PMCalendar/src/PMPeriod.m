@@ -34,7 +34,7 @@
     return result;
 }
 
-- (BOOL)isEqual:(id)object
+- (BOOL) isEqual:(id) object
 {
     if (![object isKindOfClass:[PMPeriod class]])
     {
@@ -51,9 +51,27 @@
     return [self.endDate timeIntervalSinceDate:self.startDate] / (60 * 60 * 24);
 }
 
-- (NSString *)description
+- (NSString *) description
 {
     return [NSString stringWithFormat:@"startDate = %@; endDate = %@", _startDate, _endDate];
+}
+
+- (PMPeriod *) normalizedPeriod
+{
+    PMPeriod *result = [[PMPeriod alloc] init];
+    
+    if ([_startDate compare:_endDate] == NSOrderedAscending)
+    {
+        result.startDate = _startDate;
+        result.endDate = _endDate;
+    }
+    else
+    {
+        result.startDate = _endDate;
+        result.endDate = _startDate;
+    }
+    
+    return result;
 }
 
 @end

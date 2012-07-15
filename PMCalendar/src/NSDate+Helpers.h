@@ -10,12 +10,15 @@
 
 @interface NSDate (Helpers)
 
-- (NSDate *)dateWithoutTime;
+- (NSDate *) dateWithoutTime;
 - (NSDate *) dateByAddingDays:(NSInteger) days;
 - (NSDate *) dateByAddingMonths:(NSInteger) months;
 - (NSDate *) dateByAddingYears:(NSInteger) years;
+- (NSDate *) dateByAddingDays:(NSInteger) days months:(NSInteger) months years:(NSInteger) years;
 - (NSDate *) monthStartDate;
 - (NSInteger) numberOfDaysInMonth;
 - (NSInteger) weekday;
+
+- (NSString *) dateStringWithFormat:(NSString *) format;
 
 @end

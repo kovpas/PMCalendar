@@ -54,10 +54,9 @@ static UIImage* bgImage;
     return result;
 };
 
-+ (void)initialize
++ (void) createBGImage
 {
     //// General Declarations
-//    CGContextRef context;
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGFloat width = 90;
     CGFloat height = 90;
@@ -158,6 +157,11 @@ static UIImage* bgImage;
         return nil;
     }
     
+    if (!bgImage)
+    {
+        [PMCalendarBackgroundView createBGImage];
+    }
+    
     UIImage *background = [bgImage stretchableImageWithLeftCapWidth:15 topCapHeight:15];
     UIImageView *bgImageView = [[UIImageView alloc] initWithFrame:self.bounds];
     bgImageView.image = background;
@@ -176,8 +180,6 @@ static UIImage* bgImage;
 
 
 @end
-
-
 
 @implementation PMGradientOverlayWithSeparators
 
@@ -202,11 +204,10 @@ static UIImage* bgImage;
     
     CGFloat width = self.frame.size.width - shadowPadding * 2;
     CGFloat height = self.frame.size.height - shadowPadding * 2;
-    
-//    
+    UIBezierPath *roundedRectanglePath = [PMCalendarBackgroundView createBezierPathForSize:CGSizeMake(width, height)];
     [boxStroke setStroke];
-//    roundedRectanglePath.lineWidth = 0.5;
-//    [roundedRectanglePath stroke];
+    roundedRectanglePath.lineWidth = 0.5;
+    [roundedRectanglePath stroke];
     
     //Dividers
     CGFloat hDiff = (width + shadowPadding * 2 - innerPadding.width * 2) / 7;
@@ -225,7 +226,6 @@ static UIImage* bgImage;
         CGContextRestoreGState(context);
     }
     
-    UIBezierPath *roundedRectanglePath = [PMCalendarBackgroundView createBezierPathForSize:CGSizeMake(width, height)];
     CGContextSaveGState(context);
     [roundedRectanglePath addClip];
     CGContextDrawLinearGradient(context
@@ -236,6 +236,12 @@ static UIImage* bgImage;
     
     CGGradientRelease(gradient2);
     CGColorSpaceRelease(colorSpace);
+}
+
+- (void) setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    [self setNeedsDisplay];
 }
 
 @end

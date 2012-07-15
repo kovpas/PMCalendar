@@ -14,7 +14,6 @@
 
 @interface PMCalendarController : NSObject <PMCalendarViewDelegate>
 
-@property (nonatomic, assign) CGPoint position;
 @property (nonatomic, assign) id<PMCalendarControllerDelegate> delegate;
 
 @property (nonatomic, strong) PMPeriod *period;

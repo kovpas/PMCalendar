@@ -3,17 +3,48 @@
 //  PMCalendarDemo
 //
 //  Created by Mazurin Pavel on 7/14/12.
-//  Copyright (c) 2012 TomTom. All rights reserved.
+//  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
 //
 
 #import "NSDate+Helpers.h"
 
 @implementation NSDate (Helpers)
 
+- (NSDate *)dateWithoutTime
+{
+	NSCalendar *cal = [NSCalendar currentCalendar];
+	NSDateComponents *comps = [cal components:(NSYearCalendarUnit 
+											   | NSMonthCalendarUnit 
+											   | NSDayCalendarUnit ) 
+									 fromDate:self];
+	
+	return [cal dateFromComponents:comps];
+}
+
+- (NSDate *) dateByAddingDays:(NSInteger) days
+{
+	NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+	dateComponents.day = days;
+	
+    return [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents
+                                                         toDate:self
+                                                        options:0];
+}
+
 - (NSDate *) dateByAddingMonths:(NSInteger) months
 {
 	NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
 	dateComponents.month = months;
+	
+    return [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents
+                                                         toDate:self
+                                                        options:0];
+}
+
+- (NSDate *) dateByAddingYears:(NSInteger) years
+{
+	NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+	dateComponents.year = years;
 	
     return [[NSCalendar currentCalendar] dateByAddingComponents:dateComponents
                                                          toDate:self

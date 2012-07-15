@@ -14,7 +14,7 @@
 #import "PMCalendarConstants.h"
 
 // TODO: fix constant size
-static CGSize controllerSize = (CGSize){240, 250};
+static CGSize controllerSize = (CGSize){250, 200};
 CGFloat outerPadding = 0.0f;
 
 @interface PMCalendarController ()
@@ -22,6 +22,7 @@ CGFloat outerPadding = 0.0f;
 @property (nonatomic, strong) UIView *view;
 @property (nonatomic, strong) PMCalendarBackgroundView *backgroundView;
 @property (nonatomic, strong) PMCalendarView *calendarView;
+@property (nonatomic, assign) CGPoint position;
 
 @end
 
@@ -53,7 +54,7 @@ CGFloat outerPadding = 0.0f;
     
     self.calendarView = [[PMCalendarView alloc] initWithFrame:self.view.frame];
     self.calendarView.delegate = self;
-    self.calendarView.currentDate = [NSDate date];
+    self.calendarView.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];
     [self.view addSubview:self.calendarView];
 }
 

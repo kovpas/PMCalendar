@@ -21,7 +21,8 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    pmCC = [[PMCalendarController alloc] init];
+    self.pmCC = [[PMCalendarController alloc] init];
+    pmCC.mondayFirstDayOfWeek = YES;
     [pmCC presentCalendarFromRect:CGRectZero
                            inView:self.view
          permittedArrowDirections:0 

@@ -11,15 +11,12 @@
 @class PMPeriod;
 @protocol PMCalendarViewDelegate;
 
-@interface PMCalendarView : UIView
+@interface PMCalendarView : UIView <UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) PMPeriod *period;
 @property (nonatomic, strong) PMPeriod *allowedPeriod;
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
 @property (nonatomic, assign) id<PMCalendarViewDelegate> delegate;
-@property (nonatomic, strong) NSDate *currentDate; // month to show
-
-- (NSCalendar *) gregorian;
 
 @end
 

@@ -31,8 +31,6 @@
                            inView:self.view
          permittedArrowDirections:0 
                          animated:YES];
-    pmCC.allowsLongPressYearChange = NO;
-    pmCC.allowsPeriodSelection = NO;
     
     // Update period label
     [self calendarController:pmCC didChangePeriod:pmCC.period];

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C551C5F15B20BE6007FC7D9 /* PMSelectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C551C5E15B20BE5007FC7D9 /* PMSelectionView.m */; };
 		3CC833FE15B0ADCF00C07208 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FD15B0ADCF00C07208 /* UIKit.framework */; };
 		3CC8340015B0ADCF00C07208 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FF15B0ADCF00C07208 /* Foundation.framework */; };
 		3CC8340215B0ADCF00C07208 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC8340115B0ADCF00C07208 /* CoreGraphics.framework */; };
@@ -24,6 +25,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3C551C5D15B20BE5007FC7D9 /* PMSelectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSelectionView.h; sourceTree = "<group>"; };
+		3C551C5E15B20BE5007FC7D9 /* PMSelectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSelectionView.m; sourceTree = "<group>"; };
 		3CC833F915B0ADCF00C07208 /* PMCalendarDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMCalendarDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CC833FD15B0ADCF00C07208 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3CC833FF15B0ADCF00C07208 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -132,6 +135,8 @@
 		3CC8342215B0B3DB00C07208 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				3CC8343615B18B5B00C07208 /* NSDate+Helpers.h */,
+				3CC8343715B18B5B00C07208 /* NSDate+Helpers.m */,
 				3CC8343515B162CB00C07208 /* PMCalendarConstants.h */,
 				3CC8342A15B0B47F00C07208 /* PMCalendarBackgroundView.h */,
 				3CC8342B15B0B47F00C07208 /* PMCalendarBackgroundView.m */,
@@ -141,8 +146,8 @@
 				3CC8342815B0B43100C07208 /* PMCalendarView.m */,
 				3CC8343115B0B54800C07208 /* PMPeriod.h */,
 				3CC8343215B0B54800C07208 /* PMPeriod.m */,
-				3CC8343615B18B5B00C07208 /* NSDate+Helpers.h */,
-				3CC8343715B18B5B00C07208 /* NSDate+Helpers.m */,
+				3C551C5D15B20BE5007FC7D9 /* PMSelectionView.h */,
+				3C551C5E15B20BE5007FC7D9 /* PMSelectionView.m */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -220,6 +225,7 @@
 				3CC8342C15B0B47F00C07208 /* PMCalendarBackgroundView.m in Sources */,
 				3CC8343315B0B54900C07208 /* PMPeriod.m in Sources */,
 				3CC8343815B18B5B00C07208 /* NSDate+Helpers.m in Sources */,
+				3C551C5F15B20BE6007FC7D9 /* PMSelectionView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

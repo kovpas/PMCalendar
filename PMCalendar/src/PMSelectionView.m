@@ -18,6 +18,16 @@
 @synthesize startIndex = _startIndex;
 @synthesize endIndex = _endIndex;
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)redrawComponent
+{
+    [self setNeedsDisplay];
+}
+
 - (id)initWithFrame:(CGRect)frame
 {
     if (!(self = [super initWithFrame:frame])) 
@@ -25,6 +35,12 @@
         return nil;
     }    
     
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(redrawComponent)
+                                                 name:kPMCalendarRedrawNotification
+                                               object:nil];
     self.backgroundColor = [UIColor clearColor];
     
     return self;
@@ -84,7 +100,7 @@
 
             //// selectedRect Drawing
             CGRect rect = CGRectMake(innerPadding.width + thisRowStartCell*hDiff + 2
-                                     , headerHeight + innerPadding.height + (i + 1)*vDiff
+                                     , headerHeight + innerPadding.height + (i + 1)*vDiff + 4
                                      , (thisRowEndCell - thisRowStartCell + 1) * hDiff, vDiff - 4);
             UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius: 10];
             CGContextSaveGState(context);

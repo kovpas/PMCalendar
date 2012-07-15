@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PMCalendar.h"
 
-@interface PMViewController : UIViewController
+@interface PMViewController : UIViewController <PMCalendarControllerDelegate>
+
+@property (nonatomic, strong) IBOutlet UILabel *periodLabel;
+- (IBAction)randomResize:(id)sender;
 
 @end

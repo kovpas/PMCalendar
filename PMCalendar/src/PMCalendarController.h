@@ -21,7 +21,9 @@
 @property (nonatomic, assign, getter = isMondayFirstDayOfWeek) BOOL mondayFirstDayOfWeek;
 
 @property (nonatomic, assign) BOOL allowsPeriodSelection;
+@property (nonatomic, assign) BOOL allowsLongPressYearChange;
 @property (nonatomic, assign) UIPopoverArrowDirection arrowDirection;
+@property (nonatomic, assign) CGSize size;
 
 - (void)presentCalendarFromRect:(CGRect) rect 
                          inView:(UIView *) view
@@ -35,5 +37,6 @@
 
 - (BOOL)calendarControllerShouldDismissCalendar:(PMCalendarController *)calendarController;
 - (void)calendarControllerDidDismissCalendar:(PMCalendarController *)calendarController;
+- (void)calendarController:(PMCalendarController *)calendarController didChangePeriod:(PMPeriod *)newPeriod;
 
 @end

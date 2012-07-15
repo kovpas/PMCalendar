@@ -9,7 +9,7 @@ What you see here is an alpha version, quite basic implementation of a calendar 
 
 Screenshots
 ----------
-![Screenshot 1](screenshots/screenshot_1.png) ![Screenshot 2](screenshots/screenshot_2.png)
+![Screenshot 1](PMCalendar/raw/master/screenshots/screenshot_1.png) ![Screenshot 2](PMCalendar/raw/master/screenshots/screenshot_1.png)
 
 Usage
 ----------

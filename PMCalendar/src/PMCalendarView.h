@@ -16,6 +16,8 @@
 @property (nonatomic, strong) PMPeriod *period;
 @property (nonatomic, strong) PMPeriod *allowedPeriod;
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
+@property (nonatomic, assign) BOOL allowsPeriodSelection;
+@property (nonatomic, assign) BOOL allowsLongPressYearChange;
 @property (nonatomic, assign) id<PMCalendarViewDelegate> delegate;
 
 @end

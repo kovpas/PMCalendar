@@ -21,6 +21,7 @@
 @property (nonatomic, assign, getter = isMondayFirstDayOfWeek) BOOL mondayFirstDayOfWeek;
 
 @property (nonatomic, assign) BOOL allowsPeriodSelection;
+@property (nonatomic, assign) BOOL allowsLongPressYearChange;
 @property (nonatomic, assign) UIPopoverArrowDirection arrowDirection;
 @property (nonatomic, assign) CGSize size;
 

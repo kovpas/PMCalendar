@@ -61,6 +61,8 @@
 @synthesize panPoint = _panPoint;
 @synthesize daysView = _daysView;
 @synthesize selectionView = _selectionView;
+@synthesize allowsPeriodSelection = _allowsPeriodSelection;
+@synthesize allowsLongPressYearChange = _allowsLongPressYearChange;
 
 - (void)dealloc
 {
@@ -87,13 +89,8 @@
     self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panHandling:)];
     self.panGestureRecognizer.delegate = self;
     [self addGestureRecognizer:self.panGestureRecognizer];
-
-    self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
-                                                                                     action:@selector(longPressHandling:)];
-    self.longPressGestureRecognizer.numberOfTouchesRequired = 1;
-    self.longPressGestureRecognizer.delegate = self;
-    self.longPressGestureRecognizer.minimumPressDuration = 0.5;
-    [self addGestureRecognizer:self.longPressGestureRecognizer];
+    
+    self.allowsLongPressYearChange = YES;
 
     self.selectionView = [[PMSelectionView alloc] initWithFrame:self.bounds];
     [self addSubview:self.selectionView];
@@ -357,8 +354,15 @@
 {
     NSDate *newDate = [self dateForPoint:point];
     
-    self.period = [PMPeriod periodWithStartDate:self.period.startDate 
-                                        endDate:newDate];
+    if (_allowsPeriodSelection)
+    {
+        self.period = [PMPeriod periodWithStartDate:self.period.startDate 
+                                            endDate:newDate];
+    }
+    else
+    {
+        self.period = [PMPeriod oneDayPeriodWithDate:newDate];
+    }
 }
 
 - (void) panTimerCallback: (NSTimer *)timer
@@ -513,6 +517,27 @@
             [self.longPressTimer invalidate];
             self.longPressTimer = nil;
         }
+    }
+}
+
+- (void)setAllowsLongPressYearChange:(BOOL)allowsLongPressYearChange
+{
+    if (!allowsLongPressYearChange)
+    {
+        if (self.longPressGestureRecognizer)
+        {
+            [self removeGestureRecognizer:self.longPressGestureRecognizer];
+            self.longPressGestureRecognizer = nil;
+        }
+    }
+    else if (!self.longPressGestureRecognizer)
+    {
+        self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                                                        action:@selector(longPressHandling:)];
+        self.longPressGestureRecognizer.numberOfTouchesRequired = 1;
+        self.longPressGestureRecognizer.delegate = self;
+        self.longPressGestureRecognizer.minimumPressDuration = 0.5;
+        [self addGestureRecognizer:self.longPressGestureRecognizer];
     }
 }
 

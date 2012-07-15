@@ -31,6 +31,8 @@
                            inView:self.view
          permittedArrowDirections:0 
                          animated:YES];
+    pmCC.allowsLongPressYearChange = NO;
+    pmCC.allowsPeriodSelection = NO;
     
     // Update period label
     [self calendarController:pmCC didChangePeriod:pmCC.period];
@@ -58,7 +60,7 @@
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+        return (interfaceOrientation == UIInterfaceOrientationPortrait);
     } else {
         return YES;
     }

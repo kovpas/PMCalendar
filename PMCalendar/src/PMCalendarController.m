@@ -34,8 +34,9 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 @dynamic period;
 @dynamic allowedPeriod;
 @dynamic mondayFirstDayOfWeek;
+@dynamic allowsPeriodSelection;
+@dynamic allowsLongPressYearChange;
 
-@synthesize allowsPeriodSelection = _allowsPeriodSelection;
 @synthesize arrowDirection = _arrowDirection;
 
 @synthesize view = _view;
@@ -55,8 +56,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     
     self.calendarView = [[PMCalendarView alloc] initWithFrame:self.view.frame];
     self.calendarView.delegate = self;
-    self.calendarView.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];
+    self.calendarView.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];    
     [self.view addSubview:self.calendarView];
+    
+    self.allowsPeriodSelection = YES;
+    self.allowsLongPressYearChange = YES;
 }
 
 - (id) initWithSize:(CGSize) size
@@ -91,6 +95,34 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
                         animated:(BOOL) animated
 {
     [view addSubview:self.view];
+    
+    if (animated)
+    {
+        self.view.alpha = 0;
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            self.view.alpha = 1;
+        }];
+    }
+}
+
+- (void) dismissCalendarAnimated:(BOOL) animated
+{
+    if (!animated)
+    {
+        [self.view removeFromSuperview];
+    }
+    else {
+        self.view.alpha = 1;
+        
+        [UIView animateWithDuration:0.2 
+                         animations:^{
+                             self.view.alpha = 0;
+                         }
+                         completion:^(BOOL finished) {
+                             [self.view removeFromSuperview];
+                         }];
+    }
 }
 
 - (void) fullRedraw
@@ -109,6 +141,26 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 - (void)setMondayFirstDayOfWeek:(BOOL)mondayFirstDayOfWeek
 {
     self.calendarView.mondayFirstDayOfWeek = mondayFirstDayOfWeek;
+}
+
+- (BOOL)allowsPeriodSelection
+{
+    return self.calendarView.allowsPeriodSelection;
+}
+
+- (void)setAllowsPeriodSelection:(BOOL)allowsPeriodSelection
+{
+    self.calendarView.allowsPeriodSelection = allowsPeriodSelection;
+}
+
+- (BOOL)allowsLongPressYearChange
+{
+    return self.calendarView.allowsLongPressYearChange;
+}
+
+- (void)setAllowsLongPressYearChange:(BOOL)allowsLongPressYearChange
+{
+    self.calendarView.allowsLongPressYearChange = allowsLongPressYearChange;
 }
 
 - (PMPeriod *) period

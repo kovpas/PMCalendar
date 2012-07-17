@@ -77,7 +77,7 @@
     }
     
     self.backgroundColor = [UIColor clearColor];
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+//    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.mondayFirstDayOfWeek = NO;
     
     self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandling:)];
@@ -92,7 +92,7 @@
     
     self.allowsLongPressYearChange = YES;
 
-    self.selectionView = [[PMSelectionView alloc] initWithFrame:self.bounds];
+    self.selectionView = [[PMSelectionView alloc] initWithFrame:CGRectInset(self.bounds, -innerPadding.width, -innerPadding.height)];
     [self addSubview:self.selectionView];
 
     self.daysView = [[PMDaysView alloc] initWithFrame:self.bounds];
@@ -123,10 +123,10 @@
     CGSize shadow2Offset = CGSizeMake(1, 1);
     CGFloat shadow2BlurRadius = 1;
 
-    CGFloat width = self.frame.size.width - outerPadding * 2;
-    CGFloat height = self.frame.size.height - outerPadding * 2;
-    CGFloat hDiff  = (width - innerPadding.width * 2) / 7;
-    CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+    CGFloat width = self.frame.size.width;
+    CGFloat height = self.frame.size.height;
+    CGFloat hDiff  = width / 7;
+    CGFloat vDiff  = (height - headerHeight) / 7;
     UIFont *calendarFont = self.font;
     UIFont *monthFont = [UIFont fontWithName:@"Helvetica-Bold" size:calendarFont.pointSize];
 
@@ -137,8 +137,8 @@
         //// dayHeader Drawing
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
-        CGRect dayHeaderFrame = CGRectMake(innerPadding.width + outerPadding + i * hDiff + 2
-                                           , innerPadding.height + outerPadding + headerHeight + (vDiff - self.font.pointSize) / 2
+        CGRect dayHeaderFrame = CGRectMake(floor(i * hDiff) - 1
+                                           , headerHeight + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
                                            , hDiff
                                            , 30);
         [[UIColor whiteColor] setFill];
@@ -156,9 +156,9 @@
     //// Month Header Drawing
     CGContextSaveGState(context);
     CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
-    CGRect textFrame = CGRectMake(innerPadding.width + outerPadding
-                                  , innerPadding.height + outerPadding + (headerHeight - [monthTitle sizeWithFont:monthFont].height) / 2
-                                  , width - innerPadding.width * 2
+    CGRect textFrame = CGRectMake(0
+                                  , (headerHeight - [monthTitle sizeWithFont:monthFont].height) / 2
+                                  , width
                                   , headerHeight);
     [[UIColor whiteColor] setFill];
     [monthTitle drawInRect: textFrame
@@ -169,14 +169,14 @@
     
     //// backArrow Drawing
     UIBezierPath* backArrowPath = [UIBezierPath bezierPath];
-    [backArrowPath moveToPoint: CGPointMake(innerPadding.width + outerPadding + hDiff / 2 - 6
-                                            , innerPadding.height + outerPadding + headerHeight / 2)];
-    [backArrowPath addLineToPoint: CGPointMake(innerPadding.width + outerPadding + 6 + hDiff / 2 - 6
-                                               , innerPadding.height + outerPadding + headerHeight / 2 + 4)];
-    [backArrowPath addLineToPoint: CGPointMake(innerPadding.width + outerPadding + 6 + hDiff / 2 - 6
-                                               , innerPadding.height + outerPadding + headerHeight / 2 - 4)];
-    [backArrowPath addLineToPoint: CGPointMake(innerPadding.width + outerPadding + hDiff / 2 - 6
-                                               , innerPadding.height + outerPadding + headerHeight / 2)];
+    [backArrowPath moveToPoint: CGPointMake(hDiff / 2 - 6
+                                            , headerHeight / 2)];
+    [backArrowPath addLineToPoint: CGPointMake(6 + hDiff / 2 - 6
+                                               , headerHeight / 2 + 4)];
+    [backArrowPath addLineToPoint: CGPointMake( 6 + hDiff / 2 - 6
+                                               ,  headerHeight / 2 - 4)];
+    [backArrowPath addLineToPoint: CGPointMake( hDiff / 2 - 6
+                                               ,  headerHeight / 2)];
     [backArrowPath closePath];
     [[UIColor whiteColor] setFill];
     [backArrowPath fill];
@@ -184,14 +184,14 @@
 
     //// forwardArrow Drawing
     UIBezierPath* forwardArrowPath = [UIBezierPath bezierPath];
-    [forwardArrowPath moveToPoint: CGPointMake(-innerPadding.width + outerPadding + width - hDiff / 2 + 6
-                                               , innerPadding.height + outerPadding + headerHeight / 2)];
-    [forwardArrowPath addLineToPoint: CGPointMake(-innerPadding.width + outerPadding - 6 + width - hDiff / 2 + 6
-                                                  , innerPadding.height + outerPadding + headerHeight / 2 + 4)];
-    [forwardArrowPath addLineToPoint: CGPointMake(-innerPadding.width + outerPadding - 6 + width - hDiff / 2 + 6
-                                                   , innerPadding.height + outerPadding + headerHeight / 2 - 4)];
-    [forwardArrowPath addLineToPoint: CGPointMake(-innerPadding.width + outerPadding + width - hDiff / 2 + 6
-                                                  , innerPadding.height + outerPadding + headerHeight / 2)];
+    [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2 + 6
+                                               ,  headerHeight / 2)];
+    [forwardArrowPath addLineToPoint: CGPointMake( -6 + width - hDiff / 2 + 6
+                                                  , headerHeight / 2 + 4)];
+    [forwardArrowPath addLineToPoint: CGPointMake(-6 + width - hDiff / 2 + 6
+                                                   , headerHeight / 2 - 4)];
+    [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2 + 6
+                                                  , headerHeight / 2)];
     [forwardArrowPath closePath];
     [[UIColor whiteColor] setFill];
     [forwardArrowPath fill];
@@ -317,12 +317,12 @@
 
 - (NSDate *) dateForPoint: (CGPoint)point
 {
-    CGFloat width  = self.frame.size.width - outerPadding * 2;
-    CGFloat height = self.frame.size.height - outerPadding * 2;
-    CGFloat hDiff  = (width - innerPadding.width * 2) / 7;
-    CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+    CGFloat width  = self.frame.size.width;
+    CGFloat height = self.frame.size.height;
+    CGFloat hDiff  = width / 7;
+    CGFloat vDiff  = (height - headerHeight) / 7;
     
-    CGFloat yInCalendar = point.y - (innerPadding.height + outerPadding + headerHeight + vDiff);
+    CGFloat yInCalendar = point.y - (headerHeight + vDiff);
     NSInteger row = yInCalendar / vDiff;
     
     int numDaysInMonth      = [_currentDate numberOfDaysInMonth];
@@ -334,7 +334,7 @@
     
     row = MAX(0, MIN(row, maxNumberOfRows));
     
-    CGFloat xInCalendar = point.x - 2 - (innerPadding.width + outerPadding);
+    CGFloat xInCalendar = point.x - 2;
     NSInteger col       = xInCalendar / hDiff;
     
     col = MAX(0, MIN(col, 6));
@@ -377,10 +377,10 @@
 {
     CGPoint point  = [recognizer locationInView:self];
     
-    CGFloat height = self.frame.size.height - outerPadding * 2;
-    CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+    CGFloat height = self.frame.size.height;
+    CGFloat vDiff  = (height - headerHeight) / 7;
     
-    if (point.y > innerPadding.height + outerPadding + headerHeight + vDiff) // select date in calendar
+    if (point.y > headerHeight + vDiff) // select date in calendar
     {
         if (([recognizer state] == UIGestureRecognizerStateBegan) && (recognizer.numberOfTouches == 1)) 
         {
@@ -431,10 +431,10 @@
 {
     CGPoint point  = [recognizer locationInView:self];
     
-    CGFloat height = self.frame.size.height - outerPadding * 2;
-    CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+    CGFloat height = self.frame.size.height;
+    CGFloat vDiff  = (height - headerHeight) / 7;
 
-    if (point.y > innerPadding.height + outerPadding + headerHeight + vDiff) // select date in calendar
+    if (point.y > headerHeight + vDiff) // select date in calendar
     {
         [self periodSelectionStarted:point];
         return;
@@ -469,10 +469,10 @@
         }
 
         CGPoint point = [recognizer locationInView:self];
-        CGFloat height = self.frame.size.height - outerPadding * 2;
-        CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+        CGFloat height = self.frame.size.height;
+        CGFloat vDiff  = (height - headerHeight) / 7;
         
-        if (point.y > innerPadding.height + outerPadding + headerHeight + vDiff) // select date in calendar
+        if (point.y > headerHeight + vDiff) // select date in calendar
         {
             [self periodSelectionChanged:point];
             return;
@@ -579,10 +579,10 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGFloat width  = self.frame.size.width - outerPadding * 2;
-    CGFloat height = self.frame.size.height - outerPadding * 2;
-    CGFloat hDiff  = (width - innerPadding.width * 2) / 7;
-    CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+    CGFloat width  = self.frame.size.width;
+    CGFloat height = self.frame.size.height;
+    CGFloat hDiff  = width / 7;
+    CGFloat vDiff  = (height - headerHeight) / 7;
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGColorRef shadow2 = [UIColor blackColor].CGColor;
     CGSize shadow2Offset = CGSizeMake(1, 1);
@@ -591,6 +591,8 @@
     void (^drawString)(NSString *, CGRect, UIColor *) = ^(NSString *string, CGRect rect, UIColor *color) {
         CGContextSaveGState(context);
         CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
+//        [UIColorMakeRGBA(arc4random()%255, arc4random()%255, arc4random()%255, 0.3) setFill];// \  Digits position
+//        CGContextFillRect(context, rect);                                                    // /      debug
         [color setFill];
         [string drawInRect: rect 
                   withFont: self.font
@@ -614,9 +616,9 @@
         int day = numDaysInPrevMonth - weekdayOfFirst + 2 + i;
         
         NSString *string = [NSString stringWithFormat:@"%d", day];
-        CGRect dayHeader2Frame = CGRectMake(ceil(outerPadding + innerPadding.width + i * hDiff) + 2
-                                            , (int)(outerPadding + innerPadding.height + vDiff + headerHeight + (vDiff - self.font.pointSize) / 2)
-                                            , (int)(hDiff), 14);        
+        CGRect dayHeader2Frame = CGRectMake(i * hDiff
+                                            , headerHeight + vDiff + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
+                                            , hDiff, self.font.pointSize); 
         UIColor *color = [UIColor colorWithWhite:0.6f alpha:1.0f];
         
         drawString( string, dayHeader2Frame, color );
@@ -639,9 +641,9 @@
 			
 			if(dayNumber >= (weekdayOfFirst-1) && day <= numDaysInMonth) {
                 NSString *string = [NSString stringWithFormat:@"%d", day];
-                CGRect dayHeader2Frame = CGRectMake(ceil(outerPadding + innerPadding.width + j * hDiff) + 2
-                                                    , (int)(outerPadding + innerPadding.height + headerHeight + (i + 1) * vDiff + (vDiff - self.font.pointSize) / 2)
-                                                    , (int)(hDiff), 14); 
+                CGRect dayHeader2Frame = CGRectMake(floor(j * hDiff) - 1
+                                                    , headerHeight + (i + 1) * vDiff + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
+                                                    , hDiff, self.font.pointSize); 
                 UIColor *color = nil;
                 
                 if((todayDay == day) && [today isEqualToDate:currentDateWithoutTime]) 
@@ -677,9 +679,9 @@
         {
             int day = i - weekdayOfNextFirst + 1;
             NSString *string = [NSString stringWithFormat:@"%d", day];
-            CGRect dayHeader2Frame = CGRectMake(ceil(outerPadding + innerPadding.width + i * hDiff) + 2
-                                                , (int)(outerPadding + innerPadding.height + headerHeight + (finalRow + 1) * vDiff + (vDiff - self.font.pointSize) / 2)
-                                                , (int)(hDiff), 14);        
+            CGRect dayHeader2Frame = CGRectMake(floor(i * hDiff) - 1
+                                                , headerHeight + (finalRow + 1) * vDiff + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
+                                                , hDiff, self.font.pointSize); 
             UIColor *color = [UIColor colorWithWhite:0.6f alpha:1.0f];
             drawString( string, dayHeader2Frame, color );
         }

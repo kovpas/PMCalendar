@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PMCalendarConstants.h"
 
 @interface PMCalendarBackgroundView : UIView
+
+@property (nonatomic, assign) PMCalendarArrowDirection arrowDirection;
+@property (nonatomic, assign) CGPoint arrowPosition;
 
 @end

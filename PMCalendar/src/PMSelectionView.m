@@ -69,9 +69,9 @@
         CGFloat gradient3Locations[] = {0, 1};
         CGGradientRef gradient3 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient3Colors, gradient3Locations);
         
-        CGFloat width  = self.frame.size.width - outerPadding * 2;
-        CGFloat height = self.frame.size.height - outerPadding * 2;
-        CGFloat hDiff  = (width - innerPadding.width * 2) / 7;
+        CGFloat width  = self.frame.size.width;
+        CGFloat height = self.frame.size.height;
+        CGFloat hDiff = (width - innerPadding.width * 2) / 7;
         CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
 
         int tempStart = MAX(MIN(_startIndex, _endIndex), 0);
@@ -99,9 +99,9 @@
             } 
 
             //// selectedRect Drawing
-            CGRect rect = CGRectMake(innerPadding.width + thisRowStartCell*hDiff + 2
-                                     , headerHeight + innerPadding.height + (i + 1)*vDiff + 4
-                                     , (thisRowEndCell - thisRowStartCell + 1) * hDiff, vDiff - 4);
+            CGRect rect = CGRectMake(innerPadding.width + floor(thisRowStartCell*hDiff) + 1.5
+                                     , headerHeight + innerPadding.height + (i + 1)*vDiff + 2
+                                     , floor((thisRowEndCell - thisRowStartCell + 1) * (hDiff)) - 4, vDiff - 4);
             UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius: 10];
             CGContextSaveGState(context);
             [selectedRectPath addClip];

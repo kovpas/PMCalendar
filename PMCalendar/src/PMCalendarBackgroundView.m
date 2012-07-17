@@ -78,39 +78,35 @@ static inline CGPoint CGPointOffsetByPoint(CGPoint originalPoint, CGPoint offset
     CGPoint offset = CGPointMake(shadowPadding, shadowPadding);
     CGPoint tl = CGPointZero;
     width -= shadowPadding * 2;
-    height -= shadowPadding * 2; // TODO: Fix1!
+    height -= shadowPadding * 2;
 
     switch (direction) 
     {
         case PMCalendarArrowDirectionUp: // going from right side to the left
                                          // so start point is a bottom RIGHT point of a triangle ^. this one :)
             startArrowPoint = CGPointMake(arrowSize.width / 2, arrowSize.height);
-            topArrowPoint = CGPointMake(0, 0);
-            endArrowPoint = CGPointMake(- arrowSize.width / 2, arrowSize.height);
+            endArrowPoint = CGPointMake(-arrowSize.width / 2, arrowSize.height);
             offset = CGPointOffset(offset, arrowPosition.x, 0);
             tl.y = arrowSize.height;
             break;
         case PMCalendarArrowDirectionDown: // going from left to right
                                            // so start point is a top LEFT point of a triangle - 'V
-            startArrowPoint = CGPointMake(0, 0);
-            topArrowPoint = CGPointMake(arrowSize.width / 2, arrowSize.height);
-            endArrowPoint = CGPointMake(arrowSize.width, 0);        // TODO: Fix1!
-            offset = CGPointOffset(offset, arrowPosition.x, height);
+            startArrowPoint = CGPointMake(-arrowSize.width / 2, -arrowSize.height);
+            endArrowPoint = CGPointMake(arrowSize.width / 2, -arrowSize.height);
+            offset = CGPointOffset(offset, arrowPosition.x, height + arrowSize.height);
             break;
         case PMCalendarArrowDirectionLeft: // going from top to bottom
                                             // so start point is a top RIGHT point of a triangle - <'
-            startArrowPoint = CGPointMake(arrowSize.height, 0);
-            topArrowPoint = CGPointMake(0, arrowSize.width / 2);
-            endArrowPoint = CGPointMake(arrowSize.height, arrowSize.width);
+            startArrowPoint = CGPointMake(arrowSize.height, -arrowSize.width / 2);
+            endArrowPoint = CGPointMake(arrowSize.height, arrowSize.width / 2);
             offset = CGPointOffset(offset, 0, arrowPosition.y);
             tl.x = arrowSize.height;
             break;
         case PMCalendarArrowDirectionRight: // going from bottom to top
                                             // so start point is a bottom RIGHT point of a triangle - .>
-            startArrowPoint = CGPointMake(0, arrowSize.width);
-            topArrowPoint = CGPointMake(arrowSize.height, arrowSize.width / 2);
-            endArrowPoint = CGPointMake(0, 0);
-            offset = CGPointOffset(offset, width, arrowPosition.y);
+            startArrowPoint = CGPointMake(-arrowSize.height, arrowSize.width / 2);
+            endArrowPoint = CGPointMake(-arrowSize.height, -arrowSize.width / 2);
+            offset = CGPointOffset(offset, width + arrowSize.height, arrowPosition.y);
             break;
             
         default:
@@ -213,7 +209,7 @@ static inline CGPoint CGPointOffsetByPoint(CGPoint originalPoint, CGPoint offset
     CGFloat gradient2Locations[] = {0, 1};
     CGGradientRef gradient2 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient2Colors, gradient2Locations);
     
-    CGRect boxBounds = CGRectMake(0, arrowSize.height
+    CGRect boxBounds = CGRectMake(0, 0
                                   , self.bounds.size.width - arrowSize.height
                                   , self.bounds.size.height - arrowSize.height);
     
@@ -226,9 +222,11 @@ static inline CGPoint CGPointOffsetByPoint(CGPoint originalPoint, CGPoint offset
     {
         case PMCalendarArrowDirectionUp:
             tl.y = arrowSize.height;
+            boxBounds.origin.y = arrowSize.height;
             break;
         case PMCalendarArrowDirectionLeft:
             tl.x = arrowSize.height;
+            boxBounds.origin.x = arrowSize.height;
             break;
         default:
             break;

@@ -29,7 +29,7 @@
     pmCC.mondayFirstDayOfWeek = YES;
     [pmCC presentCalendarFromRect:CGRectZero
                            inView:self.view
-         permittedArrowDirections:0 
+         permittedArrowDirections:PMCalendarArrowDirectionDown
                          animated:YES];
     
     // Update period label

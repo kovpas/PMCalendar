@@ -77,7 +77,7 @@
     }
     
     self.backgroundColor = [UIColor clearColor];
-//    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.mondayFirstDayOfWeek = NO;
     
     self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandling:)];
@@ -104,6 +104,11 @@
                                                object:nil];
     
     return self;
+}
+
+-(void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
 }
 
 - (void)redrawComponent

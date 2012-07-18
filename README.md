@@ -1,4 +1,4 @@
-PMCalendar
+PMCalendar v0.1
 ==========
 
 Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iPad) and higher.
@@ -6,6 +6,8 @@ Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iP
 UI is inspired by [ocrickard](https://github.com/ocrickard)'s [OCCalendarController](https://github.com/ocrickard/OCCalendar). It's quite good component, but doesn't have some useful features which I wanted to see. Unfortunately [OCCalendarController](https://github.com/ocrickard/OCCalendar) very hard to maintain, so I decided to create my own implementation.
 
 PMCalendar supports selection of multiple dates within one or several months, appears as a popover (if you used UIPopoverController before, you'll find PMCalendar management very similar), supports orientation changes and does not require any third party frameworks.
+
+It's definitely not bug-free, so if you're going to use PMCalendar in production, please test it hard ;)
 
 Screenshots
 ----------

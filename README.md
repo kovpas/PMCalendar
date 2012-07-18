@@ -3,40 +3,45 @@ PMCalendar
 
 Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iPad) and higher.
 
-UI is inspired by [ocrickard](https://github.com/ocrickard)'s [OCCalendarController](https://github.com/ocrickard/OCCalendar). It's quite good component, but doesn't have some useful features which I wanted to see. Unfortunately [OCCalendarController](https://github.com/ocrickard/OCCalendar) very hard to maintain, so I decided to make my own implementation.
+UI is inspired by [ocrickard](https://github.com/ocrickard)'s [OCCalendarController](https://github.com/ocrickard/OCCalendar). It's quite good component, but doesn't have some useful features which I wanted to see. Unfortunately [OCCalendarController](https://github.com/ocrickard/OCCalendar) very hard to maintain, so I decided to create my own implementation.
 
-PMCalendar does not require any third party frameworks, supports selection of multiple dates within one or several months.
-
-What you see here is an alpha version, quite basic implementation of a calendar component.
+PMCalendar supports selection of multiple dates within one or several months, appears as a popover (if you used UIPopoverController before, you'll find PMCalendar management very similar), supports orientation changes and does not require any third party frameworks.
 
 Screenshots
 ----------
-![Screenshot 1](PMCalendar/raw/master/screenshots/screenshot_1.png)  ![Screenshot 2](PMCalendar/raw/master/screenshots/screenshot_2.png)
+![Screenshot 1](PMCalendar/raw/master/screenshots/screenshot_1.png) ![Screenshot 2](PMCalendar/raw/master/screenshots/screenshot_2.png)
+![Screenshot 3](PMCalendar/raw/master/screenshots/screenshot_3.png)
 
 Usage
 ----------
 
  - Add PMCalendar directory to your Xcode project.
  - #import "PMCalendar.h"
- - Create instance of PMCalendarController:
+ - Create instance of PMCalendarController with wanted size:
+
+        PMCalendarController *calendarController = [[PMCalendarController alloc] initWithSize:CGSizeMake(300, 200)];
+ - Or use default:
 
         PMCalendarController *calendarController = [[PMCalendarController alloc] init];
  - Implement PMCalendarControllerDelegate methods to be aware of controller's state change:
 
-        /*TBI*/ - (BOOL)calendarControllerShouldDismissCalendar:(PMCalendarController *)calendarController;
-        /*TBI*/ - (void)calendarControllerDidDismissCalendar:(PMCalendarController *)calendarController;
+        - (BOOL)calendarControllerShouldDismissCalendar:(PMCalendarController *)calendarController;
+        - (void)calendarControllerDidDismissCalendar:(PMCalendarController *)calendarController;
         - (void)calendarController:(PMCalendarController *)calendarController didChangePeriod:(PMPeriod *)newPeriod;
  - Don't forget to assign delegate!
 
         calendarController.delegate = self;
+ - Present calendarController from a view (i.e. UIButton), so calendar could position itself during rotation:
 
- - Present calendarController:
-
-         [calendarController presentCalendarFromRect:CGRectZero // TBI
-                                              inView:self.view
-                            permittedArrowDirections:0          // TBI
+         [calendarController presentCalendarFromView:pressedButton
+                            permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
                                             animated:YES];
-
+ - Or CGRect:
+ 
+         [calendarController presentCalendarFromRect:CGRectMake(100, 100, 10, 10)
+                                              inView:self.view
+                            permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
+                                            animated:YES];
  - Dismiss it:
 
          [calendarController dismissAnimated:YES];
@@ -89,9 +94,9 @@ Implemented properties
 
     @property (nonatomic, assign) BOOL allowsLongPressYearChange;
 
-*TBI!* **Direction of the arrow (similar to UIPopoverController's arrowDirection)**
+**Direction of the arrow (similar to UIPopoverController's arrowDirection)**
 
-    @property (nonatomic, assign) UIPopoverArrowDirection arrowDirection;
+    @property (nonatomic, readonly) UIPopoverArrowDirection arrowDirection;
 
 **Size of a calendar controller**
 

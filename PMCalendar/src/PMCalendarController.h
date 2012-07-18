@@ -8,11 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "PMCalendarView.h"
+#import "PMCalendarConstants.h"
 
 @protocol PMCalendarControllerDelegate;
 @class PMPeriod;
 
-@interface PMCalendarController : NSObject <PMCalendarViewDelegate>
+@interface PMCalendarController : UIViewController <PMCalendarViewDelegate>
 
 @property (nonatomic, assign) id<PMCalendarControllerDelegate> delegate;
 
@@ -22,13 +23,19 @@
 
 @property (nonatomic, assign) BOOL allowsPeriodSelection;
 @property (nonatomic, assign) BOOL allowsLongPressYearChange;
-@property (nonatomic, assign) UIPopoverArrowDirection arrowDirection;
+@property (nonatomic, readonly) PMCalendarArrowDirection calendarArrowDirection;
 @property (nonatomic, assign) CGSize size;
 
 - (void)presentCalendarFromRect:(CGRect) rect 
                          inView:(UIView *) view
-       permittedArrowDirections:(UIPopoverArrowDirection) arrowDirections
+       permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
                        animated:(BOOL) animated;
+
+- (void)presentCalendarFromView:(UIView *) anchorView 
+       permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
+                       animated:(BOOL) animated;
+
+- (void) dismissCalendarAnimated:(BOOL) animated;
 
 @end
 

@@ -18,13 +18,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        self.viewController = [[PMViewController alloc] initWithNibName:@"PMViewController_iPhone" bundle:nil];
-    } else {
-        self.viewController = [[PMViewController alloc] initWithNibName:@"PMViewController_iPad" bundle:nil];
-    }
-    self.window.rootViewController = self.viewController;
+    self.window.rootViewController = [[PMViewController alloc] init];
     [self.window makeKeyAndVisible];
     return YES;
 }

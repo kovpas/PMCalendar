@@ -22,48 +22,25 @@
 
 @synthesize periodLabel;
 
-- (void)viewDidAppear:(BOOL)animated
+- (IBAction)showCalendar:(id)sender
 {
     self.pmCC = [[PMCalendarController alloc] init];
     pmCC.delegate = self;
     pmCC.mondayFirstDayOfWeek = YES;
-    [pmCC presentCalendarFromRect:CGRectZero
-                           inView:self.view
-         permittedArrowDirections:0 
-                         animated:YES];
-    pmCC.allowsLongPressYearChange = NO;
-    pmCC.allowsPeriodSelection = NO;
-    
-    // Update period label
-    [self calendarController:pmCC didChangePeriod:pmCC.period];
-}
 
-- (IBAction)randomResize:(id)sender
-{
-    NSInteger increment = 5;
-    if ([sender tag] < 0)
-    {
-        increment = -5;
-    }
-    
-    CGSize currentSize = self.pmCC.size;
-    CGSize tmpSize = CGSizeZero;
-    tmpSize.width = currentSize.width + increment;
-    tmpSize.height = currentSize.height + increment;
-    
-    currentSize.width = MIN(MAX( 250, tmpSize.width ), 320);
-    currentSize.height = MIN(MAX( 200, tmpSize.height ), 320);
-    
-    [self.pmCC setSize:currentSize];
+    [pmCC presentCalendarFromView:sender 
+         permittedArrowDirections:PMCalendarArrowDirectionAny 
+                         animated:YES];
+/*    [pmCC presentCalendarFromRect:[sender frame]
+                           inView:[sender superview]
+         permittedArrowDirections:PMCalendarArrowDirectionAny
+                         animated:YES];*/
+    [self calendarController:pmCC didChangePeriod:pmCC.period];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        return (interfaceOrientation == UIInterfaceOrientationPortrait);
-    } else {
-        return YES;
-    }
+    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
 
 #pragma mark PMCalendarControllerDelegate methods

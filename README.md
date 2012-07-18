@@ -10,6 +10,7 @@ PMCalendar supports selection of multiple dates within one or several months, ap
 Screenshots
 ----------
 ![Screenshot 1](PMCalendar/raw/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](PMCalendar/raw/master/screenshots/screenshot_2.png)
+
 ![Screenshot 3](PMCalendar/raw/master/screenshots/screenshot_3.png)
 
 Usage

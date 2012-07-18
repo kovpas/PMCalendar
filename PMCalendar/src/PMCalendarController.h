@@ -13,7 +13,7 @@
 @protocol PMCalendarControllerDelegate;
 @class PMPeriod;
 
-@interface PMCalendarController : NSObject <PMCalendarViewDelegate>
+@interface PMCalendarController : UIViewController <PMCalendarViewDelegate>
 
 @property (nonatomic, assign) id<PMCalendarControllerDelegate> delegate;
 
@@ -30,6 +30,12 @@
                          inView:(UIView *) view
        permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
                        animated:(BOOL) animated;
+
+- (void)presentCalendarFromView:(UIView *) anchorView 
+       permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
+                       animated:(BOOL) animated;
+
+- (void) dismissCalendarAnimated:(BOOL) animated;
 
 @end
 

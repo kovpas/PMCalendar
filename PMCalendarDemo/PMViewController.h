@@ -12,6 +12,6 @@
 @interface PMViewController : UIViewController <PMCalendarControllerDelegate>
 
 @property (nonatomic, strong) IBOutlet UILabel *periodLabel;
-- (IBAction)randomResize:(id)sender;
+- (IBAction)showCalendar:(id)sender;
 
 @end

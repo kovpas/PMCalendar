@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C73527C15B619260068E9B4 /* PMDimmingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C73527B15B619260068E9B4 /* PMDimmingView.m */; };
 		3CC833FE15B0ADCF00C07208 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FD15B0ADCF00C07208 /* UIKit.framework */; };
 		3CC8340015B0ADCF00C07208 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FF15B0ADCF00C07208 /* Foundation.framework */; };
 		3CC8340215B0ADCF00C07208 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC8340115B0ADCF00C07208 /* CoreGraphics.framework */; };
@@ -14,8 +15,7 @@
 		3CC8340A15B0ADCF00C07208 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8340915B0ADCF00C07208 /* main.m */; };
 		3CC8340E15B0ADCF00C07208 /* PMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8340D15B0ADCF00C07208 /* PMAppDelegate.m */; };
 		3CC8341115B0ADCF00C07208 /* PMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CC8341015B0ADCF00C07208 /* PMViewController.m */; };
-		3CC8341415B0ADCF00C07208 /* PMViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CC8341215B0ADCF00C07208 /* PMViewController_iPhone.xib */; };
-		3CC8341715B0ADCF00C07208 /* PMViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CC8341515B0ADCF00C07208 /* PMViewController_iPad.xib */; };
+		3CC8341415B0ADCF00C07208 /* PMViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CC8341215B0ADCF00C07208 /* PMViewController.xib */; };
 		3CDF54E415B2C3FE00B6F64E /* NSDate+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CDF54D815B2C3FE00B6F64E /* NSDate+Helpers.m */; };
 		3CDF54E515B2C3FE00B6F64E /* PMCalendarBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CDF54DA15B2C3FE00B6F64E /* PMCalendarBackgroundView.m */; };
 		3CDF54E615B2C3FE00B6F64E /* PMCalendarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CDF54DD15B2C3FE00B6F64E /* PMCalendarController.m */; };
@@ -25,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3C73527A15B619260068E9B4 /* PMDimmingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMDimmingView.h; sourceTree = "<group>"; };
+		3C73527B15B619260068E9B4 /* PMDimmingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMDimmingView.m; sourceTree = "<group>"; };
+		3C73527E15B61D070068E9B4 /* PMCalendarHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PMCalendarHelpers.h; sourceTree = "<group>"; };
 		3CC833F915B0ADCF00C07208 /* PMCalendarDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PMCalendarDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CC833FD15B0ADCF00C07208 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		3CC833FF15B0ADCF00C07208 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -37,8 +40,7 @@
 		3CC8340D15B0ADCF00C07208 /* PMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PMAppDelegate.m; sourceTree = "<group>"; };
 		3CC8340F15B0ADCF00C07208 /* PMViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PMViewController.h; sourceTree = "<group>"; };
 		3CC8341015B0ADCF00C07208 /* PMViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PMViewController.m; sourceTree = "<group>"; };
-		3CC8341315B0ADCF00C07208 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PMViewController_iPhone.xib; sourceTree = "<group>"; };
-		3CC8341615B0ADCF00C07208 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PMViewController_iPad.xib; sourceTree = "<group>"; };
+		3CC8341315B0ADCF00C07208 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PMViewController.xib; sourceTree = "<group>"; };
 		3CDF54D515B2C3FE00B6F64E /* PMCalendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMCalendar.h; sourceTree = "<group>"; };
 		3CDF54D715B2C3FE00B6F64E /* NSDate+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+Helpers.h"; sourceTree = "<group>"; };
 		3CDF54D815B2C3FE00B6F64E /* NSDate+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+Helpers.m"; sourceTree = "<group>"; };
@@ -104,8 +106,7 @@
 				3CC8340D15B0ADCF00C07208 /* PMAppDelegate.m */,
 				3CC8340F15B0ADCF00C07208 /* PMViewController.h */,
 				3CC8341015B0ADCF00C07208 /* PMViewController.m */,
-				3CC8341215B0ADCF00C07208 /* PMViewController_iPhone.xib */,
-				3CC8341515B0ADCF00C07208 /* PMViewController_iPad.xib */,
+				3CC8341215B0ADCF00C07208 /* PMViewController.xib */,
 				3CC8340415B0ADCF00C07208 /* Supporting Files */,
 			);
 			path = PMCalendarDemo;
@@ -147,6 +148,9 @@
 				3CDF54E115B2C3FE00B6F64E /* PMPeriod.m */,
 				3CDF54E215B2C3FE00B6F64E /* PMSelectionView.h */,
 				3CDF54E315B2C3FE00B6F64E /* PMSelectionView.m */,
+				3C73527A15B619260068E9B4 /* PMDimmingView.h */,
+				3C73527B15B619260068E9B4 /* PMDimmingView.m */,
+				3C73527E15B61D070068E9B4 /* PMCalendarHelpers.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -204,8 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CC8340815B0ADCF00C07208 /* InfoPlist.strings in Resources */,
-				3CC8341415B0ADCF00C07208 /* PMViewController_iPhone.xib in Resources */,
-				3CC8341715B0ADCF00C07208 /* PMViewController_iPad.xib in Resources */,
+				3CC8341415B0ADCF00C07208 /* PMViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +228,7 @@
 				3CDF54E715B2C3FE00B6F64E /* PMCalendarView.m in Sources */,
 				3CDF54E815B2C3FE00B6F64E /* PMPeriod.m in Sources */,
 				3CDF54E915B2C3FE00B6F64E /* PMSelectionView.m in Sources */,
+				3C73527C15B619260068E9B4 /* PMDimmingView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,20 +243,12 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		3CC8341215B0ADCF00C07208 /* PMViewController_iPhone.xib */ = {
+		3CC8341215B0ADCF00C07208 /* PMViewController.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				3CC8341315B0ADCF00C07208 /* en */,
 			);
-			name = PMViewController_iPhone.xib;
-			sourceTree = "<group>";
-		};
-		3CC8341515B0ADCF00C07208 /* PMViewController_iPad.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3CC8341615B0ADCF00C07208 /* en */,
-			);
-			name = PMViewController_iPad.xib;
+			name = PMViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -313,6 +309,7 @@
 				INFOPLIST_FILE = "PMCalendarDemo/PMCalendarDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -325,6 +322,7 @@
 				INFOPLIST_FILE = "PMCalendarDemo/PMCalendarDemo-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

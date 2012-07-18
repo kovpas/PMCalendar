@@ -8,24 +8,12 @@
 
 #import "PMCalendarBackgroundView.h"
 #import "PMCalendarConstants.h"
+#import "PMCalendarHelpers.h"
 
 CGFloat shadowPadding = 3.0f;
 CGFloat cornerRadius = 10.0f;
 CGFloat headerHeight = 40.0f;
 CGSize innerPadding = (CGSize){10, 10};
-
-static inline float radians(double degrees) 
-{ 
-    return degrees * M_PI / 180; 
-}
-static inline CGPoint CGPointOffset(CGPoint originalPoint, CGFloat dx, CGFloat dy) 
-{ 
-    return CGPointMake(originalPoint.x + dx, originalPoint.y + dy); 
-}
-static inline CGPoint CGPointOffsetByPoint(CGPoint originalPoint, CGPoint offsetPoint) 
-{ 
-    return CGPointOffset(originalPoint, offsetPoint.x, offsetPoint.y); 
-}
 
 @interface PMGradientOverlayWithSeparators : UIView
 

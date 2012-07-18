@@ -100,7 +100,7 @@
 
             //// selectedRect Drawing
             CGRect rect = CGRectMake(innerPadding.width + floor(thisRowStartCell*hDiff) + 1.5
-                                     , headerHeight + innerPadding.height + (i + 1)*vDiff + 2
+                                     , headerHeight + innerPadding.height + ceil((i + 1)*vDiff) + 2
                                      , floor((thisRowEndCell - thisRowStartCell + 1) * (hDiff)) - 4, vDiff - 4);
             UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius: 10];
             CGContextSaveGState(context);

@@ -48,7 +48,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
-//    if((_startIndex >= 0) || (_endIndex >= 0)) 
+    if((_startIndex >= 0) || (_endIndex >= 0)) 
     {
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         CGContextRef context = UIGraphicsGetCurrentContext();

@@ -12,18 +12,17 @@
  * PMSelectionView is an internal class.
  *
  * PMSelectionView is a view which renders selection. 
- * start and end indexes are non-negative numbers. 0 is a left-top corner of a calendar. 
  */
 @interface PMSelectionView : UIView
 
 /**
  * Selection start index.
  */
-@property (nonatomic, assign) NSUInteger startIndex;
+@property (nonatomic, assign) NSInteger startIndex;
 
 /**
  * Selection end index.
  */
-@property (nonatomic, assign) NSUInteger endIndex;
+@property (nonatomic, assign) NSInteger endIndex;
 
 @end

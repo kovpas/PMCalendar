@@ -634,7 +634,6 @@
                                                                    fromDate:today];
     NSInteger todayDay = [components day];
     NSDate *currentDateWithoutTime = [_currentDate dateWithoutTime];
-    BOOL endedOnSat = NO;
 	int finalRow    = 0;
 	int day         = 1;
     
@@ -663,11 +662,6 @@
                 drawString( string, dayHeader2Frame, color );
                 
                 finalRow = i;
-                
-                if(day == numDaysInMonth && j == 6) 
-                {
-                    endedOnSat = YES;
-                }
                 
 				++day;
 			}

@@ -183,7 +183,10 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     }
     
     CGRect calendarFrame = self.mainView.frame;
-    CGRect frm = CGRectMake(0, 0, calendarFrame.size.width - arrowSize.height, calendarFrame.size.height - arrowSize.height);
+    CGRect frm = CGRectMake(self.calendarView.frame.origin.x
+                            , self.calendarView.frame.origin.y
+                            , calendarFrame.size.width - arrowSize.height
+                            , calendarFrame.size.height - arrowSize.height);
     CGPoint arrowPosition = CGPointZero;
     CGPoint arrowOffset = CGPointZero;
     

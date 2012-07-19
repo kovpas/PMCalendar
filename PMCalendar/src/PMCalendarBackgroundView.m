@@ -15,7 +15,9 @@ CGFloat cornerRadius = 10.0f;
 CGFloat headerHeight = 40.0f;
 CGSize innerPadding = (CGSize){10, 10};
 
-@interface PMGradientOverlayWithSeparators : UIView
+@interface PMCalendarBackgroundView ()
+
+- (void)redrawComponent;
 
 @end
 
@@ -24,14 +26,11 @@ CGSize innerPadding = (CGSize){10, 10};
 @synthesize arrowDirection = _arrowDirection;
 @synthesize arrowPosition = _arrowPosition;
 
+#pragma mark - UIView overridden methods -
+
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)redrawComponent
-{
-    [self setNeedsDisplay];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -52,6 +51,15 @@ CGSize innerPadding = (CGSize){10, 10};
     return self;
 }
 
+#pragma mark - component drawing management -
+
+- (void)redrawComponent
+{
+    [self setNeedsDisplay];
+}
+
+// Returns background bezier path with arrow pointing to a given 
+// arrowDirection and arrowPosition (top corner of a triangle).
 + (UIBezierPath*) createBezierPathForSize:(CGSize) size
                            arrowDirection:(PMCalendarArrowDirection)direction 
                             arrowPosition:(CGPoint)arrowPosition
@@ -111,18 +119,23 @@ CGSize innerPadding = (CGSize){10, 10};
         [result addLineToPoint: endArrowPoint];
     };
     
+    // starting from bottom-left corner
     [result moveToPoint: CGPointMake(tl.x + shadowPadding
                                      , tl.y + shadowPadding + height - cornerRadius)];
+    // creating arc to a bottom line
     [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + cornerRadius
                                          , tl.y + shadowPadding + height - cornerRadius) 
                       radius:cornerRadius 
                   startAngle:radians(180) 
                     endAngle:radians(90)
                    clockwise:NO];
+    // checking if we have an arrow on a bottom of the background
     if (direction == PMCalendarArrowDirectionDown)
     {
+        // draw it if yes
         createBezierArrow();
     }
+    // same steps for bottom-right corner
     [result addLineToPoint: CGPointMake(tl.x + shadowPadding + width - cornerRadius
                                         , tl.y + shadowPadding + height)];
     [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + width - cornerRadius
@@ -135,6 +148,7 @@ CGSize innerPadding = (CGSize){10, 10};
     {
         createBezierArrow();
     }
+    // same steps for top-right corner
     [result addLineToPoint: CGPointMake(tl.x + shadowPadding + width
                                         , tl.y + shadowPadding + cornerRadius)];
     [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + width - cornerRadius
@@ -147,6 +161,7 @@ CGSize innerPadding = (CGSize){10, 10};
     {
         createBezierArrow();
     }
+    // same steps for top-left corner
     [result addLineToPoint: CGPointMake(tl.x + shadowPadding + cornerRadius
                                         , tl.y + shadowPadding)];
     [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + cornerRadius
@@ -158,7 +173,8 @@ CGSize innerPadding = (CGSize){10, 10};
     if (direction == PMCalendarArrowDirectionLeft)
     {
         createBezierArrow();
-    }
+    }    
+    // return back to the starting point
     [result addLineToPoint: CGPointMake(tl.x + shadowPadding
                                         , tl.y + shadowPadding + height - cornerRadius)];
 
@@ -172,35 +188,39 @@ CGSize innerPadding = (CGSize){10, 10};
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    //// Color Declarations
+    // color declarations
     UIColor* bigBoxInnerShadowColor = [UIColor colorWithRed: 1 green: 1 blue: 1 alpha: 0.56];
     UIColor* backgroundLightColor = [UIColor colorWithWhite:0.2 alpha: 1];
-    
-    //// Shadow Declarations
+    UIColor* lineLightColor = [UIColor colorWithRed: 1 green: 1 blue: 1 alpha: 0.27];
+    UIColor* boxStroke = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.59];
+
+    // overlay gradient colors
+    UIColor* darkColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.45];
+    UIColor* lightColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.15];
+
+    NSArray* gradient2Colors = [NSArray arrayWithObjects: 
+                                (id)darkColor.CGColor, 
+                                (id)lightColor.CGColor, nil];
+    CGFloat gradient2Locations[] = {0, 1};
+    CGGradientRef gradient2 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient2Colors, gradient2Locations);
+
+    // shadow declarations
     CGColorRef bigBoxInnerShadow = bigBoxInnerShadowColor.CGColor;
     CGSize bigBoxInnerShadowOffset = CGSizeMake(0, 1);
     CGFloat bigBoxInnerShadowBlurRadius = 1;
     CGColorRef backgroundShadow = [UIColor blackColor].CGColor;
     CGSize backgroundShadowOffset = CGSizeMake(1, 1);
     CGFloat backgroundShadowBlurRadius = 2;
-    UIColor* darkColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.45];
-    UIColor* lightColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.15];
-    UIColor* lineLightColor = [UIColor colorWithRed: 1 green: 1 blue: 1 alpha: 0.27];
     CGColorRef shadow = [UIColor blackColor].CGColor;
     CGSize shadowOffset = CGSizeMake(-1, -0);
     CGFloat shadowBlurRadius = 0;
-    UIColor* boxStroke = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.59];
     
-    NSArray* gradient2Colors = [NSArray arrayWithObjects: 
-                                (id)darkColor.CGColor, 
-                                (id)lightColor.CGColor, nil];
-    CGFloat gradient2Locations[] = {0, 1};
-    CGGradientRef gradient2 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient2Colors, gradient2Locations);
-    
+    // backgound box. it doesn't include arrow:
     CGRect boxBounds = CGRectMake(0, 0
                                   , self.bounds.size.width - arrowSize.height
                                   , self.bounds.size.height - arrowSize.height);
-    
+
+    // TODO: check if *2 is really needed.
     CGFloat width = boxBounds.size.width - shadowPadding * 2;
     CGFloat height = boxBounds.size.height - shadowPadding * 2;
     
@@ -220,21 +240,22 @@ CGSize innerPadding = (CGSize){10, 10};
             break;
     }
     
-    //////// Draws background of popover    
-    
+    // draws background of popover
     UIBezierPath *roundedRectanglePath = [PMCalendarBackgroundView createBezierPathForSize:boxBounds.size
                                                                             arrowDirection:self.arrowDirection
                                                                              arrowPosition:self.arrowPosition];
 
     CGContextSaveGState(context);
     CGContextSetShadowWithColor(context, backgroundShadowOffset, backgroundShadowBlurRadius, backgroundShadow);
+    
+    // light stroke around
     [boxStroke setStroke];
     roundedRectanglePath.lineWidth = 0.5;
     [roundedRectanglePath stroke];
     [backgroundLightColor setFill];
     [roundedRectanglePath fill];
 
-    ////// background Inner Shadow
+    // background inner shadow
     CGRect roundedRectangleBorderRect = CGRectInset([roundedRectanglePath bounds]
                                                     , -bigBoxInnerShadowBlurRadius
                                                     , -bigBoxInnerShadowBlurRadius);
@@ -275,11 +296,11 @@ CGSize innerPadding = (CGSize){10, 10};
     [roundedRectangle2Path addClip];
     CGContextRestoreGState(context);
 
-    //Dividers        
+    // dividers        
     CGFloat hDiff = (width + shadowPadding * 2 - innerPadding.width * 2) / 7;
     
-    for(int i = 0; i < 6; i++) {
-        //// divider Drawing
+    for (int i = 0; i < 6; i++) 
+    {
         CGRect dividerRect = CGRectMake(tl.x + innerPadding.width + floor((i + 1) * hDiff) - 1
                                         , tl.y + innerPadding.height + headerHeight + shadowPadding
                                         , 0.5

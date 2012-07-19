@@ -25,5 +25,8 @@ static inline CGPoint CGPointOffsetByPoint(CGPoint originalPoint, CGPoint offset
 
 // UIColor helpers
 
-#define UIColorMakeRGBA(nRed, nGreen, nBlue, nAlpha) [UIColor colorWithRed:(nRed)/255.0f green:(nGreen)/255.0f blue:(nBlue)/255.0f alpha:nAlpha]
+#define UIColorMakeRGBA(nRed, nGreen, nBlue, nAlpha) [UIColor colorWithRed:(nRed)/255.0f \
+                                                                     green:(nGreen)/255.0f \
+                                                                      blue:(nBlue)/255.0f \
+                                                                     alpha:nAlpha]
 #define UIColorMakeRGB(nRed, nGreen, nBlue) UIColorMakeRGBA(nRed, nGreen, nBlue, 1.0f)

@@ -46,11 +46,9 @@
     return self;
 }
 
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    if((_startIndex >= 0) || (_endIndex >= 0)) 
+//    if((_startIndex >= 0) || (_endIndex >= 0)) 
     {
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         CGContextRef context = UIGraphicsGetCurrentContext();
@@ -123,7 +121,7 @@
     }
 }
 
-- (void)setStartIndex:(NSInteger)startIndex
+- (void)setStartIndex:(NSUInteger)startIndex
 {
     if (_startIndex != startIndex)
     {
@@ -132,7 +130,7 @@
     }
 }
 
-- (void)setEndIndex:(NSInteger)endIndex
+- (void)setEndIndex:(NSUInteger)endIndex
 {
     if (_endIndex != endIndex)
     {

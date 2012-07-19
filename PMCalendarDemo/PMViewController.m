@@ -8,7 +8,6 @@
 
 #import "PMViewController.h"
 #import "PMCalendar.h"
-#import "NSDate+Helpers.h"
 
 @interface PMViewController ()
 
@@ -48,8 +47,8 @@
 - (void)calendarController:(PMCalendarController *)calendarController didChangePeriod:(PMPeriod *)newPeriod
 {
     periodLabel.text = [NSString stringWithFormat:@"%@ - %@"
-                        , [newPeriod.startDate dateStringWithFormat:@"dd-MM-yyy"]
-                        , [newPeriod.endDate dateStringWithFormat:@"dd-MM-yyy"]];
+                        , [newPeriod.startDate dateStringWithFormat:@"dd-MM-yyyy"]
+                        , [newPeriod.endDate dateStringWithFormat:@"dd-MM-yyyy"]];
 }
 
 @end

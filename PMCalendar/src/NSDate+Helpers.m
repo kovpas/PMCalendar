@@ -59,14 +59,14 @@
 	return monthStartDate;
 }
 
-- (NSInteger) numberOfDaysInMonth
+- (NSUInteger) numberOfDaysInMonth
 {
     return [[NSCalendar currentCalendar] rangeOfUnit:NSDayCalendarUnit 
                                               inUnit:NSMonthCalendarUnit 
                                              forDate:self].length;
 }
 
-- (NSInteger) weekday
+- (NSUInteger) weekday
 {
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     

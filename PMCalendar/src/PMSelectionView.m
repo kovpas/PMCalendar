@@ -121,7 +121,7 @@
     }
 }
 
-- (void)setStartIndex:(NSUInteger)startIndex
+- (void)setStartIndex:(NSInteger)startIndex
 {
     if (_startIndex != startIndex)
     {
@@ -130,7 +130,7 @@
     }
 }
 
-- (void)setEndIndex:(NSUInteger)endIndex
+- (void)setEndIndex:(NSInteger)endIndex
 {
     if (_endIndex != endIndex)
     {

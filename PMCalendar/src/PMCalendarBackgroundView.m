@@ -9,11 +9,12 @@
 #import "PMCalendarBackgroundView.h"
 #import "PMCalendarConstants.h"
 #import "PMCalendarHelpers.h"
+#import "PMTheme.h"
 
-CGFloat shadowPadding = 3.0f;
-CGFloat cornerRadius = 10.0f;
-CGFloat headerHeight = 40.0f;
-CGSize innerPadding = (CGSize){10, 10};
+UIEdgeInsets shadowPadding = kPMThemeShadowInsets;
+CGFloat cornerRadius = kPMThemeCornerRadius;
+CGFloat headerHeight = kPMThemeHeaderHeight;
+CGSize innerPadding = kPMThemeInnerPadding;
 
 @interface PMCalendarBackgroundView ()
 
@@ -64,17 +65,38 @@ CGSize innerPadding = (CGSize){10, 10};
                            arrowDirection:(PMCalendarArrowDirection)direction 
                             arrowPosition:(CGPoint)arrowPosition
 {
-    UIBezierPath* result = [UIBezierPath bezierPath];
-    
+    UIBezierPath* result = nil;
     CGFloat width = size.width;
     CGFloat height = size.height;
+    width -= shadowPadding.left + shadowPadding.right;
+    height -= shadowPadding.top + shadowPadding.bottom;
+
+    if (arrowSize.height == 0)
+    {
+        CGRect pathRect = CGRectMake(shadowPadding.top
+                                     , shadowPadding.left
+                                     , width
+                                     , height);
+        
+        if (cornerRadius > 0)
+        {
+            result = [UIBezierPath bezierPathWithRoundedRect:pathRect
+                                                cornerRadius:cornerRadius];
+        }
+        else
+        {
+            result = [UIBezierPath bezierPathWithRect:pathRect];
+        }
+        
+        return result;
+    }
+    
+    result = [UIBezierPath bezierPath];
     CGPoint startArrowPoint = CGPointZero;
     CGPoint endArrowPoint = CGPointZero;
     CGPoint topArrowPoint = CGPointZero;
-    CGPoint offset = CGPointMake(shadowPadding, shadowPadding);
+    CGPoint offset = CGPointMake(shadowPadding.top, shadowPadding.left);
     CGPoint tl = CGPointZero;
-    width -= shadowPadding * 2;
-    height -= shadowPadding * 2;
 
     switch (direction) 
     {
@@ -120,11 +142,11 @@ CGSize innerPadding = (CGSize){10, 10};
     };
     
     // starting from bottom-left corner
-    [result moveToPoint: CGPointMake(tl.x + shadowPadding
-                                     , tl.y + shadowPadding + height - cornerRadius)];
+    [result moveToPoint: CGPointMake(tl.x + shadowPadding.left
+                                     , tl.y + shadowPadding.top + height - cornerRadius)];
     // creating arc to a bottom line
-    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + cornerRadius
-                                         , tl.y + shadowPadding + height - cornerRadius) 
+    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding.left + cornerRadius
+                                         , tl.y + shadowPadding.top + height - cornerRadius) 
                       radius:cornerRadius 
                   startAngle:radians(180) 
                     endAngle:radians(90)
@@ -136,10 +158,10 @@ CGSize innerPadding = (CGSize){10, 10};
         createBezierArrow();
     }
     // same steps for bottom-right corner
-    [result addLineToPoint: CGPointMake(tl.x + shadowPadding + width - cornerRadius
-                                        , tl.y + shadowPadding + height)];
-    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + width - cornerRadius
-                                         , tl.y + shadowPadding + height - cornerRadius) 
+    [result addLineToPoint: CGPointMake(tl.x + shadowPadding.left + width - cornerRadius
+                                        , tl.y + shadowPadding.top + height)];
+    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding.left + width - cornerRadius
+                                         , tl.y + shadowPadding.top + height - cornerRadius) 
                       radius:cornerRadius 
                   startAngle:radians(90) 
                     endAngle:radians(0)
@@ -149,10 +171,10 @@ CGSize innerPadding = (CGSize){10, 10};
         createBezierArrow();
     }
     // same steps for top-right corner
-    [result addLineToPoint: CGPointMake(tl.x + shadowPadding + width
-                                        , tl.y + shadowPadding + cornerRadius)];
-    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + width - cornerRadius
-                                         , tl.y + shadowPadding + cornerRadius) 
+    [result addLineToPoint: CGPointMake(tl.x + shadowPadding.left + width
+                                        , tl.y + shadowPadding.top + cornerRadius)];
+    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding.left + width - cornerRadius
+                                         , tl.y + shadowPadding.top + cornerRadius) 
                       radius:cornerRadius 
                   startAngle:radians(0) 
                     endAngle:radians(-90)
@@ -162,10 +184,10 @@ CGSize innerPadding = (CGSize){10, 10};
         createBezierArrow();
     }
     // same steps for top-left corner
-    [result addLineToPoint: CGPointMake(tl.x + shadowPadding + cornerRadius
-                                        , tl.y + shadowPadding)];
-    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding + cornerRadius
-                                         , tl.y + shadowPadding + cornerRadius) 
+    [result addLineToPoint: CGPointMake(tl.x + shadowPadding.left + cornerRadius
+                                        , tl.y + shadowPadding.top)];
+    [result addArcWithCenter:CGPointMake(tl.x + shadowPadding.left + cornerRadius
+                                         , tl.y + shadowPadding.top + cornerRadius) 
                       radius:cornerRadius 
                   startAngle:radians(-90) 
                     endAngle:radians(-180)
@@ -175,8 +197,8 @@ CGSize innerPadding = (CGSize){10, 10};
         createBezierArrow();
     }    
     // return back to the starting point
-    [result addLineToPoint: CGPointMake(tl.x + shadowPadding
-                                        , tl.y + shadowPadding + height - cornerRadius)];
+    [result addLineToPoint: CGPointMake(tl.x + shadowPadding.left
+                                        , tl.y + shadowPadding.top + height - cornerRadius)];
 
     [result closePath];
     
@@ -185,24 +207,22 @@ CGSize innerPadding = (CGSize){10, 10};
 
 -(void)drawRect:(CGRect)rect
 {
+    PMLog( @"Start" );
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = UIGraphicsGetCurrentContext();
 
     // color declarations
-    UIColor* bigBoxInnerShadowColor = [UIColor colorWithRed: 1 green: 1 blue: 1 alpha: 0.56];
-    UIColor* backgroundLightColor = [UIColor colorWithWhite:0.2 alpha: 1];
-    UIColor* lineLightColor = [UIColor colorWithRed: 1 green: 1 blue: 1 alpha: 0.27];
-    UIColor* boxStroke = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.59];
+    UIColor* bigBoxInnerShadowColor = kPMThemeBackgroundInnerShadowColor;
+    UIColor* backgroundLightColor = kPMThemeBackgroundColor;
+    UIColor* lineLightColor = kPMThemeSeparatorColor;
+    UIColor* boxStroke = kPMThemeBoxStrokeColor;
 
     // overlay gradient colors
-    UIColor* darkColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.45];
-    UIColor* lightColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.15];
-
-    NSArray* gradient2Colors = [NSArray arrayWithObjects: 
-                                (id)darkColor.CGColor, 
-                                (id)lightColor.CGColor, nil];
-    CGFloat gradient2Locations[] = {0, 1};
-    CGGradientRef gradient2 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient2Colors, gradient2Locations);
+    NSArray* gradient2Colors = kPMThemeBackgoundOverlayGradientColors;
+    CGFloat gradient2Locations[] = kPMThemeBackgoundOverlayGradientColorLocations;
+    CGGradientRef gradient2 = CGGradientCreateWithColors(colorSpace
+                                                         , (__bridge CFArrayRef)gradient2Colors
+                                                         , gradient2Locations);
 
     // shadow declarations
     CGColorRef bigBoxInnerShadow = bigBoxInnerShadowColor.CGColor;
@@ -210,22 +230,21 @@ CGSize innerPadding = (CGSize){10, 10};
     CGFloat bigBoxInnerShadowBlurRadius = 1;
     CGColorRef backgroundShadow = [UIColor blackColor].CGColor;
     CGSize backgroundShadowOffset = CGSizeMake(1, 1);
-    CGFloat backgroundShadowBlurRadius = 2;
-    CGColorRef shadow = [UIColor blackColor].CGColor;
-    CGSize shadowOffset = CGSizeMake(-1, -0);
+    CGFloat backgroundShadowBlurRadius = shadowPadding.bottom;
+    CGColorRef shadow = kPMThemeSeparatorShadowColor.CGColor;
+    UIOffset shadowOffset = kPMThemeSeparatorShadowOffset;
     CGFloat shadowBlurRadius = 0;
-    
+
     // backgound box. it doesn't include arrow:
     CGRect boxBounds = CGRectMake(0, 0
                                   , self.bounds.size.width - arrowSize.height
                                   , self.bounds.size.height - arrowSize.height);
 
-    // TODO: check if *2 is really needed.
-    CGFloat width = boxBounds.size.width - shadowPadding * 2;
-    CGFloat height = boxBounds.size.height - shadowPadding * 2;
-    
+    CGFloat width = boxBounds.size.width - (shadowPadding.left + shadowPadding.right);
+    CGFloat height = boxBounds.size.height - (shadowPadding.top + shadowPadding.bottom);
+
     CGPoint tl = CGPointZero;
-    
+
     switch (self.arrowDirection) 
     {
         case PMCalendarArrowDirectionUp:
@@ -239,7 +258,7 @@ CGSize innerPadding = (CGSize){10, 10};
         default:
             break;
     }
-    
+
     // draws background of popover
     UIBezierPath *roundedRectanglePath = [PMCalendarBackgroundView createBezierPathForSize:boxBounds.size
                                                                             arrowDirection:self.arrowDirection
@@ -247,11 +266,14 @@ CGSize innerPadding = (CGSize){10, 10};
 
     CGContextSaveGState(context);
     CGContextSetShadowWithColor(context, backgroundShadowOffset, backgroundShadowBlurRadius, backgroundShadow);
-    
+
     // light stroke around
-    [boxStroke setStroke];
-    roundedRectanglePath.lineWidth = 0.5;
-    [roundedRectanglePath stroke];
+    if (boxStroke)
+    {
+        [boxStroke setStroke];
+        roundedRectanglePath.lineWidth = 0.5;
+        [roundedRectanglePath stroke];
+    }
     [backgroundLightColor setFill];
     [roundedRectanglePath fill];
 
@@ -268,7 +290,7 @@ CGSize innerPadding = (CGSize){10, 10};
     UIBezierPath* roundedRectangleNegativePath = [UIBezierPath bezierPathWithRect: roundedRectangleBorderRect];
     [roundedRectangleNegativePath appendPath: roundedRectanglePath];
     roundedRectangleNegativePath.usesEvenOddFillRule = YES;
-    
+
     CGContextSaveGState(context);
     {
         CGFloat xOffset = bigBoxInnerShadowOffset.width + round(roundedRectangleBorderRect.size.width);
@@ -287,7 +309,7 @@ CGSize innerPadding = (CGSize){10, 10};
         [roundedRectangleNegativePath fill];
     }
     CGContextRestoreGState(context);
-    
+
     UIBezierPath *roundedRectangle2Path = [PMCalendarBackgroundView createBezierPathForSize:boxBounds.size
                                                                             arrowDirection:self.arrowDirection
                                                                              arrowPosition:self.arrowPosition];
@@ -296,34 +318,38 @@ CGSize innerPadding = (CGSize){10, 10};
     [roundedRectangle2Path addClip];
     CGContextRestoreGState(context);
 
-    // dividers        
-    CGFloat hDiff = (width + shadowPadding * 2 - innerPadding.width * 2) / 7;
-    
-    for (int i = 0; i < 6; i++) 
+    if (kPMThemeSeparatorWidth > 0)
     {
-        CGRect dividerRect = CGRectMake(tl.x + innerPadding.width + floor((i + 1) * hDiff) - 1
-                                        , tl.y + innerPadding.height + headerHeight + shadowPadding
-                                        , 0.5
-                                        , height - innerPadding.height * 2 - headerHeight);
-        UIBezierPath* dividerPath = [UIBezierPath bezierPathWithRect:dividerRect];
-        CGContextSaveGState(context);
-        CGContextSetShadowWithColor(context, shadowOffset, shadowBlurRadius, shadow);
-        [lineLightColor setFill];
-        [dividerPath fill];
-        CGContextRestoreGState(context);
+        // dividers        
+        CGFloat hDiff = (width + shadowPadding.left + shadowPadding.right - innerPadding.width * 2) / 7;
+        
+        for (int i = 0; i < 6; i++) 
+        {
+            CGRect dividerRect = CGRectMake(tl.x + innerPadding.width + floor((i + 1) * hDiff) - 1 + shadowPadding.left
+                                            , tl.y + innerPadding.height + headerHeight + shadowPadding.top
+                                            , kPMThemeSeparatorWidth
+                                            , height - innerPadding.height * 2 - headerHeight);
+            UIBezierPath* dividerPath = [UIBezierPath bezierPathWithRect:dividerRect];
+            CGContextSaveGState(context);
+            CGContextSetShadowWithColor(context, UIOffsetToCGSize(shadowOffset), shadowBlurRadius, shadow);
+            [lineLightColor setFill];
+            [dividerPath fill];
+            CGContextRestoreGState(context);
+        }
     }
-    
+
     CGContextSaveGState(context);
     [roundedRectanglePath addClip];
     CGContextDrawLinearGradient(context
                                 , gradient2
-                                , CGPointMake(width / 2, shadowPadding + self.frame.size.height)
-                                , CGPointMake(width / 2, shadowPadding), 0);
+                                , CGPointMake(width / 2, shadowPadding.top + self.frame.size.height)
+                                , CGPointMake(width / 2, shadowPadding.top), 0);
     CGContextRestoreGState(context);
     
     CGGradientRelease(gradient2);
     
     CGColorSpaceRelease(colorSpace);
+    PMLog( @"End" );
 }
 
 - (void)setFrame:(CGRect)frame

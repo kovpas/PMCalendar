@@ -34,4 +34,9 @@
  */
 - (PMPeriod *) normalizedPeriod;
 
+/**
+ * Checks if current (self) period contains a given date.
+ */
+- (BOOL) containsDate:(NSDate *) date;
+
 @end

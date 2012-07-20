@@ -56,6 +56,11 @@
 - (NSUInteger) weekday;
 
 /**
+ * Returns the number of days since given date.
+ */
+- (NSInteger) daysSinceDate:(NSDate *) date;
+
+/**
  * Returns string representation of the current (self) date formatted with given format.
  *
  * i.e. "dd-MM-yyyy" will return "14-07-2012"

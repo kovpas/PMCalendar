@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
 //
 
-extern CGFloat shadowPadding;
+extern UIEdgeInsets shadowPadding;
 extern CGFloat cornerRadius;
 extern CGFloat headerHeight;
 extern CGSize arrowSize;

@@ -74,4 +74,17 @@
     return result;
 }
 
+- (BOOL) containsDate:(NSDate *) date
+{
+    PMPeriod *normalizedPeriod = [self normalizedPeriod];
+    
+    if (([normalizedPeriod.startDate compare:date] != NSOrderedDescending)
+        && ([normalizedPeriod.endDate compare:date] != NSOrderedAscending))
+    {
+        return YES;
+    }
+    
+    return NO;
+}
+
 @end

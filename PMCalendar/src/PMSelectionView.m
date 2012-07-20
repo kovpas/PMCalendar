@@ -8,6 +8,7 @@
 
 #import "PMSelectionView.h"
 #import "PMCalendarConstants.h"
+#import "PMTheme.h"
 
 @interface PMSelectionView ()
 
@@ -48,6 +49,7 @@
 
 - (void)drawRect:(CGRect)rect
 {
+    PMLog(@"Start");
     if((_startIndex >= 0) || (_endIndex >= 0)) 
     {
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -57,20 +59,20 @@
         CGSize backgroundShadowOffset = CGSizeMake(2, 3);
         CGFloat backgroundShadowBlurRadius = 5;
         
-        UIColor* darkColor = [UIColor colorWithRed: 0 green: 0 blue: 0 alpha: 0.72];
-        
-        UIColor* color = [UIColor colorWithRed: 0.82 green: 0.08 blue: 0 alpha: 0.86];
-        UIColor* color2 = [UIColor colorWithRed: 0.66 green: 0.02 blue: 0.04 alpha: 0.88];
-        NSArray* gradient3Colors = [NSArray arrayWithObjects: 
-                                    (id)color.CGColor, 
-                                    (id)color2.CGColor, nil];
-        CGFloat gradient3Locations[] = {0, 1};
+        UIColor* darkColor = kPMThemeSelectionStrokeColor;
+        NSArray* gradient3Colors = kPMThemeSelectionGradientColors;
+        CGFloat gradient3Locations[] = kPMThemeSelectionGradientColorLocations;
         CGGradientRef gradient3 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient3Colors, gradient3Locations);
         
         CGFloat width  = self.frame.size.width;
         CGFloat height = self.frame.size.height;
-        CGFloat hDiff = (width - innerPadding.width * 2) / 7;
-        CGFloat vDiff  = (height - headerHeight - innerPadding.height * 2) / 7;
+#ifdef kPMThemeSelectionCeilCoordinates
+        CGFloat hDiff = ceil((width + shadowPadding.left + shadowPadding.right - innerPadding.width * 2) / 7);
+        CGFloat vDiff = ceil((height - headerHeight - innerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7));
+#else        
+        CGFloat hDiff = (width + shadowPadding.left + shadowPadding.right - innerPadding.width * 2) / 7;
+        CGFloat vDiff = (height - headerHeight - innerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7);
+#endif
 
         int tempStart = MAX(MIN(_startIndex, _endIndex), 0);
         int tempEnd = MAX(_startIndex, _endIndex);
@@ -97,10 +99,11 @@
             } 
 
             //// selectedRect Drawing
-            CGRect rect = CGRectMake(innerPadding.width + floor(thisRowStartCell*hDiff) + 1.5
-                                     , headerHeight + innerPadding.height + ceil((i + 1)*vDiff) + 2
-                                     , floor((thisRowEndCell - thisRowStartCell + 1) * (hDiff)) - 4, vDiff - 4);
-            UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius: 10];
+            CGRect rect = CGRectMake(innerPadding.width + floor(thisRowStartCell*hDiff) + kPMThemeSelectionOffset.horizontal
+                                     , headerHeight + innerPadding.height + ceil((i + ((kPMThemeDayTitlesInHeader)?0:1))*vDiff) + kPMThemeSelectionOffset.vertical
+                                     , floor((thisRowEndCell - thisRowStartCell + 1) * (hDiff)) + kPMThemeSelectionSizeInset.width
+                                     , vDiff + kPMThemeSelectionSizeInset.height);
+            UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius: kPMThemeSelectionCornerRadius];
             CGContextSaveGState(context);
             [selectedRectPath addClip];
             CGContextDrawLinearGradient(context, gradient3
@@ -109,9 +112,9 @@
             CGContextRestoreGState(context);
             
             CGContextSaveGState(context);
-            CGContextSetShadowWithColor(context, backgroundShadowOffset, backgroundShadowBlurRadius, backgroundShadow);
+//            CGContextSetShadowWithColor(context, backgroundShadowOffset, backgroundShadowBlurRadius, backgroundShadow);
             [darkColor setStroke];
-            selectedRectPath.lineWidth = 0.5;
+            selectedRectPath.lineWidth = kPMThemeSelectionStrokeWidth;
             [selectedRectPath stroke];
             CGContextRestoreGState(context);
         }
@@ -119,6 +122,7 @@
         CGGradientRelease(gradient3);
         CGColorSpaceRelease(colorSpace);
     }
+    PMLog(@"End");
 }
 
 - (void)setStartIndex:(NSInteger)startIndex

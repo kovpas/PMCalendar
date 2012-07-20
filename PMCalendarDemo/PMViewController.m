@@ -25,15 +25,18 @@
 {
     self.pmCC = [[PMCalendarController alloc] init];
     pmCC.delegate = self;
-    pmCC.mondayFirstDayOfWeek = YES;
+    pmCC.mondayFirstDayOfWeek = NO;
 
+#ifdef MIMIC_APPLE_THEME
+    [pmCC presentCalendarFromRect:CGRectZero
+                           inView:[sender superview]
+         permittedArrowDirections:PMCalendarArrowDirectionAny
+                         animated:YES];
+#else
     [pmCC presentCalendarFromView:sender 
          permittedArrowDirections:PMCalendarArrowDirectionAny 
                          animated:YES];
-/*    [pmCC presentCalendarFromRect:[sender frame]
-                           inView:[sender superview]
-         permittedArrowDirections:PMCalendarArrowDirectionAny
-                         animated:YES];*/
+#endif
     [self calendarController:pmCC didChangePeriod:pmCC.period];
 }
 

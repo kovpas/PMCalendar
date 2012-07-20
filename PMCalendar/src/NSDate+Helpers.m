@@ -83,4 +83,9 @@
 	return [formatter stringFromDate:self];
 }
 
+- (NSInteger) daysSinceDate:(NSDate *) date
+{
+    return [self timeIntervalSinceDate:date] / (60 * 60 * 24);
+}
+
 @end

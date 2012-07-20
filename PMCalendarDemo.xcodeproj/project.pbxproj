@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C504FED15B8B6C10064A435 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C504FEC15B8B6C10064A435 /* background.png */; };
 		3C73527C15B619260068E9B4 /* PMDimmingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C73527B15B619260068E9B4 /* PMDimmingView.m */; };
 		3CC833FE15B0ADCF00C07208 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FD15B0ADCF00C07208 /* UIKit.framework */; };
 		3CC8340015B0ADCF00C07208 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FF15B0ADCF00C07208 /* Foundation.framework */; };
@@ -22,9 +23,17 @@
 		3CDF54E715B2C3FE00B6F64E /* PMCalendarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CDF54DF15B2C3FE00B6F64E /* PMCalendarView.m */; };
 		3CDF54E815B2C3FE00B6F64E /* PMPeriod.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CDF54E115B2C3FE00B6F64E /* PMPeriod.m */; };
 		3CDF54E915B2C3FE00B6F64E /* PMSelectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CDF54E315B2C3FE00B6F64E /* PMSelectionView.m */; };
+		3CF3CAE715B8C58400720F03 /* background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAE615B8C58400720F03 /* background@2x.png */; };
+		3CF3CAEE15B9436300720F03 /* arrow_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAEC15B9436300720F03 /* arrow_fill.png */; };
+		3CF3CAEF15B9436300720F03 /* arrow_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAED15B9436300720F03 /* arrow_fill@2x.png */; };
+		3CF3CAF215B9439000720F03 /* text_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAF015B9439000720F03 /* text_fill.png */; };
+		3CF3CAF315B9439000720F03 /* text_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAF115B9439000720F03 /* text_fill@2x.png */; };
+		3CF3CAF615B9451F00720F03 /* dim_text_fill.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAF415B9451F00720F03 /* dim_text_fill.png */; };
+		3CF3CAF715B9451F00720F03 /* dim_text_fill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3CF3CAF515B9451F00720F03 /* dim_text_fill@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3C504FEC15B8B6C10064A435 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background.png; sourceTree = "<group>"; };
 		3C73527A15B619260068E9B4 /* PMDimmingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMDimmingView.h; sourceTree = "<group>"; };
 		3C73527B15B619260068E9B4 /* PMDimmingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMDimmingView.m; sourceTree = "<group>"; };
 		3C73527E15B61D070068E9B4 /* PMCalendarHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PMCalendarHelpers.h; sourceTree = "<group>"; };
@@ -55,6 +64,14 @@
 		3CDF54E115B2C3FE00B6F64E /* PMPeriod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMPeriod.m; sourceTree = "<group>"; };
 		3CDF54E215B2C3FE00B6F64E /* PMSelectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PMSelectionView.h; sourceTree = "<group>"; };
 		3CDF54E315B2C3FE00B6F64E /* PMSelectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PMSelectionView.m; sourceTree = "<group>"; };
+		3CF3CAE615B8C58400720F03 /* background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "background@2x.png"; sourceTree = "<group>"; };
+		3CF3CAEC15B9436300720F03 /* arrow_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow_fill.png; sourceTree = "<group>"; };
+		3CF3CAED15B9436300720F03 /* arrow_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow_fill@2x.png"; sourceTree = "<group>"; };
+		3CF3CAF015B9439000720F03 /* text_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = text_fill.png; sourceTree = "<group>"; };
+		3CF3CAF115B9439000720F03 /* text_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "text_fill@2x.png"; sourceTree = "<group>"; };
+		3CF3CAF415B9451F00720F03 /* dim_text_fill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dim_text_fill.png; sourceTree = "<group>"; };
+		3CF3CAF515B9451F00720F03 /* dim_text_fill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dim_text_fill@2x.png"; sourceTree = "<group>"; };
+		A94719B115B9801B005EB39E /* PMTheme.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PMTheme.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +88,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C504FE915B8B6340064A435 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				3C504FEC15B8B6C10064A435 /* background.png */,
+				3CF3CAE615B8C58400720F03 /* background@2x.png */,
+				3CF3CAEC15B9436300720F03 /* arrow_fill.png */,
+				3CF3CAED15B9436300720F03 /* arrow_fill@2x.png */,
+				3CF3CAF015B9439000720F03 /* text_fill.png */,
+				3CF3CAF115B9439000720F03 /* text_fill@2x.png */,
+				3CF3CAF415B9451F00720F03 /* dim_text_fill.png */,
+				3CF3CAF515B9451F00720F03 /* dim_text_fill@2x.png */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
 		3CC833EE15B0ADCF00C07208 = {
 			isa = PBXGroup;
 			children = (
@@ -127,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				3CDF54D515B2C3FE00B6F64E /* PMCalendar.h */,
+				3C504FE915B8B6340064A435 /* Theme */,
 				3CDF54D615B2C3FE00B6F64E /* src */,
 			);
 			path = PMCalendar;
@@ -135,6 +168,7 @@
 		3CDF54D615B2C3FE00B6F64E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A94719B115B9801B005EB39E /* PMTheme.h */,
 				3CDF54D715B2C3FE00B6F64E /* NSDate+Helpers.h */,
 				3CDF54D815B2C3FE00B6F64E /* NSDate+Helpers.m */,
 				3CDF54D915B2C3FE00B6F64E /* PMCalendarBackgroundView.h */,
@@ -209,6 +243,14 @@
 			files = (
 				3CC8340815B0ADCF00C07208 /* InfoPlist.strings in Resources */,
 				3CC8341415B0ADCF00C07208 /* PMViewController.xib in Resources */,
+				3C504FED15B8B6C10064A435 /* background.png in Resources */,
+				3CF3CAE715B8C58400720F03 /* background@2x.png in Resources */,
+				3CF3CAEE15B9436300720F03 /* arrow_fill.png in Resources */,
+				3CF3CAEF15B9436300720F03 /* arrow_fill@2x.png in Resources */,
+				3CF3CAF215B9439000720F03 /* text_fill.png in Resources */,
+				3CF3CAF315B9439000720F03 /* text_fill@2x.png in Resources */,
+				3CF3CAF615B9451F00720F03 /* dim_text_fill.png in Resources */,
+				3CF3CAF715B9451F00720F03 /* dim_text_fill@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

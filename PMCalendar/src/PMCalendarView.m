@@ -11,12 +11,17 @@
 #import "PMCalendarConstants.h"
 #import "NSDate+Helpers.h"
 #import "PMSelectionView.h"
+#import "PMTheme.h"
 
 @interface PMDaysView : UIView
 
 @property (nonatomic, strong) UIFont *font;
 @property (nonatomic, strong) NSDate *currentDate;
+@property (nonatomic, strong) PMPeriod *selectedPeriod;
+@property (nonatomic, strong) NSArray *rects;
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
+
+- (void) redrawComponent;
 
 @end
 
@@ -118,22 +123,28 @@
 
 - (void)drawRect:(CGRect)rect
 {
+    PMLog( @"Start" );
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     NSArray *dayTitles = [dateFormatter shortStandaloneWeekdaySymbols];
     NSArray *monthTitles = [dateFormatter standaloneMonthSymbols];
 
     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    CGColorRef shadow2 = [UIColor blackColor].CGColor;
-    CGSize shadow2Offset = CGSizeMake(1, 1);
-    CGFloat shadow2BlurRadius = 1;
-
-    CGFloat width = self.frame.size.width;
+    CGFloat width = self.frame.size.width + shadowPadding.left + shadowPadding.right;
     CGFloat height = self.frame.size.height;
     CGFloat hDiff  = width / 7;
-    CGFloat vDiff  = (height - headerHeight) / 7;
-    UIFont *calendarFont = self.font;
-    UIFont *monthFont = [UIFont fontWithName:@"Helvetica-Bold" size:calendarFont.pointSize];
+    CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
+
+    UIFont *dayTitlesFont = kPMThemeDayTitlesFont;
+    if (!dayTitlesFont)
+    {
+        dayTitlesFont = self.font;
+    }
+    UIFont *monthFont = kPMThemeMonthTitleFont;
+    if (!monthFont)
+    {
+        monthFont = [UIFont fontWithName:@"Helvetica-Bold" size:self.font.pointSize];
+    }
 
     for (int i = 0; i < dayTitles.count; i++) 
     {
@@ -141,14 +152,14 @@
         index = index % 7;
         //// dayHeader Drawing
         CGContextSaveGState(context);
-        CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
+        CGContextSetShadowWithColor(context, UIOffsetToCGSize(kPMThemeDayTitlesShadowOffset), kPMThemeShadowsBlurRadius, kPMThemeDayTitlesShadowColor.CGColor);
         CGRect dayHeaderFrame = CGRectMake(floor(i * hDiff) - 1
-                                           , headerHeight + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
+                                           , headerHeight + (vDiff - self.font.pointSize) / 2 - kPMThemeDayTitlesShadowOffset.vertical + kPMThemeDayTitlesVerticalOffset
                                            , hDiff
                                            , 30);
-        [[UIColor whiteColor] setFill];
+        [kPMThemeMonthTitleColor setFill];
         [((NSString *)[dayTitles objectAtIndex:index]) drawInRect: dayHeaderFrame 
-                                                         withFont: calendarFont 
+                                                         withFont: dayTitlesFont 
                                                     lineBreakMode: UILineBreakModeWordWrap
                                                         alignment: UITextAlignmentCenter];
         CGContextRestoreGState(context);
@@ -160,47 +171,56 @@
 	NSString *monthTitle = [NSString stringWithFormat:@"%@ %d", [monthTitles objectAtIndex:(month - 1)], year];
     //// Month Header Drawing
     CGContextSaveGState(context);
-    CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
+    CGContextSetShadowWithColor(context, UIOffsetToCGSize(kPMThemeMonthTitleShadowOffset), kPMThemeShadowsBlurRadius, kPMThemeMonthTitleShadowColor.CGColor);
     CGRect textFrame = CGRectMake(0
-                                  , (headerHeight - [monthTitle sizeWithFont:monthFont].height) / 2
+                                  , (headerHeight - [monthTitle sizeWithFont:monthFont].height) / 2 + kPMThemeMonthTitleVerticalOffset
                                   , width
-                                  , headerHeight);
-    [[UIColor whiteColor] setFill];
+                                  , monthFont.pointSize);
+    [kPMThemeMonthTitleColor setFill];
     [monthTitle drawInRect: textFrame
                   withFont: monthFont
              lineBreakMode: UILineBreakModeWordWrap 
                  alignment: UITextAlignmentCenter];
     CGContextRestoreGState(context);
     
+    CGSize arrowSize = kPMThemeMonthArrowSize;
+    
     //// backArrow Drawing
     UIBezierPath* backArrowPath = [UIBezierPath bezierPath];
-    [backArrowPath moveToPoint: CGPointMake(hDiff / 2 - 6
-                                            , headerHeight / 2)];
-    [backArrowPath addLineToPoint: CGPointMake(6 + hDiff / 2 - 6
-                                               , headerHeight / 2 + 4)];
-    [backArrowPath addLineToPoint: CGPointMake( 6 + hDiff / 2 - 6
-                                               ,  headerHeight / 2 - 4)];
-    [backArrowPath addLineToPoint: CGPointMake( hDiff / 2 - 6
-                                               ,  headerHeight / 2)];
+    [backArrowPath moveToPoint: CGPointMake(hDiff / 2 + kPMThemeMonthArrowHorizontalOffset
+                                            , headerHeight / 2 + kPMThemeMonthArrowVerticalOffset)]; // left-center corner
+    [backArrowPath addLineToPoint: CGPointMake(arrowSize.width + hDiff / 2 + kPMThemeMonthArrowHorizontalOffset
+                                               , headerHeight / 2 + arrowSize.height / 2 + kPMThemeMonthArrowVerticalOffset)]; // right-bottom corner
+    [backArrowPath addLineToPoint: CGPointMake( arrowSize.width + hDiff / 2 + kPMThemeMonthArrowHorizontalOffset
+                                               ,  headerHeight / 2 - arrowSize.height / 2 + kPMThemeMonthArrowVerticalOffset)]; // right-top corner
+    [backArrowPath addLineToPoint: CGPointMake( hDiff / 2 + kPMThemeMonthArrowHorizontalOffset
+                                               ,  headerHeight / 2 + kPMThemeMonthArrowVerticalOffset)];  // back to left-center corner
     [backArrowPath closePath];
-    [[UIColor whiteColor] setFill];
+#ifdef kPMThemeMonthArrowShadowColor
+        CGContextSetShadowWithColor(context, UIOffsetToCGSize(kPMThemeMonthArrowShadowOffset), kPMThemeShadowsBlurRadius, kPMThemeMonthArrowShadowColor.CGColor);
+#endif
+    [kPMThemeMonthArrowColor setFill];
     [backArrowPath fill];
     leftArrowRect = CGRectInset(backArrowPath.bounds, -20, -20);
 
     //// forwardArrow Drawing
     UIBezierPath* forwardArrowPath = [UIBezierPath bezierPath];
-    [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2 + 6
-                                               ,  headerHeight / 2)];
-    [forwardArrowPath addLineToPoint: CGPointMake( -6 + width - hDiff / 2 + 6
-                                                  , headerHeight / 2 + 4)];
-    [forwardArrowPath addLineToPoint: CGPointMake(-6 + width - hDiff / 2 + 6
-                                                   , headerHeight / 2 - 4)];
-    [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2 + 6
-                                                  , headerHeight / 2)];
+    [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2 - kPMThemeMonthArrowHorizontalOffset
+                                               ,  headerHeight / 2 + kPMThemeMonthArrowVerticalOffset)]; // right-center corner
+    [forwardArrowPath addLineToPoint: CGPointMake( -arrowSize.width + width - hDiff / 2 - kPMThemeMonthArrowHorizontalOffset
+                                                  , headerHeight / 2 + arrowSize.height / 2 + kPMThemeMonthArrowVerticalOffset)];  // left-bottom corner
+    [forwardArrowPath addLineToPoint: CGPointMake(-arrowSize.width + width - hDiff / 2 - kPMThemeMonthArrowHorizontalOffset
+                                                   , headerHeight / 2 - arrowSize.height / 2 + kPMThemeMonthArrowVerticalOffset)]; // left-top corner
+    [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2 - kPMThemeMonthArrowHorizontalOffset
+                                                  , headerHeight / 2 + kPMThemeMonthArrowVerticalOffset)]; // back to right-center corner
     [forwardArrowPath closePath];
-    [[UIColor whiteColor] setFill];
+#ifdef kPMThemeMonthArrowShadowColor
+        CGContextSetShadowWithColor(context, UIOffsetToCGSize(kPMThemeMonthArrowShadowOffset), kPMThemeShadowsBlurRadius, kPMThemeMonthArrowShadowColor.CGColor);
+#endif
+    [kPMThemeMonthArrowColor setFill];
     [forwardArrowPath fill];
     rightArrowRect = CGRectInset(forwardArrowPath.bounds, -20, -20);
+    PMLog( @"End" );
 }
 
 - (void) setCurrentDate:(NSDate *)currentDate
@@ -275,7 +295,7 @@
     NSInteger monthStartDay = [monthStartDate weekday];
     monthStartDay           = (monthStartDay + (self.mondayFirstDayOfWeek?5:6)) % 7;
     numDaysInMonth         += monthStartDay;
-    int maxNumberOfCells    = ceil((CGFloat)numDaysInMonth / 7.0f) * 7 - 1;
+    int maxNumberOfCells    = ceil((CGFloat)numDaysInMonth / 7) * 7 - 1;
 
     NSInteger endIndex = -1;
     NSInteger startIndex = -1;
@@ -287,6 +307,8 @@
 
     [self.selectionView setStartIndex:startIndex];
     [self.selectionView setEndIndex:endIndex];
+    self.daysView.selectedPeriod = _period;
+    [self.daysView redrawComponent];
 }
 - (void)setPeriod:(PMPeriod *)period
 {
@@ -325,9 +347,9 @@
     CGFloat width  = self.frame.size.width;
     CGFloat height = self.frame.size.height;
     CGFloat hDiff  = width / 7;
-    CGFloat vDiff  = (height - headerHeight) / 7;
+    CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
     
-    CGFloat yInCalendar = point.y - (headerHeight + vDiff);
+    CGFloat yInCalendar = point.y - (headerHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff));
     NSInteger row = yInCalendar / vDiff;
     
     int numDaysInMonth      = [_currentDate numberOfDaysInMonth];
@@ -335,7 +357,7 @@
     NSInteger monthStartDay = [monthStartDate weekday];
     monthStartDay           = (monthStartDay + (self.mondayFirstDayOfWeek?5:6)) % 7;
     numDaysInMonth         += monthStartDay;
-    int maxNumberOfRows     = ceil((CGFloat)numDaysInMonth / 7.0f) - 1;
+    int maxNumberOfRows     = ceil((CGFloat)numDaysInMonth / 7) - 1;
     
     row = MAX(0, MIN(row, maxNumberOfRows));
     
@@ -383,9 +405,9 @@
     CGPoint point  = [recognizer locationInView:self];
     
     CGFloat height = self.frame.size.height;
-    CGFloat vDiff  = (height - headerHeight) / 7;
+    CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
     
-    if (point.y > headerHeight + vDiff) // select date in calendar
+    if (point.y > headerHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
     {
         if (([recognizer state] == UIGestureRecognizerStateBegan) && (recognizer.numberOfTouches == 1)) 
         {
@@ -437,9 +459,9 @@
     CGPoint point  = [recognizer locationInView:self];
     
     CGFloat height = self.frame.size.height;
-    CGFloat vDiff  = (height - headerHeight) / 7;
+    CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
 
-    if (point.y > headerHeight + vDiff) // select date in calendar
+    if (point.y > headerHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
     {
         [self periodSelectionStarted:point];
         return;
@@ -460,8 +482,7 @@
 - (void) longPressTimerCallback: (NSTimer *)timer
 {
     NSNumber *increment = timer.userInfo;
-    
-    [self setCurrentDate:[self.currentDate dateByAddingYears:[increment intValue]]];
+    [self setCurrentDate:[self.currentDate dateByAddingMonths:[increment intValue]]];
 }
 
 - (void) longPressHandling: (UIGestureRecognizer *)recognizer
@@ -475,9 +496,9 @@
 
         CGPoint point = [recognizer locationInView:self];
         CGFloat height = self.frame.size.height;
-        CGFloat vDiff  = (height - headerHeight) / 7;
+        CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
         
-        if (point.y > headerHeight + vDiff) // select date in calendar
+        if (point.y > headerHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
         {
             [self periodSelectionChanged:point];
             return;
@@ -497,7 +518,7 @@
 
         if (increment)
         {
-            self.longPressTimer = [NSTimer scheduledTimerWithTimeInterval:1
+            self.longPressTimer = [NSTimer scheduledTimerWithTimeInterval:0.2f
                                                                    target:self
                                                                  selector:@selector(longPressTimerCallback:)
                                                                  userInfo:increment 
@@ -552,7 +573,9 @@
 
 @synthesize font;
 @synthesize currentDate = _currentDate;
+@synthesize selectedPeriod = _selectedPeriod;
 @synthesize mondayFirstDayOfWeek = _mondayFirstDayOfWeek;
+@synthesize rects;
 
 - (void)dealloc
 {
@@ -578,29 +601,95 @@
                                              selector:@selector(redrawComponent)
                                                  name:kPMCalendarRedrawNotification
                                                object:nil];
+    
+    NSMutableArray *tmpRects = [NSMutableArray arrayWithCapacity:42];
+
+    CGFloat width  = self.frame.size.width + shadowPadding.left + shadowPadding.right;
+    CGFloat hDiff  = width / 7;
+    CGFloat height = self.frame.size.height;
+    CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
+    UIFont *calendarFont = kPMThemeCalendarDigitsFont;
+    if (!calendarFont)
+    {
+        calendarFont = self.font;
+    }
+    CGSize shadow2Offset = CGSizeMake(1, 1);
+
+    for (NSInteger i = 0; i < 42; i++) 
+    {
+        CGRect rect = CGRectMake(ceil((i % 7) * hDiff) + kPMThemeCalendarDigitsHorizontalOffset
+                                 , headerHeight + ((int)(i / 7) + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff
+                                        + (vDiff - calendarFont.pointSize) / 2 - shadow2Offset.height + kPMThemeCalendarDigitsVerticalOffset
+                                 , hDiff
+                                 , calendarFont.pointSize); 
+        [tmpRects addObject:NSStringFromCGRect(rect)];
+    }
+    
+    self.rects = [NSArray arrayWithArray:tmpRects];
 
     return self;
 }
 
 - (void)drawRect:(CGRect)rect
 {
-    CGFloat width  = self.frame.size.width;
-    CGFloat height = self.frame.size.height;
-    CGFloat hDiff  = width / 7;
-    CGFloat vDiff  = (height - headerHeight) / 7;
+    PMLog( @"Start" );
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGColorRef shadow2 = [UIColor blackColor].CGColor;
-    CGSize shadow2Offset = CGSizeMake(1, 1);
-    CGFloat shadow2BlurRadius = 1;
+    UIFont *calendarFont = kPMThemeCalendarDigitsFont;
 
-    void (^drawString)(NSString *, CGRect, UIColor *) = ^(NSString *string, CGRect rect, UIColor *color) {
+    if (!calendarFont)
+    {
+        calendarFont = self.font;
+    }
+
+    void (^drawString)(NSString *, CGRect, UIColor *, BOOL, BOOL, BOOL) = ^(NSString *string
+                                                                            , CGRect rect
+                                                                            , UIColor *color
+                                                                            , BOOL active
+                                                                            , BOOL selected
+                                                                            , BOOL today) {
         CGContextSaveGState(context);
-        CGContextSetShadowWithColor(context, shadow2Offset, shadow2BlurRadius, shadow2);
+        if (active)
+        {
+            CGContextSetShadowWithColor(context
+                                        , UIOffsetToCGSize(kPMThemeCalendarDigitsShadowOffset)
+                                        , kPMThemeShadowsBlurRadius
+                                        , kPMThemeCalendarDigitsShadowColor.CGColor);
+        }
+        else
+        {
+            CGContextSetShadowWithColor(context
+                                        , UIOffsetToCGSize(kPMThemeCalendarDigitsInactiveShadowOffset)
+                                        , kPMThemeShadowsBlurRadius
+                                        , kPMThemeCalendarDigitsInactiveShadowColor.CGColor);
+
+        }
+#ifdef kPMThemeCalendarDigitsSelectedShadowOffset
+        if (today)
+        {
+            CGContextSetShadowWithColor(context, UIOffsetToCGSize(kPMThemeCalendarDigitsTodayShadowOffset)
+                                        , kPMThemeShadowsBlurRadius
+                                        , kPMThemeCalendarDigitsTodayShadowColor.CGColor);
+            color = kPMThemeCalendarDigitsSelectedColor;
+        }
+#ifdef kPMThemeCalendarDigitsSelectedShadowOffset
+        else 
+#endif // kPMThemeCalendarDigitsSelectedShadowOffset
+#endif // kPMThemeCalendarDigitsSelectedShadowOffset
+#ifdef kPMThemeCalendarDigitsSelectedShadowOffset
+        if (selected)
+        {
+            CGContextSetShadowWithColor(context
+                                        , UIOffsetToCGSize(kPMThemeCalendarDigitsSelectedShadowOffset)
+                                        , kPMThemeShadowsBlurRadius
+                                        , kPMThemeCalendarDigitsSelectedShadowColor.CGColor);
+            color = kPMThemeCalendarDigitsSelectedColor;
+        }
+#endif
 //        [UIColorMakeRGBA(arc4random()%255, arc4random()%255, arc4random()%255, 0.3) setFill];// \  Digits position
 //        CGContextFillRect(context, rect);                                                    // /      debug
         [color setFill];
         [string drawInRect: rect 
-                  withFont: self.font
+                  withFont: calendarFont
              lineBreakMode: UILineBreakModeWordWrap
                  alignment: UITextAlignmentCenter];
         CGContextRestoreGState(context);
@@ -610,56 +699,108 @@
 	NSDate *dateOnFirst = [_currentDate monthStartDate];
 	int weekdayOfFirst = ([dateOnFirst weekday] + (_mondayFirstDayOfWeek?5:6)) % 7 + 1;
 	int numDaysInMonth = [dateOnFirst numberOfDaysInMonth];
-        
+    NSDate *monthStartDate = [_currentDate monthStartDate];
+    int todayIndex  = [[[NSDate date] dateWithoutTime] daysSinceDate:monthStartDate];
+
     //Find number of days in previous month
     NSDate *prevDateOnFirst = [[_currentDate dateByAddingMonths:-1] monthStartDate];
     int numDaysInPrevMonth = [prevDateOnFirst numberOfDaysInMonth];
+    NSDate *firstDateInCal = [monthStartDate dateByAddingDays:(-weekdayOfFirst + 2)];
     
-    
+    int selectionStartIndex = [[self.selectedPeriod normalizedPeriod].startDate daysSinceDate:firstDateInCal] + 1;
+    int selectionEndIndex = [[self.selectedPeriod normalizedPeriod].endDate daysSinceDate:firstDateInCal] + 1;
+
     //Draw the text for each of those days.
-    for(int i = 0; i <= weekdayOfFirst-2; i++) {
+    for(int i = 0; i <= weekdayOfFirst-2; i++) 
+    {
         int day = numDaysInPrevMonth - weekdayOfFirst + 2 + i;
-        
+        BOOL selected = (i >= selectionStartIndex) && (i <= selectionEndIndex);
+
         NSString *string = [NSString stringWithFormat:@"%d", day];
-        CGRect dayHeader2Frame = CGRectMake(i * hDiff
-                                            , headerHeight + vDiff + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
-                                            , hDiff, self.font.pointSize); 
-        UIColor *color = [UIColor colorWithWhite:0.6f alpha:1.0f];
-        
-        drawString( string, dayHeader2Frame, color );
+        CGRect dayHeader2Frame = CGRectFromString([self.rects objectAtIndex:i]);
+        drawString( string, dayHeader2Frame, kPMThemeCalendarDigitsInactiveColor, NO, selected, todayIndex == i );
     }
-    
-    NSDate *today = [[NSDate date] dateWithoutTime];
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSDayCalendarUnit
-                                                                   fromDate:today];
-    NSInteger todayDay = [components day];
-    NSDate *currentDateWithoutTime = [_currentDate dateWithoutTime];
+
 	int finalRow    = 0;
 	int day         = 1;
-    
+
 	for (int i = 0; i < 6; i++) 
     {
 		for(int j = 0; j < 7; j++) 
         {
 			int dayNumber = i * 7 + j;
-			
-			if(dayNumber >= (weekdayOfFirst-1) && day <= numDaysInMonth) {
+
+			if (dayNumber >= (weekdayOfFirst-1) && day <= numDaysInMonth) 
+            {
                 NSString *string = [NSString stringWithFormat:@"%d", day];
-                CGRect dayHeader2Frame = CGRectMake(floor(j * hDiff) - 1
-                                                    , headerHeight + (i + 1) * vDiff + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
-                                                    , hDiff, self.font.pointSize); 
+                CGRect dayHeader2Frame = CGRectFromString([self.rects objectAtIndex:dayNumber]);
                 UIColor *color = nil;
-                
-                if((todayDay == day) && [today isEqualToDate:currentDateWithoutTime]) 
+                BOOL selected = (dayNumber >= selectionStartIndex) && (dayNumber <= selectionEndIndex);
+                BOOL isToday = (dayNumber == todayIndex);
+
+                if(isToday) 
                 {
-                    color = [UIColor colorWithRed: 0.98 green: 0.24 blue: 0.09 alpha: 1];
+                    color = kPMThemeCalendarDigitsTodayColor;
+                    
+#ifdef kPMThemeBackgroundTodayColor
+                    CGFloat width  = self.frame.size.width + shadowPadding.left + shadowPadding.right;
+                    CGFloat hDiff  = width / 7;
+                    CGFloat height = self.frame.size.height;
+                    CGFloat vDiff  = (height - headerHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
+                    
+                    CGRect rect = CGRectMake(ceil(j * hDiff) + kPMThemeBackgroundTodayOffset.horizontal
+                                             , headerHeight + (i + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff + kPMThemeBackgroundTodayOffset.vertical
+#ifdef kPMThemeSelectionCeilCoordinates
+                                             , ceil(hDiff)
+#else
+                                             , hDiff
+#endif // kPMThemeSelectionCeilCoordinates
+                                              + kPMThemeBackgroundTodaySizeInset.width
+#ifdef kPMThemeSelectionCeilCoordinates
+                                             , ceil(vDiff)
+#else
+                                             , vDiff
+#endif // kPMThemeSelectionCeilCoordinates
+                                              + kPMThemeBackgroundTodaySizeInset.height);
+                    UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius: kPMThemeSelectionCornerRadius];
+                    CGContextSaveGState(context);
+                    [selectedRectPath addClip];
+                    if (selected)
+                    {
+                        [kPMThemeBackgroundTodaySelectedColor setFill];
+                    }
+                    else
+                    {
+                        [kPMThemeBackgroundTodayColor setFill];
+                    }
+                    [selectedRectPath fill];
+                    CGContextRestoreGState(context);
+
+                    CGContextSaveGState(context);
+                    [selectedRectPath addClip];
+                    CGContextSetShadowWithColor(context
+                                                , UIOffsetToCGSize(kPMThemeBackgroundTodayInnerShadowOffset)
+                                                , kPMThemeBackgroundTodayInnerShadowBlurRadius
+                                                , kPMThemeBackgroundTodayInnerShadowColor.CGColor);
+                    if (selected)
+                    {
+                        [kPMThemeBackgroundTodayStrokeSelectedColor setStroke];
+                    }
+                    else
+                    {
+                        [kPMThemeBackgroundTodayStrokeColor setStroke];
+                    }
+                    selectedRectPath.lineWidth = kPMThemeBackgroundTodayStrokeWidth;
+                    [selectedRectPath stroke];
+                    CGContextRestoreGState(context);
+#endif // kPMThemeBackgroundTodayColor
                 }
                 else 
                 {
-                    color = [UIColor whiteColor];
+                    color = kPMThemeCalendarDigitsColor;
                 }
-                
-                drawString( string, dayHeader2Frame, color );
+
+                drawString( string, dayHeader2Frame, color, YES, selected, isToday );
                 
                 finalRow = i;
                 
@@ -667,8 +808,7 @@
 			}
 		}
 	}
-    
-    //Find number of days in previous month
+
     int weekdayOfNextFirst = (weekdayOfFirst - 1 + numDaysInMonth) % 7;
     
     if( weekdayOfNextFirst > 0 )
@@ -676,15 +816,16 @@
         //Draw the text for each of those days.
         for ( int i = weekdayOfNextFirst; i < 7; i++ ) 
         {
+            int index = numDaysInMonth + weekdayOfFirst + i - weekdayOfNextFirst - 1;
             int day = i - weekdayOfNextFirst + 1;
+            BOOL isToday = (numDaysInMonth + day - 1 == todayIndex);
+            BOOL selected = (index >= selectionStartIndex) && (index <= selectionEndIndex);
             NSString *string = [NSString stringWithFormat:@"%d", day];
-            CGRect dayHeader2Frame = CGRectMake(floor(i * hDiff) - 1
-                                                , headerHeight + (finalRow + 1) * vDiff + (vDiff - self.font.pointSize) / 2 - shadow2Offset.height
-                                                , hDiff, self.font.pointSize); 
-            UIColor *color = [UIColor colorWithWhite:0.6f alpha:1.0f];
-            drawString( string, dayHeader2Frame, color );
+            CGRect dayHeader2Frame = CGRectFromString([self.rects objectAtIndex:index]);
+            drawString( string, dayHeader2Frame, kPMThemeCalendarDigitsInactiveColor, NO, selected, isToday );
         }
     }
+    PMLog( @"End" );
 }
 
 - (void) setCurrentDate:(NSDate *)currentDate

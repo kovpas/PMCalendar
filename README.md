@@ -104,3 +104,13 @@ Implemented properties
 **Size of a calendar controller**
 
     @property (nonatomic, assign) CGSize size;
+
+Themes (pre-alpha! :))
+----------
+You can play around with themes by enabling MIMIC_APPLE_THEME define in PMCalendarDemo-Prefix.pch.
+
+I'll add documentation as soon as the feature is ready.
+
+By setting up custom theme you can get something like this:
+
+![Apple calendar theme 1](PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](PMCalendar/raw/master/screenshots/apple_theme_2.png)

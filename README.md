@@ -22,36 +22,57 @@ Usage
  - #import "PMCalendar.h"
  - Create instance of PMCalendarController with wanted size:
 
+``` objective-c
         PMCalendarController *calendarController = [[PMCalendarController alloc] initWithSize:CGSizeMake(300, 200)];
+```
+
  - Or use default:
 
+``` objective-c
         PMCalendarController *calendarController = [[PMCalendarController alloc] init];
- - Implement PMCalendarControllerDelegate methods to be aware of controller's state change:
+```
 
+- Implement PMCalendarControllerDelegate methods to be aware of controller's state change:
+
+``` objective-c
         - (BOOL)calendarControllerShouldDismissCalendar:(PMCalendarController *)calendarController;
         - (void)calendarControllerDidDismissCalendar:(PMCalendarController *)calendarController;
         - (void)calendarController:(PMCalendarController *)calendarController didChangePeriod:(PMPeriod *)newPeriod;
+```
+
  - Don't forget to assign delegate!
 
+``` objective-c
         calendarController.delegate = self;
+```
+
  - Present calendarController from a view (i.e. UIButton), so calendar could position itself during rotation:
 
+``` objective-c
          [calendarController presentCalendarFromView:pressedButton
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
                                             animated:YES];
+```
+
  - Or CGRect:
  
+``` objective-c
          [calendarController presentCalendarFromRect:CGRectMake(100, 100, 10, 10)
                                               inView:self.view
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
                                             animated:YES];
+```
+
  - Dismiss it:
 
+``` objective-c
          [calendarController dismissAnimated:YES];
+```
 
 PMPeriod
 ----------
 
+``` objective-c
     @interface PMPeriod : NSObject
 
     @property (nonatomic, strong) NSDate *startDate;
@@ -72,38 +93,56 @@ PMPeriod
     - (PMPeriod *) normalizedPeriod;
 
     @end
+```
 
 Implemented properties
 ----------
+
+``` objective-c
     @property (nonatomic, assign) id<PMCalendarControllerDelegate> delegate;
+```
 
 **Selected period**
 
+``` objective-c
     @property (nonatomic, strong) PMPeriod *period;
+```
 
 *TBI!* **Period allowed for selection**
 
+``` objective-c
     @property (nonatomic, strong) PMPeriod *allowedPeriod;
+```
 
 **Monday is a first day of week. If set to NO then Sunday is a first day**
 
+``` objective-c
     @property (nonatomic, assign, getter = isMondayFirstDayOfWeek) BOOL mondayFirstDayOfWeek;
+```
 
 **If NO, only one date can be selected. Otherwise, user can pan to select period**
 
+``` objective-c
     @property (nonatomic, assign) BOOL allowsPeriodSelection;
+```
 
 **If YES, user can long press on arrow to iterate through years (single tap iterates through months)**
 
+``` objective-c
     @property (nonatomic, assign) BOOL allowsLongPressYearChange;
+```
 
 **Direction of the arrow (similar to UIPopoverController's arrowDirection)**
 
+``` objective-c
     @property (nonatomic, readonly) UIPopoverArrowDirection arrowDirection;
+```
 
 **Size of a calendar controller**
 
+``` objective-c
     @property (nonatomic, assign) CGSize size;
+```
 
 Themes (pre-alpha! :))
 ----------

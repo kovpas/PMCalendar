@@ -189,7 +189,8 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     }
     
     CGRect calendarFrame = self.mainView.frame;
-    CGRect frm = CGRectMake(0, 0
+    CGRect frm = CGRectMake(0
+                            , 0
                             , calendarFrame.size.width - arrowSize.height
                             , calendarFrame.size.height - arrowSize.height);
     CGPoint arrowPosition = CGPointZero;
@@ -199,14 +200,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     {
         case PMCalendarArrowDirectionUp:
         case PMCalendarArrowDirectionDown:
-            if (_calendarArrowDirection == PMCalendarArrowDirectionUp)
-            {
-                arrowPosition.x = CGRectGetMidX(rect) - shadowPadding.top;
-            }
-            else 
-            {
-                arrowPosition.x = CGRectGetMidX(rect) - shadowPadding.bottom;
-            }
+            arrowPosition.x = CGRectGetMidX(rect) - shadowPadding.right;
             
             if (arrowPosition.x < frm.size.width / 2)
             {
@@ -228,20 +222,13 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
             }
             else 
             {
-                calendarFrame.origin.y = CGRectGetMinY(rect) - calendarFrame.size.height;
+                calendarFrame.origin.y = CGRectGetMinY(rect) - self.backgroundView.frame.size.height + shadowPadding.bottom;
             }
             
             break;
         case PMCalendarArrowDirectionLeft:
         case PMCalendarArrowDirectionRight:
-            if (_calendarArrowDirection == PMCalendarArrowDirectionLeft)
-            {
-                arrowPosition.y = CGRectGetMidY(rect) - shadowPadding.left;
-            }
-            else 
-            {
-                arrowPosition.y = CGRectGetMidY(rect) - shadowPadding.right;
-            }
+            arrowPosition.y = CGRectGetMidY(rect) - shadowPadding.top;
             
             if (arrowPosition.y < frm.size.height / 2)
             {
@@ -249,11 +236,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
             }
             else if (arrowPosition.y > self.view.bounds.size.height - frm.size.height / 2)
             {
-                calendarFrame.origin.y = self.view.bounds.size.height - frm.size.height - shadowPadding.bottom;
+                calendarFrame.origin.y = self.view.bounds.size.height - frm.size.height;
             }
             else
             {
-                calendarFrame.origin.y = arrowPosition.y - calendarFrame.size.height / 2 - shadowPadding.top + arrowSize.height;
+                calendarFrame.origin.y = arrowPosition.y - calendarFrame.size.height / 2 + arrowSize.height;
             }
             
             if (_calendarArrowDirection == PMCalendarArrowDirectionLeft)
@@ -263,7 +250,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
             }
             else 
             {
-                calendarFrame.origin.x = CGRectGetMinX(rect) - calendarFrame.size.width;
+                calendarFrame.origin.x = CGRectGetMinX(rect) - calendarFrame.size.width + shadowPadding.right;
             }
             break;
         default:

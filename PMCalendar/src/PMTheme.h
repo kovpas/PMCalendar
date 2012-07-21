@@ -112,7 +112,7 @@
 #define kPMThemeOuterPadding (CGSize){0, 0}
 
                                         // top, left, bottom, right
-#define kPMThemeShadowInsets (UIEdgeInsets){3.0f, 3.0f, 3.0f, 0.0f}
+#define kPMThemeShadowInsets (UIEdgeInsets){3.0f, 3.0f, 3.0f, 3.0f}
 
 #define kPMThemeCornerRadius 10.0f
 #define kPMThemeHeaderHeight 40.0f

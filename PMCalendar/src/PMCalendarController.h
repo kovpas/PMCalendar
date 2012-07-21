@@ -91,10 +91,10 @@
 
 /**
  * If set to YES, the calendar allows to long press on a month change arrow
- * in order to iterate through years.
+ * in order to fast iterate through months.
  * If set to NO, long press does nothing.
  */
-@property (nonatomic, assign) BOOL allowsLongPressYearChange;
+@property (nonatomic, assign) BOOL allowsLongPressMonthChange;
 
 /**
  * Returns the direction the arrow is pointing on a presented calendar. 

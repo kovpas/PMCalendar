@@ -45,7 +45,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 @dynamic allowedPeriod;
 @dynamic mondayFirstDayOfWeek;
 @dynamic allowsPeriodSelection;
-@dynamic allowsLongPressYearChange;
+@dynamic allowsLongPressMonthChange;
 
 @synthesize calendarArrowDirection = _calendarArrowDirection;
 @synthesize currentOrientation = _currentOrientation;
@@ -96,7 +96,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     [self.mainView addSubview:self.calendarView];
     
     self.allowsPeriodSelection = YES;
-    self.allowsLongPressYearChange = YES;
+    self.allowsLongPressMonthChange = YES;
 }
 
 - (id) initWithSize:(CGSize) size
@@ -401,14 +401,14 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     self.digitsView.allowsPeriodSelection = allowsPeriodSelection;
 }
 
-- (BOOL)allowsLongPressYearChange
+- (BOOL)allowsLongPressMonthChange
 {
-    return self.digitsView.allowsLongPressYearChange;
+    return self.digitsView.allowsLongPressMonthChange;
 }
 
-- (void)setAllowsLongPressYearChange:(BOOL)allowsLongPressYearChange
+- (void)setAllowsLongPressMonthChange:(BOOL)allowsLongPressMonthChange
 {
-    self.digitsView.allowsLongPressYearChange = allowsLongPressYearChange;
+    self.digitsView.allowsLongPressMonthChange = allowsLongPressMonthChange;
 }
 
 - (PMPeriod *) period

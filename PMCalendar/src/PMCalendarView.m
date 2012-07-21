@@ -67,7 +67,7 @@
 @synthesize daysView = _daysView;
 @synthesize selectionView = _selectionView;
 @synthesize allowsPeriodSelection = _allowsPeriodSelection;
-@synthesize allowsLongPressYearChange = _allowsLongPressYearChange;
+@synthesize allowsLongPressMonthChange = _allowsLongPressMonthChange;
 
 - (void)dealloc
 {
@@ -95,7 +95,7 @@
     self.panGestureRecognizer.delegate = self;
     [self addGestureRecognizer:self.panGestureRecognizer];
     
-    self.allowsLongPressYearChange = YES;
+    self.allowsLongPressMonthChange = YES;
 
     self.selectionView = [[PMSelectionView alloc] initWithFrame:CGRectInset(self.bounds, -innerPadding.width, -innerPadding.height)];
     [self addSubview:self.selectionView];
@@ -546,9 +546,9 @@
     }
 }
 
-- (void)setAllowsLongPressYearChange:(BOOL)allowsLongPressYearChange
+- (void)setAllowsLongPressMonthChange:(BOOL)allowsLongPressMonthChange
 {
-    if (!allowsLongPressYearChange)
+    if (!allowsLongPressMonthChange)
     {
         if (self.longPressGestureRecognizer)
         {

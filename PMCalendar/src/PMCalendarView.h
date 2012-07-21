@@ -42,7 +42,7 @@
 /**
  * Is long press allowed. See PMCalendarController for more information.
  */
-@property (nonatomic, assign) BOOL allowsLongPressYearChange;
+@property (nonatomic, assign) BOOL allowsLongPressMonthChange;
 @property (nonatomic, assign) id<PMCalendarViewDelegate> delegate;
 
 @end

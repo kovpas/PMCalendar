@@ -126,10 +126,10 @@ Implemented properties
     @property (nonatomic, assign) BOOL allowsPeriodSelection;
 ```
 
-**If YES, user can long press on arrow to iterate through years (single tap iterates through months)**
+**If YES, user can long press on arrow to fast iterate through months**
 
 ``` objective-c
-    @property (nonatomic, assign) BOOL allowsLongPressYearChange;
+    @property (nonatomic, assign) BOOL allowsLongPressMonthChange;
 ```
 
 **Direction of the arrow (similar to UIPopoverController's arrowDirection)**

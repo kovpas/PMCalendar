@@ -189,7 +189,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     }
     
     CGRect calendarFrame = self.mainView.frame;
-    CGRect frm = CGRectMake(self.calendarView.frame.origin.x, self.calendarView.frame.origin.y
+    CGRect frm = CGRectMake(0, 0
                             , calendarFrame.size.width - arrowSize.height
                             , calendarFrame.size.height - arrowSize.height);
     CGPoint arrowPosition = CGPointZero;
@@ -452,14 +452,14 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     int numberOfRows        = ceil((CGFloat)numDaysInMonth / 7);
     frm.size.height         = ceil(((numberOfRows + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff) + headerHeight + innerPadding.height * 2 + arrowSize.height);
     
-    CGRect calendarViewFrame = self.calendarView.frame;
     
     if (self.calendarArrowDirection == PMCalendarArrowDirectionDown)
     {
+        CGRect calendarViewFrame = self.calendarView.frame;
         frm.origin.y = self.mainView.bounds.size.height - frm.size.height;
         calendarViewFrame.origin.y = frm.origin.y;
+        self.calendarView.frame = calendarViewFrame;
     }
-    self.calendarView.frame = calendarViewFrame;
     
     // TODO: recalculate arrow position for left & right
 //    else if ((self.calendarArrowDirection == PMCalendarArrowDirectionLeft) 

@@ -1,6 +1,6 @@
 //
 //  PMCalendarController.m
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/13/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -16,9 +16,9 @@
 #import "PMDimmingView.h"
 #import "PMTheme.h"
 
-static CGSize defaultSize = kPMThemeDefaultSize;
+/*static CGSize defaultSize = kPMThemeDefaultSize;
 CGSize arrowSize = kPMThemeArrowSize;
-CGSize outerPadding = kPMThemeOuterPadding; // TBD
+CGSize outerPadding = kPMThemeOuterPadding; // TBD*/
 NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 
 @interface PMCalendarController ()
@@ -63,12 +63,14 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 
 - (void) initializeWithSize:(CGSize) size
 {
+    CGSize arrowSize = kPMThemeArrowSize;
+    CGSize outerPadding = kPMThemeOuterPadding;
     self.calendarArrowDirection = PMCalendarArrowDirectionUnknown;
     
     CGRect calendarRect = CGRectMake(0
                                      , 0
-                                     , size.width + shadowPadding.left + shadowPadding.right
-                                     , size.height + shadowPadding.top + shadowPadding.bottom);
+                                     , size.width + kPMThemeShadowPadding.left + kPMThemeShadowPadding.right
+                                     , size.height + kPMThemeShadowPadding.top + kPMThemeShadowPadding.bottom);
     self.calendarView = [[UIView alloc] initWithFrame:calendarRect];
     self.calendarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
@@ -81,14 +83,14 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     self.backgroundView = [[PMCalendarBackgroundView alloc] initWithFrame:CGRectInset(calendarRectWithArrowInsets
                                                                                       , outerPadding.width
                                                                                       , outerPadding.height)];
-    UIEdgeInsetsInsetRect(calendarRect, shadowPadding);
+    UIEdgeInsetsInsetRect(calendarRect, kPMThemeShadowPadding);
     self.backgroundView.clipsToBounds = NO;
     [self.mainView addSubview:self.backgroundView];
     
     self.digitsView = [[PMCalendarView alloc] initWithFrame:UIEdgeInsetsInsetRect(CGRectInset(calendarRect
-                                                                                              , innerPadding.width
-                                                                                              , innerPadding.height)
-                                                                                  , shadowPadding)];
+                                                                                              , kPMThemeInnerPadding.width
+                                                                                              , kPMThemeInnerPadding.height)
+                                                                                  , kPMThemeShadowPadding)];
     self.digitsView.delegate = self;
     self.digitsView.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];    
 
@@ -113,8 +115,15 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 
 - (id) init
 {
-    return [self initWithSize: defaultSize];
+    return [self initWithSize: [PMThemeEngine sharedInstance].defaultSize];
 }
+
+- (id) initWithThemeName:(NSString *) themeName
+{
+    [PMThemeEngine sharedInstance].themeName = themeName;
+    return [self init];
+}
+
 
 #pragma mark - rotation handling -
 
@@ -138,11 +147,13 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 - (void) adjustCalendarPositionForPermittedArrowDirections:(PMCalendarArrowDirection) arrowDirections 
                                          arrowPointsToRect:(CGRect)rect
 {
+    CGSize arrowSize = kPMThemeArrowSize;
+
     if (arrowDirections & PMCalendarArrowDirectionUp)
     {
         if ((CGRectGetMaxY(rect) + self.size.height + arrowSize.height <= self.view.bounds.size.height)
-            && (CGRectGetMidX(rect) >= (arrowSize.width / 2 + cornerRadius + shadowPadding.left))
-            && (CGRectGetMidX(rect) <= (self.view.bounds.size.width - arrowSize.width / 2 - cornerRadius - shadowPadding.right)))
+            && (CGRectGetMidX(rect) >= (arrowSize.width / 2 +  kPMThemeCornerRadius + kPMThemeShadowPadding.left))
+            && (CGRectGetMidX(rect) <= (self.view.bounds.size.width - arrowSize.width / 2 -  kPMThemeCornerRadius - kPMThemeShadowPadding.right)))
         {
             self.calendarArrowDirection = PMCalendarArrowDirectionUp;
         }
@@ -152,8 +163,8 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
         && (arrowDirections & PMCalendarArrowDirectionLeft))
     {
         if ((CGRectGetMidX(rect) + self.size.width + arrowSize.height <= self.view.bounds.size.width)
-            && (CGRectGetMidY(rect) >= (arrowSize.width / 2 + cornerRadius + shadowPadding.top))
-            && (CGRectGetMidY(rect) <= (self.view.bounds.size.height - arrowSize.width / 2 - cornerRadius - shadowPadding.bottom)))
+            && (CGRectGetMidY(rect) >= (arrowSize.width / 2 +  kPMThemeCornerRadius + kPMThemeShadowPadding.top))
+            && (CGRectGetMidY(rect) <= (self.view.bounds.size.height - arrowSize.width / 2 -  kPMThemeCornerRadius - kPMThemeShadowPadding.bottom)))
             
         {
             self.calendarArrowDirection = PMCalendarArrowDirectionLeft;
@@ -164,8 +175,8 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
         && (arrowDirections & PMCalendarArrowDirectionDown))
     {
         if ((CGRectGetMidY(rect) - self.size.height - arrowSize.height >= 0)
-            && (CGRectGetMidX(rect) >= (arrowSize.width / 2 + cornerRadius + shadowPadding.left))
-            && (CGRectGetMidX(rect) <= (self.view.bounds.size.width - arrowSize.width / 2 - cornerRadius - shadowPadding.right)))
+            && (CGRectGetMidX(rect) >= (arrowSize.width / 2 +  kPMThemeCornerRadius + kPMThemeShadowPadding.left))
+            && (CGRectGetMidX(rect) <= (self.view.bounds.size.width - arrowSize.width / 2 -  kPMThemeCornerRadius - kPMThemeShadowPadding.right)))
         {
             self.calendarArrowDirection = PMCalendarArrowDirectionDown;
         }
@@ -175,8 +186,8 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
         && (arrowDirections & PMCalendarArrowDirectionRight))
     {
         if ((CGRectGetMidX(rect) - self.size.width - arrowSize.height >= 0)
-            && (CGRectGetMidY(rect) >= (arrowSize.width / 2 + cornerRadius + shadowPadding.top))
-            && (CGRectGetMidY(rect) <= (self.view.bounds.size.height - arrowSize.width / 2 - cornerRadius - shadowPadding.bottom)))
+            && (CGRectGetMidY(rect) >= (arrowSize.width / 2 +  kPMThemeCornerRadius + kPMThemeShadowPadding.top))
+            && (CGRectGetMidY(rect) <= (self.view.bounds.size.height - arrowSize.width / 2 -  kPMThemeCornerRadius - kPMThemeShadowPadding.bottom)))
         {
             self.calendarArrowDirection = PMCalendarArrowDirectionRight;
         }
@@ -200,7 +211,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     {
         case PMCalendarArrowDirectionUp:
         case PMCalendarArrowDirectionDown:
-            arrowPosition.x = CGRectGetMidX(rect) - shadowPadding.right;
+            arrowPosition.x = CGRectGetMidX(rect) - kPMThemeShadowPadding.right;
             
             if (arrowPosition.x < frm.size.width / 2)
             {
@@ -208,27 +219,27 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
             }
             else if (arrowPosition.x > self.view.bounds.size.width - frm.size.width / 2)
             {
-                calendarFrame.origin.x = self.view.bounds.size.width - frm.size.width - shadowPadding.right;
+                calendarFrame.origin.x = self.view.bounds.size.width - frm.size.width - kPMThemeShadowPadding.right;
             }
             else
             {
-                calendarFrame.origin.x = arrowPosition.x - frm.size.width / 2 + shadowPadding.left;
+                calendarFrame.origin.x = arrowPosition.x - frm.size.width / 2 + kPMThemeShadowPadding.left;
             }
             
             if (_calendarArrowDirection == PMCalendarArrowDirectionUp)
             {
                 arrowOffset.y = arrowSize.height;
-                calendarFrame.origin.y = CGRectGetMaxY(rect) - shadowPadding.top;
+                calendarFrame.origin.y = CGRectGetMaxY(rect) - kPMThemeShadowPadding.top;
             }
             else 
             {
-                calendarFrame.origin.y = CGRectGetMinY(rect) - self.backgroundView.frame.size.height + shadowPadding.bottom;
+                calendarFrame.origin.y = CGRectGetMinY(rect) - self.backgroundView.frame.size.height + kPMThemeShadowPadding.bottom;
             }
             
             break;
         case PMCalendarArrowDirectionLeft:
         case PMCalendarArrowDirectionRight:
-            arrowPosition.y = CGRectGetMidY(rect) - shadowPadding.top;
+            arrowPosition.y = CGRectGetMidY(rect) - kPMThemeShadowPadding.top;
             
             if (arrowPosition.y < frm.size.height / 2)
             {
@@ -246,11 +257,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
             if (_calendarArrowDirection == PMCalendarArrowDirectionLeft)
             {
                 arrowOffset.x = arrowSize.height;
-                calendarFrame.origin.x = CGRectGetMaxX(rect) - shadowPadding.left;
+                calendarFrame.origin.x = CGRectGetMaxX(rect) - kPMThemeShadowPadding.left;
             }
             else 
             {
-                calendarFrame.origin.x = CGRectGetMinX(rect) - calendarFrame.size.width + shadowPadding.right;
+                calendarFrame.origin.x = CGRectGetMinX(rect) - calendarFrame.size.width + kPMThemeShadowPadding.right;
             }
             break;
         default:
@@ -266,14 +277,14 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     if ((_calendarArrowDirection == PMCalendarArrowDirectionUp)
         || (_calendarArrowDirection == PMCalendarArrowDirectionDown))
     {
-        arrowPosition.x = MIN(arrowPosition.x, frm.size.width - arrowSize.width / 2 - cornerRadius);
-        arrowPosition.x = MAX(arrowPosition.x, arrowSize.width / 2 + cornerRadius);
+        arrowPosition.x = MIN(arrowPosition.x, frm.size.width - arrowSize.width / 2 -  kPMThemeCornerRadius);
+        arrowPosition.x = MAX(arrowPosition.x, arrowSize.width / 2 +  kPMThemeCornerRadius);
     }
     else if ((_calendarArrowDirection == PMCalendarArrowDirectionRight)
              || (_calendarArrowDirection == PMCalendarArrowDirectionLeft)) 
     {
-        arrowPosition.y = MIN(arrowPosition.y, frm.size.height - arrowSize.width / 2 - cornerRadius);
-        arrowPosition.y = MAX(arrowPosition.y, arrowSize.width / 2 + cornerRadius);
+        arrowPosition.y = MIN(arrowPosition.y, frm.size.height - arrowSize.width / 2 -  kPMThemeCornerRadius);
+        arrowPosition.y = MAX(arrowPosition.y, arrowSize.width / 2 +  kPMThemeCornerRadius);
     }
     
     self.backgroundView.arrowPosition = arrowPosition;
@@ -430,14 +441,17 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 
 - (void) currentDateChanged:(NSDate *) currentDate
 {
+    CGSize arrowSize = kPMThemeArrowSize;
+    CGSize outerPadding = kPMThemeOuterPadding;
+    
 	int numDaysInMonth      = [currentDate numberOfDaysInMonth];
     NSInteger monthStartDay = [[currentDate monthStartDate] weekday];
     numDaysInMonth         += (monthStartDay + (self.digitsView.mondayFirstDayOfWeek?5:6)) % 7;
     CGFloat height          = self.mainView.frame.size.height - outerPadding.height * 2 - arrowSize.height;
-    CGFloat vDiff           = (height - headerHeight - innerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7);
+    CGFloat vDiff           = (height - kPMThemeHeaderHeight - kPMThemeInnerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7);
     CGRect frm              = CGRectInset(self.mainView.bounds, outerPadding.width, outerPadding.height);
     int numberOfRows        = ceil((CGFloat)numDaysInMonth / 7);
-    frm.size.height         = ceil(((numberOfRows + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff) + headerHeight + innerPadding.height * 2 + arrowSize.height);
+    frm.size.height         = ceil(((numberOfRows + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff) + kPMThemeHeaderHeight + kPMThemeInnerPadding.height * 2 + arrowSize.height);
     
     
     if (self.calendarArrowDirection == PMCalendarArrowDirectionDown)

@@ -1,6 +1,6 @@
 //
 //  PMDimmingView.h
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/18/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.

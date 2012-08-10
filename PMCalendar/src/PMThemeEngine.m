@@ -1,0 +1,531 @@
+//
+//  PMThemeEngine.m
+//  PMCalendar
+//
+//  Created by Pavel Mazurin on 7/22/12.
+//  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
+//
+
+#import "PMThemeEngine.h"
+#import "PMCalendarHelpers.h"
+
+static PMThemeEngine* sharedInstance;
+
+@interface PMThemeEngine ()
+
+@property (nonatomic, strong) NSDictionary *themeDict;
+
++ (NSString *) keyNameForElementType:(PMThemeElementType) type;
++ (NSString *) keyNameForElementSubtype:(PMThemeElementSubtype) type;
++ (NSString *) keyNameForGenericType:(PMThemeGenericType) type;
+
+@end
+
+@implementation PMThemeEngine
+
+@synthesize themeName = _themeName;
+@synthesize themeDict = _themeDict;
+
+@synthesize dayTitlesInHeader = _dayTitlesInHeader;
+@synthesize defaultFont = _defaultFont;
+@synthesize arrowSize = _arrowSize;
+@synthesize shadowInsets = _shadowInsets;
+@synthesize innerPadding = _innerPadding;
+@synthesize outerPadding = _outerPadding;
+@synthesize headerHeight = _headerHeight;
+@synthesize cornerRadius = _cornerRadius;
+@synthesize defaultSize = _defaultSize;
+@synthesize shadowBlurRadius = _shadowBlurRadius;
+
++ (PMThemeEngine *) sharedInstance
+{
+    static dispatch_once_t onceToken;
+    
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[PMThemeEngine alloc] init];
+    });
+    
+    return sharedInstance;
+}
+
++ (UIColor *) colorFromString:(NSString *)colorString
+{
+    UIColor *color = nil;
+    if ([colorString isKindOfClass:[NSString class]]) // plain color
+    {
+        if ([colorString hasSuffix:@".png"])
+        {
+            color = [UIColor colorWithPatternImage:[UIImage imageNamed:colorString]];
+        }
+        else
+        {
+            NSArray *elements = [colorString componentsSeparatedByString:@","];
+            NSAssert([elements count] >= 3 && [elements count] <= 4, @"Wrong count of color components.");
+            
+            NSString *r = [elements objectAtIndex:0];
+            NSString *g = [elements objectAtIndex:1];
+            NSString *b = [elements objectAtIndex:2];
+            
+            if ([elements count] > 3) // R,G,B,A
+            {
+                NSString *a = [elements objectAtIndex:3];
+                color = UIColorMakeRGBA([r floatValue], [g floatValue], [b floatValue], [a floatValue]);
+            }
+            else
+            {
+                color = UIColorMakeRGB([r floatValue], [g floatValue], [b floatValue]);
+            }
+        }
+    }
+    return color;
+}
+
+// draws vertical gradient
++ (void) drawGradientInContext:(CGContextRef) context
+                        inRect:(CGRect) rect
+                     fromArray:(NSArray *) gradientArray
+{
+    NSMutableArray *gradientColorsArray = [NSMutableArray arrayWithCapacity:[gradientArray count]];
+    CGFloat gradientLocations[gradientArray.count];
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    // TODO: ADD CACHING! May be expensive!
+    int i = 0;
+    for (NSDictionary *colElement in gradientArray) 
+    {
+        NSString *color = [colElement elementInThemeDictOfGenericType:PMThemeColorGenericType];
+        NSNumber *pos = [colElement elementInThemeDictOfGenericType:PMThemePositionGenericType];
+        [gradientColorsArray addObject:(id)[PMThemeEngine colorFromString:color].CGColor];
+        gradientLocations[i] = pos.floatValue;
+        i++;
+    }
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace
+                                                        , (__bridge CFArrayRef)gradientColorsArray
+                                                        , gradientLocations);
+    
+    CGContextDrawLinearGradient(context
+                                , gradient
+                                , CGPointMake(rect.origin.x + rect.size.width / 2, rect.origin.y + rect.size.height)
+                                , CGPointMake(rect.origin.x + rect.size.width / 2, rect.origin.y)
+                                , 0);
+    CGGradientRelease(gradient);
+//    CGColorSpaceRelease(colorSpace);
+}
+
++ (NSString *) keyNameForElementType: (PMThemeElementType) type
+{
+    NSString *result = nil;
+    
+    switch (type) {
+        case PMThemeGeneralElementType:
+            result = @"General";
+            break;
+        case PMThemeBackgroundElementType:
+            result = @"Background";
+            break;
+        case PMThemeSeparatorsElementType:
+            result = @"Separators";
+            break;
+        case PMThemeMonthTitleElementType:
+            result = @"Month title";
+            break;
+        case PMThemeDayTitlesElementType:
+            result = @"Day titles";
+            break;
+        case PMThemeCalendarDigitsActiveElementType:
+            result = @"Calendar digits active";
+            break;
+        case PMThemeCalendarDigitsActiveSelectedElementType:
+            result = @"Calendar digits active selected";
+            break;
+        case PMThemeCalendarDigitsInactiveElementType:
+            result = @"Calendar digits inactive";
+            break;
+        case PMThemeCalendarDigitsInactiveSelectedElementType:
+            result = @"Calendar digits inactive selected";
+            break;
+        case PMThemeCalendarDigitsTodayElementType:
+            result = @"Calendar digits today";
+            break;
+        case PMThemeCalendarDigitsTodaySelectedElementType:
+            result = @"Calendar digits today selected";
+            break;
+        case PMThemeMonthArrowsElementType:
+            result = @"Month arrows";
+            break;
+        case PMThemeSelectionElementType:
+            result = @"Selection";
+            break;
+        default:
+            break;
+    }
+    
+    return result;
+}
+
++ (NSString *) keyNameForElementSubtype: (PMThemeElementSubtype) type
+{
+    NSString *result = nil;
+    
+    switch (type) {
+        case PMThemeBackgroundSubtype:
+            result = @"Background";
+            break;
+        case PMThemeMainSubtype:
+            result = @"Main";
+            break;
+        case PMThemeOverlaySubtype:
+            result = @"Overlay";
+            break;
+        default:
+            break;
+    }
+    
+    return result;
+}
+
++ (NSString *) keyNameForGenericType: (PMThemeGenericType) type
+{
+    NSString *result = nil;
+    
+    switch (type) {
+        case PMThemeColorGenericType:
+            result = @"Color";
+            break;
+        case PMThemeFontGenericType:
+            result = @"Font";
+            break;
+        case PMThemeFontNameGenericType:
+            result = @"Name";
+            break;
+        case PMThemeFontSizeGenericType:
+            result = @"Size";
+            break;
+        case PMThemeFontTypeGenericType:
+            result = @"Type";
+            break;
+        case PMThemePositionGenericType:
+            result = @"Position";
+            break;
+        case PMThemeOffsetGenericType:
+            result = @"Offset";
+            break;
+        case PMThemeOffsetHorizontalGenericType:
+            result = @"Horizontal";
+            break;
+        case PMThemeOffsetVerticalGenericType:
+            result = @"Vertical";
+            break;
+        case PMThemeShadowGenericType:
+            result = @"Shadow";
+            break;
+        case PMThemeShadowBlurRadiusType:
+            result = @"Blur radius";
+            break;
+        case PMThemeSizeGenericType:
+            result = @"Size";
+            break;
+        case PMThemeSizeWidthGenericType:
+            result = @"Width";
+            break;
+        case PMThemeSizeHeightGenericType:
+            result = @"Height";
+            break;
+        case PMThemeSizeInsetGenericType:
+            result = @"Size inset";
+            break;
+        case PMThemeStrokeGenericType:
+            result = @"Stroke";
+            break;
+        case PMThemeEdgeInsetsGenericType:
+            result = @"Insets";
+            break;
+        case PMThemeEdgeInsetsTopGenericType:
+            result = @"Top";
+            break;
+        case PMThemeEdgeInsetsLeftGenericType:
+            result = @"Left";
+            break;
+        case PMThemeEdgeInsetsBottomGenericType:
+            result = @"Bottom";
+            break;
+        case PMThemeEdgeInsetsRightGenericType:
+            result = @"Right";
+            break;
+        case PMThemeCornerRadiusGenericType:
+            result = @"Corner radius";
+            break;
+        case PMThemeCoordinatesRoundGenericType:
+            result = @"Coordinates round";
+            break;
+        default:
+            break;
+    }
+    
+    return result;
+}
+
+- (void) setThemeName:(NSString *)themeName
+{
+    if ([_themeName isEqualToString:themeName])
+    {
+        return;
+    }
+    
+    _themeName = themeName;
+    
+    NSString* filePath = [[NSBundle mainBundle] pathForResource:themeName ofType:@"plist"];
+    self.themeDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    
+    NSDictionary *generalSettings = [sharedInstance themeDictForType:PMThemeGeneralElementType
+                                                             subtype:PMThemeNoSubtype];
+    
+    self.dayTitlesInHeader = [[generalSettings objectForKey:@"Day titles in header"] boolValue];
+    self.defaultFont = [[generalSettings elementInThemeDictOfGenericType:PMThemeFontGenericType] pmThemeGenerateFont];
+    self.arrowSize = [[generalSettings objectForKey:@"Arrow size"] pmThemeGenerateSize];
+    self.defaultSize = [[generalSettings objectForKey:@"Default size"] pmThemeGenerateSize];
+    self.cornerRadius = [[generalSettings objectForKey:@"Corner radius"] floatValue];
+    self.headerHeight = [[generalSettings objectForKey:@"Header height"] floatValue];
+    self.outerPadding = [[generalSettings objectForKey:@"Outer padding"] pmThemeGenerateSize];
+    self.innerPadding = [[generalSettings objectForKey:@"Inner padding"] pmThemeGenerateSize];
+    self.shadowInsets = [[generalSettings objectForKey:@"Shadow insets"] pmThemeGenerateEdgeInsets];
+    self.shadowBlurRadius = [[generalSettings objectForKey:@"Shadow blur radius"] floatValue];
+}
+
+- (void) drawString:(NSString *) string 
+           withFont:(UIFont *) font
+             inRect:(CGRect) rect 
+     forElementType:(PMThemeElementType) themeElementType
+            subType:(PMThemeElementSubtype) themeElementSubtype
+          inContext:(CGContextRef) context
+{
+    NSDictionary *themeDictionary = [[PMThemeEngine sharedInstance] themeDictForType:themeElementType 
+                                                                             subtype:themeElementSubtype];
+    id colorObj = [themeDictionary elementInThemeDictOfGenericType:PMThemeColorGenericType];
+    NSDictionary *shadowDict = [themeDictionary elementInThemeDictOfGenericType:PMThemeShadowGenericType];
+    UIFont *usedFont = font;
+    CGSize offset = [[themeDictionary elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
+    CGRect realRect = CGRectOffset(rect, offset.width, offset.height);
+
+    if (!usedFont)
+    {
+        usedFont = [[themeDictionary elementInThemeDictOfGenericType:PMThemeFontGenericType] pmThemeGenerateFont];
+    }
+
+    if (!usedFont)
+    {
+        usedFont = self.defaultFont;
+    }
+
+    NSAssert(usedFont != nil, @"Please provide proper font either in theme file or in a code.");
+    
+    CGSize sz = [string sizeWithFont:usedFont];
+    BOOL isGradient = ![colorObj isKindOfClass:[NSString class]];
+    
+    if (!isGradient) // plain color or tiled image
+    {
+        [[PMThemeEngine colorFromString:colorObj] setFill];
+    }
+
+    CGContextSaveGState(context);
+    if (isGradient)
+    {
+        CGContextTranslateCTM(context, realRect.origin.x, realRect.origin.y+realRect.size.height);
+        CGContextScaleCTM(context, 1.0f, -1.0f);
+
+        CGContextSelectFont(context
+                            , [usedFont.fontName UTF8String]
+                            , usedFont.pointSize
+                            , kCGEncodingMacRoman);
+        CGContextSetTextDrawingMode(context, kCGTextClip);
+        CGContextSetTextPosition(context, (realRect.size.width - sz.width) / 2, (realRect.size.height - sz.height) / 2);
+    }
+
+    if (shadowDict)
+    {
+        CGSize shadowOffset = [[shadowDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
+        UIColor *shadowColor = [PMThemeEngine colorFromString:[shadowDict elementInThemeDictOfGenericType:PMThemeColorGenericType]];
+        NSNumber *blurRadius = [shadowDict elementInThemeDictOfGenericType:PMThemeShadowBlurRadiusType];
+        CGContextSetShadowWithColor(context
+                                    , shadowOffset
+                                    , blurRadius?[blurRadius floatValue]:sharedInstance.shadowBlurRadius
+                                    , shadowColor.CGColor);
+        if (isGradient) // gradient color
+        {
+            [shadowColor setFill];
+        }
+    }
+    
+    if (!isGradient)
+    {
+        [string drawInRect: realRect 
+                  withFont: usedFont 
+             lineBreakMode: UILineBreakModeWordWrap
+                 alignment: UITextAlignmentCenter];
+    }
+    else
+    {
+        CGContextShowText(context, [string UTF8String], strlen([string UTF8String]));
+        CGContextClip(context);
+        [PMThemeEngine drawGradientInContext: context 
+                                      inRect: CGRectMake(0, (realRect.size.height - sz.height) / 2 - 1, realRect.size.width, sz.height) 
+                                   fromArray: colorObj];
+    }
+    
+    CGContextRestoreGState(context);
+}
+
+- (void) drawPath:(UIBezierPath *) path 
+   forElementType:(PMThemeElementType) themeElementType
+          subType:(PMThemeElementSubtype) themeElementSubtype
+        inContext:(CGContextRef) context
+{
+    NSDictionary *themeDictionary = [[PMThemeEngine sharedInstance] themeDictForType:themeElementType 
+                                                                             subtype:themeElementSubtype];
+    id colorObj = [themeDictionary elementInThemeDictOfGenericType:PMThemeColorGenericType];
+
+    CGContextSaveGState(context);
+    NSDictionary *shadowDict = [themeDictionary elementInThemeDictOfGenericType:PMThemeShadowGenericType];
+    
+    if (shadowDict)
+    {
+        CGSize shadowOffset = [[shadowDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
+        UIColor *shadowColor = [PMThemeEngine colorFromString:[shadowDict elementInThemeDictOfGenericType:PMThemeColorGenericType]];
+        NSNumber *blurRadius = [shadowDict elementInThemeDictOfGenericType:PMThemeShadowBlurRadiusType];
+        CGContextSetShadowWithColor(context
+                                    , shadowOffset
+                                    , blurRadius?[blurRadius floatValue]:sharedInstance.shadowBlurRadius
+                                    , shadowColor.CGColor);
+    }
+    [path addClip];
+
+    if ([colorObj isKindOfClass:[NSString class]]) // plain color
+    {
+        [[PMThemeEngine colorFromString:colorObj] setFill];
+        
+        [path fill];
+    }
+    else
+    {
+        [PMThemeEngine drawGradientInContext:context
+                                      inRect:path.bounds
+                                   fromArray:colorObj];
+    }
+
+    NSDictionary *stroke = [themeDictionary elementInThemeDictOfGenericType:PMThemeStrokeGenericType];
+    
+    if (stroke)
+    {
+        NSString *strokeColorStr = [stroke elementInThemeDictOfGenericType:PMThemeColorGenericType];
+        UIColor *strokeColor = [PMThemeEngine colorFromString:strokeColorStr];
+        [strokeColor setStroke];
+        path.lineWidth = [[stroke elementInThemeDictOfGenericType:PMThemeSizeWidthGenericType] floatValue]; // TODO: make separate stroke width generic type
+        [path stroke];
+    }
+    
+    CGContextRestoreGState(context);
+}
+
+- (id) elementOfGenericType:(PMThemeGenericType) genericType
+                    subtype:(PMThemeElementSubtype) subtype
+                       type:(PMThemeElementType) type
+{
+    return [[[PMThemeEngine sharedInstance] themeDictForType:type 
+                                                     subtype:subtype] elementInThemeDictOfGenericType:genericType];
+}
+
+- (NSDictionary *) themeDictForType:(PMThemeElementType) type 
+                            subtype:(PMThemeElementSubtype) subtype
+{
+    NSDictionary *result = [sharedInstance.themeDict objectForKey:[PMThemeEngine keyNameForElementType:type]];
+    
+    if (subtype != PMThemeNoSubtype)
+    {
+        result = [result objectForKey:[PMThemeEngine keyNameForElementSubtype:subtype]];
+    }
+    
+    return result;
+}
+
+- (NSDictionary *) themeDict
+{
+    if (!_themeDict)
+    {
+        self.themeName = @"default";
+    }
+    
+    return _themeDict;
+}
+
+@end
+
+@implementation NSDictionary (PMThemeAddons)
+
+- (id) elementInThemeDictOfGenericType:(PMThemeGenericType) type
+{
+    return [self objectForKey:[PMThemeEngine keyNameForGenericType:type]];
+}
+
+- (CGSize) pmThemeGenerateSize
+{
+    NSNumber *width = [self elementInThemeDictOfGenericType:PMThemeSizeWidthGenericType];
+    NSNumber *height = [self elementInThemeDictOfGenericType:PMThemeSizeHeightGenericType];
+    
+    if (!width || !height)
+    {
+        return CGSizeZero;
+    }
+    
+    NSAssert( [width isKindOfClass:[NSNumber class]], @"Expected numeric width value to generate CGSize" );
+    NSAssert( [height isKindOfClass:[NSNumber class]], @"Expected numeric height value to generate CGSize" );
+    
+    return CGSizeMake([width floatValue], [height floatValue]);
+}
+
+- (UIFont *) pmThemeGenerateFont
+{
+    NSNumber *size = [self elementInThemeDictOfGenericType:PMThemeFontSizeGenericType];
+    NSString *name = [self elementInThemeDictOfGenericType:PMThemeFontNameGenericType];
+    
+    if (!size)
+    {
+        return [PMThemeEngine sharedInstance].defaultFont;
+    }
+    
+    NSAssert( [size isKindOfClass:[NSNumber class]], @"Expected numeric font size value to generate UIFont" );
+
+    if (!name)
+    {
+        NSString *type = [self elementInThemeDictOfGenericType:PMThemeFontTypeGenericType];
+        if ([type isEqualToString:@"bold"])
+        {
+            return [UIFont boldSystemFontOfSize:[size floatValue]];            
+        }
+        
+        return [UIFont systemFontOfSize:[size floatValue]];
+    }
+    
+    return [UIFont fontWithName:name size:[size floatValue]];
+}
+
+- (UIEdgeInsets) pmThemeGenerateEdgeInsets
+{
+    NSNumber *top = [self elementInThemeDictOfGenericType:PMThemeEdgeInsetsTopGenericType];
+    NSNumber *left = [self elementInThemeDictOfGenericType:PMThemeEdgeInsetsLeftGenericType];
+    NSNumber *bottom = [self elementInThemeDictOfGenericType:PMThemeEdgeInsetsBottomGenericType];
+    NSNumber *right = [self elementInThemeDictOfGenericType:PMThemeEdgeInsetsRightGenericType];
+    
+    if (!top || !bottom || !left || !right)
+    {
+        return UIEdgeInsetsZero;
+    }
+    
+    NSAssert( [top isKindOfClass:[NSNumber class]], @"Expected numeric top value to generate UIEdgeInsets" );
+    NSAssert( [left isKindOfClass:[NSNumber class]], @"Expected numeric left value to generate UIEdgeInsets" );
+    NSAssert( [bottom isKindOfClass:[NSNumber class]], @"Expected numeric bottom value to generate UIEdgeInsets" );
+    NSAssert( [right isKindOfClass:[NSNumber class]], @"Expected numeric right value to generate UIEdgeInsets" );
+    
+    return UIEdgeInsetsMake([top floatValue], [left floatValue], [bottom floatValue], [right floatValue]);
+}
+
+@end
+

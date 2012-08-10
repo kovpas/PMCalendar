@@ -1,19 +1,11 @@
 //
 //  PMCalendarConstants.h
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/14/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
 //
 
-extern UIEdgeInsets shadowPadding;
-extern CGFloat cornerRadius;
-extern CGFloat headerHeight;
-extern CGSize arrowSize;
-
-// TODO: Replace paddings with UIEdgeInsets (what for? :))
-extern CGSize innerPadding;
-extern CGSize outerPadding;
 extern NSString *kPMCalendarRedrawNotification;
 
 enum {

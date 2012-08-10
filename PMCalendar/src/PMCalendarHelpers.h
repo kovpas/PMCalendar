@@ -1,6 +1,6 @@
 //
 //  PMCalendarHelpers.h
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/18/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -23,6 +23,7 @@ static inline CGPoint CGPointOffsetByPoint(CGPoint originalPoint, CGPoint offset
     return CGPointOffset(originalPoint, offsetPoint.x, offsetPoint.y); 
 }
 
+// To be deprecated as UIOffset is iOS 5 only.
 static inline CGSize UIOffsetToCGSize(UIOffset offset) 
 { 
     return CGSizeMake(offset.horizontal, offset.vertical); 

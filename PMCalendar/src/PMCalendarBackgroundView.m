@@ -1,6 +1,6 @@
 //
 //  PMCalendarBackgroundView.m
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/13/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -9,12 +9,8 @@
 #import "PMCalendarBackgroundView.h"
 #import "PMCalendarConstants.h"
 #import "PMCalendarHelpers.h"
+#import "PMThemeShadow.h"
 #import "PMTheme.h"
-
-UIEdgeInsets shadowPadding = kPMThemeShadowInsets;
-CGFloat cornerRadius = kPMThemeCornerRadius;
-CGFloat headerHeight = kPMThemeHeaderHeight;
-CGSize innerPadding = kPMThemeInnerPadding;
 
 @interface PMCalendarBackgroundView ()
 
@@ -65,9 +61,12 @@ CGSize innerPadding = kPMThemeInnerPadding;
                            arrowDirection:(PMCalendarArrowDirection)direction 
                             arrowPosition:(CGPoint)arrowPosition
 {
+    CGSize arrowSize = kPMThemeArrowSize;
     UIBezierPath* result = nil;
     CGFloat width = size.width;
     CGFloat height = size.height;
+    UIEdgeInsets shadowPadding = kPMThemeShadowPadding;
+    CGFloat cornerRadius = kPMThemeCornerRadius;
     width -= shadowPadding.left + shadowPadding.right;
     height -= shadowPadding.top + shadowPadding.bottom;
 
@@ -207,41 +206,25 @@ CGSize innerPadding = kPMThemeInnerPadding;
 
 -(void)drawRect:(CGRect)rect
 {
-    PMLog( @"Start" );
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    // color declarations
-    UIColor* bigBoxInnerShadowColor = kPMThemeBackgroundInnerShadowColor;
-    UIColor* backgroundLightColor = kPMThemeBackgroundColor;
-    UIColor* lineLightColor = kPMThemeSeparatorColor;
-    UIColor* boxStroke = kPMThemeBoxStrokeColor;
-
-    // overlay gradient colors
-    NSArray* gradient2Colors = kPMThemeBackgoundOverlayGradientColors;
-    CGFloat gradient2Locations[] = kPMThemeBackgoundOverlayGradientColorLocations;
-    CGGradientRef gradient2 = CGGradientCreateWithColors(colorSpace
-                                                         , (__bridge CFArrayRef)gradient2Colors
-                                                         , gradient2Locations);
-
-    // shadow declarations
-    CGColorRef bigBoxInnerShadow = bigBoxInnerShadowColor.CGColor;
-    CGSize bigBoxInnerShadowOffset = CGSizeMake(0, 1);
-    CGFloat bigBoxInnerShadowBlurRadius = 1;
-    CGColorRef backgroundShadow = [UIColor blackColor].CGColor;
-    CGSize backgroundShadowOffset = CGSizeMake(1, 1);
-    CGFloat backgroundShadowBlurRadius = shadowPadding.bottom;
-    CGColorRef shadow = kPMThemeSeparatorShadowColor.CGColor;
-    UIOffset shadowOffset = kPMThemeSeparatorShadowOffset;
-    CGFloat shadowBlurRadius = 0;
-
-    // backgound box. it doesn't include arrow:
+    CGSize arrowSize           = kPMThemeArrowSize;
+    UIEdgeInsets shadowPadding = kPMThemeShadowPadding;
+    CGSize innerPadding        = kPMThemeInnerPadding;
+    CGFloat headerHeight       = kPMThemeHeaderHeight;
+    
+    // backgound box. doesn't include arrow:
     CGRect boxBounds = CGRectMake(0, 0
                                   , self.bounds.size.width - arrowSize.height
                                   , self.bounds.size.height - arrowSize.height);
 
     CGFloat width = boxBounds.size.width - (shadowPadding.left + shadowPadding.right);
     CGFloat height = boxBounds.size.height - (shadowPadding.top + shadowPadding.bottom);
+ 
+    NSDictionary *shadowDict = [[PMThemeEngine sharedInstance] elementOfGenericType:PMThemeShadowGenericType
+                                                                            subtype:PMThemeMainSubtype
+                                                                               type:PMThemeBackgroundElementType];
+    PMThemeShadow *innerShadow = [[PMThemeShadow alloc] initWithShadowDict:shadowDict];
 
     CGPoint tl = CGPointZero;
 
@@ -264,26 +247,18 @@ CGSize innerPadding = kPMThemeInnerPadding;
                                                                             arrowDirection:self.arrowDirection
                                                                              arrowPosition:self.arrowPosition];
 
-    CGContextSaveGState(context);
-    CGContextSetShadowWithColor(context, backgroundShadowOffset, backgroundShadowBlurRadius, backgroundShadow);
-
-    // light stroke around
-    if (boxStroke)
-    {
-        [boxStroke setStroke];
-        roundedRectanglePath.lineWidth = 0.5;
-        [roundedRectanglePath stroke];
-    }
-    [backgroundLightColor setFill];
-    [roundedRectanglePath fill];
+    [[PMThemeEngine sharedInstance] drawPath:roundedRectanglePath
+                              forElementType:PMThemeBackgroundElementType 
+                                     subType:PMThemeBackgroundSubtype
+                                   inContext:context];
 
     // background inner shadow
     CGRect roundedRectangleBorderRect = CGRectInset([roundedRectanglePath bounds]
-                                                    , -bigBoxInnerShadowBlurRadius
-                                                    , -bigBoxInnerShadowBlurRadius);
+                                                    , -innerShadow.blurRadius
+                                                    , -innerShadow.blurRadius);
     roundedRectangleBorderRect = CGRectOffset(roundedRectangleBorderRect
-                                              , -bigBoxInnerShadowOffset.width
-                                              , -bigBoxInnerShadowOffset.height);
+                                              , -innerShadow.offset.width
+                                              , -innerShadow.offset.height);
     roundedRectangleBorderRect = CGRectInset(CGRectUnion(roundedRectangleBorderRect
                                                          , [roundedRectanglePath bounds]), -1, -1);
     
@@ -293,13 +268,13 @@ CGSize innerPadding = kPMThemeInnerPadding;
 
     CGContextSaveGState(context);
     {
-        CGFloat xOffset = bigBoxInnerShadowOffset.width + round(roundedRectangleBorderRect.size.width);
-        CGFloat yOffset = bigBoxInnerShadowOffset.height;
+        CGFloat xOffset = innerShadow.offset.width + round(roundedRectangleBorderRect.size.width);
+        CGFloat yOffset = innerShadow.offset.height;
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(xOffset + copysign(0.1, xOffset)
                                                , yOffset + copysign(0.1, yOffset)),
-                                    bigBoxInnerShadowBlurRadius,
-                                    bigBoxInnerShadow);
+                                    innerShadow.blurRadius,
+                                    innerShadow.color.CGColor);
         
         [roundedRectanglePath addClip];
         CGAffineTransform transform = CGAffineTransformMakeTranslation(-round(roundedRectangleBorderRect.size.width)
@@ -310,46 +285,35 @@ CGSize innerPadding = kPMThemeInnerPadding;
     }
     CGContextRestoreGState(context);
 
-    UIBezierPath *roundedRectangle2Path = [PMCalendarBackgroundView createBezierPathForSize:boxBounds.size
-                                                                            arrowDirection:self.arrowDirection
-                                                                             arrowPosition:self.arrowPosition];
-    
-    CGContextSaveGState(context);
-    [roundedRectangle2Path addClip];
-    CGContextRestoreGState(context);
+    NSNumber *separatorWidthNumber = [[PMThemeEngine sharedInstance] elementOfGenericType:PMThemeSizeWidthGenericType
+                                                                                  subtype:PMThemeMainSubtype
+                                                                                     type:PMThemeSeparatorsElementType];
 
-    if (kPMThemeSeparatorWidth > 0)
+    if (separatorWidthNumber)
     {
         // dividers        
         CGFloat hDiff = (width + shadowPadding.left + shadowPadding.right - innerPadding.width * 2) / 7;
+        CGFloat separatorWidth = [separatorWidthNumber floatValue];
         
         for (int i = 0; i < 6; i++) 
         {
             CGRect dividerRect = CGRectMake(tl.x + innerPadding.width + floor((i + 1) * hDiff) - 1 + shadowPadding.left
                                             , tl.y + innerPadding.height + headerHeight + shadowPadding.top
-                                            , kPMThemeSeparatorWidth
+                                            , separatorWidth
                                             , height - innerPadding.height * 2 - headerHeight);
             UIBezierPath* dividerPath = [UIBezierPath bezierPathWithRect:dividerRect];
-            CGContextSaveGState(context);
-            CGContextSetShadowWithColor(context, UIOffsetToCGSize(shadowOffset), shadowBlurRadius, shadow);
-            [lineLightColor setFill];
-            [dividerPath fill];
-            CGContextRestoreGState(context);
+
+            [[PMThemeEngine sharedInstance] drawPath:dividerPath
+                                      forElementType:PMThemeSeparatorsElementType
+                                             subType:PMThemeMainSubtype
+                                           inContext:context];
         }
     }
 
-    CGContextSaveGState(context);
-    [roundedRectanglePath addClip];
-    CGContextDrawLinearGradient(context
-                                , gradient2
-                                , CGPointMake(width / 2, shadowPadding.top + self.frame.size.height)
-                                , CGPointMake(width / 2, shadowPadding.top), 0);
-    CGContextRestoreGState(context);
-    
-    CGGradientRelease(gradient2);
-    
-    CGColorSpaceRelease(colorSpace);
-    PMLog( @"End" );
+    [[PMThemeEngine sharedInstance] drawPath:roundedRectanglePath
+                              forElementType:PMThemeBackgroundElementType
+                                     subType:PMThemeOverlaySubtype
+                                   inContext:context];
 }
 
 - (void)setFrame:(CGRect)frame

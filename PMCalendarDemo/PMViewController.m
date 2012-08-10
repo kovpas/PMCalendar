@@ -23,7 +23,7 @@
 
 - (IBAction)showCalendar:(id)sender
 {
-    self.pmCC = [[PMCalendarController alloc] init];
+    self.pmCC = [[PMCalendarController alloc] initWithThemeName:@"apple calendar"];
     pmCC.delegate = self;
     pmCC.mondayFirstDayOfWeek = NO;
 

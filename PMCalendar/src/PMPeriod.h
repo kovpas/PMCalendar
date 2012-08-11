@@ -1,6 +1,6 @@
 //
 //  PMPeriod.h
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/13/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -33,5 +33,10 @@
  * Creates new period from the current (self) period self with proper order of startDate and endDate.
  */
 - (PMPeriod *) normalizedPeriod;
+
+/**
+ * Checks if current (self) period contains a given date.
+ */
+- (BOOL) containsDate:(NSDate *) date;
 
 @end

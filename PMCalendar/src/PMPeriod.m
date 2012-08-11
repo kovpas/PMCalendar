@@ -1,6 +1,6 @@
 //
 //  PMPeriod.m
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/13/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -72,6 +72,19 @@
     }
     
     return result;
+}
+
+- (BOOL) containsDate:(NSDate *) date
+{
+    PMPeriod *normalizedPeriod = [self normalizedPeriod];
+    
+    if (([normalizedPeriod.startDate compare:date] != NSOrderedDescending)
+        && ([normalizedPeriod.endDate compare:date] != NSOrderedAscending))
+    {
+        return YES;
+    }
+    
+    return NO;
 }
 
 @end

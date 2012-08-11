@@ -1,6 +1,6 @@
 //
 //  NSDate+Helpers.m
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/14/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -81,6 +81,11 @@
     [formatter setDateFormat:format];
 		
 	return [formatter stringFromDate:self];
+}
+
+- (NSInteger) daysSinceDate:(NSDate *) date
+{
+    return [self timeIntervalSinceDate:date] / (60 * 60 * 24);
 }
 
 @end

@@ -1,6 +1,6 @@
 //
 //  PMCalendarController.h
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/13/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -29,9 +29,15 @@
 
 /**
  * Creates calendar controller with given size. Arrow is NOT includeed in this size.
- * You can also create PMCalendarController with -init method, it invokes initWithSize: with default size.
+ * You can also create PMCalendarController with -init method, it invokes -initWithSize: with default size.
  */
 - (id) initWithSize:(CGSize) size;
+
+/**
+ * Creates calendar controller with given theme name.
+ * This method gets default calendar size from theme and invokes -initWithSize:.
+ */
+- (id) initWithThemeName:(NSString *) themeName;
 
 /**
  * Allows you to present a calendar from a rect in a particular view. 
@@ -91,10 +97,10 @@
 
 /**
  * If set to YES, the calendar allows to long press on a month change arrow
- * in order to iterate through years.
+ * in order to fast iterate through months.
  * If set to NO, long press does nothing.
  */
-@property (nonatomic, assign) BOOL allowsLongPressYearChange;
+@property (nonatomic, assign) BOOL allowsLongPressMonthChange;
 
 /**
  * Returns the direction the arrow is pointing on a presented calendar. 

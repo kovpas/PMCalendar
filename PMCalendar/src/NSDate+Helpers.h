@@ -1,6 +1,6 @@
 //
 //  NSDate+Helpers.h
-//  PMCalendarDemo
+//  PMCalendar
 //
 //  Created by Pavel Mazurin on 7/14/12.
 //  Copyright (c) 2012 Pavel Mazurin. All rights reserved.
@@ -54,6 +54,11 @@
  * Returns 1 for Sunday, 2 for Monday ... 7 for Saturday
  */
 - (NSUInteger) weekday;
+
+/**
+ * Returns the number of days since given date.
+ */
+- (NSInteger) daysSinceDate:(NSDate *) date;
 
 /**
  * Returns string representation of the current (self) date formatted with given format.

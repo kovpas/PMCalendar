@@ -23,17 +23,31 @@
 
 - (IBAction)showCalendar:(id)sender
 {
-    self.pmCC = [[PMCalendarController alloc] init];
+    if ([sender tag] == 10)
+    {
+        self.pmCC = [[PMCalendarController alloc] initWithThemeName:@"apple calendar"];
+    }
+    else
+    {
+        self.pmCC = [[PMCalendarController alloc] initWithThemeName:@"default"];
+    }
     pmCC.delegate = self;
-    pmCC.mondayFirstDayOfWeek = YES;
+    pmCC.mondayFirstDayOfWeek = NO;
 
-    [pmCC presentCalendarFromView:sender 
-         permittedArrowDirections:PMCalendarArrowDirectionAny 
-                         animated:YES];
-/*    [pmCC presentCalendarFromRect:[sender frame]
-                           inView:[sender superview]
-         permittedArrowDirections:PMCalendarArrowDirectionAny
-                         animated:YES];*/
+    if ([sender tag] == 10)
+    {
+        [pmCC presentCalendarFromRect:CGRectZero
+                               inView:[sender superview]
+             permittedArrowDirections:PMCalendarArrowDirectionAny
+                             animated:YES];
+    }
+    else
+    {
+        [pmCC presentCalendarFromView:sender
+             permittedArrowDirections:PMCalendarArrowDirectionAny 
+                             animated:YES];
+    }
+
     [self calendarController:pmCC didChangePeriod:pmCC.period];
 }
 

@@ -12,7 +12,7 @@
 			<integer>310</integer>
 		</dict>
 		<key>Header height</key>
-		<integer>45</integer>
+		<integer>46</integer>
 		<key>Outer padding</key>
 		<dict>
 			<key>Height</key>
@@ -96,7 +96,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-8</integer>
+				<integer>-5</integer>
 			</dict>
 			<key>Shadow</key>
 			<dict>
@@ -132,10 +132,8 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-10</integer>
 			</dict>
-			<key>Color</key>
-			<string>84,84,84</string>
 			<key>Shadow</key>
 			<dict>
 				<key>Color</key>
@@ -148,6 +146,8 @@
 					<integer>1</integer>
 				</dict>
 			</dict>
+			<key>Color</key>
+			<string>84,84,84</string>
 		</dict>
 	</dict>
 	<key>Calendar digits today</key>
@@ -155,7 +155,7 @@
 		<key>Background</key>
 		<dict>
 			<key>Coordinates round</key>
-			<string>floor</string>
+			<string>ceil</string>
 			<key>Color</key>
 			<string>115,137,165</string>
 			<key>Shadow</key>
@@ -182,13 +182,13 @@
 			<key>Insets</key>
 			<dict>
 				<key>Top</key>
-				<integer>-1</integer>
-				<key>Left</key>
-				<integer>0</integer>
-				<key>Bottom</key>
-				<integer>0</integer>
-				<key>Right</key>
 				<integer>-2</integer>
+				<key>Left</key>
+				<integer>-1</integer>
+				<key>Bottom</key>
+				<integer>1</integer>
+				<key>Right</key>
+				<integer>0</integer>
 			</dict>
 		</dict>
 		<key>Main</key>
@@ -214,7 +214,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-4</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -248,13 +248,13 @@
 			<key>Insets</key>
 			<dict>
 				<key>Top</key>
-				<integer>-1</integer>
-				<key>Left</key>
-				<integer>0</integer>
-				<key>Bottom</key>
-				<integer>0</integer>
-				<key>Right</key>
 				<integer>-2</integer>
+				<key>Left</key>
+				<integer>-1</integer>
+				<key>Bottom</key>
+				<integer>1</integer>
+				<key>Right</key>
+				<integer>0</integer>
 			</dict>
 		</dict>
 		<key>Main</key>
@@ -280,7 +280,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-4</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -311,8 +311,6 @@
 					<integer>1</integer>
 				</dict>
 			</array>
-			<key>Color2</key>
-			<string>text_fill.png</string>
 			<key>Shadow</key>
 			<dict>
 				<key>Color</key>
@@ -330,7 +328,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-4</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -351,7 +349,7 @@
 					<key>Width</key>
 					<integer>0</integer>
 					<key>Height</key>
-					<integer>1</integer>
+					<integer>-1</integer>
 				</dict>
 			</dict>
 			<key>Offset</key>
@@ -359,7 +357,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-4</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -393,7 +391,7 @@
 			<key>Shadow</key>
 			<dict>
 				<key>Color</key>
-				<string>217,216,220</string>
+				<string>232,231,233</string>
 				<key>Offset</key>
 				<dict>
 					<key>Width</key>
@@ -407,7 +405,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-4</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -428,7 +426,7 @@
 					<key>Width</key>
 					<integer>0</integer>
 					<key>Height</key>
-					<integer>1</integer>
+					<integer>-1</integer>
 				</dict>
 			</dict>
 			<key>Offset</key>
@@ -436,7 +434,7 @@
 				<key>Width</key>
 				<integer>0</integer>
 				<key>Height</key>
-				<integer>-7</integer>
+				<integer>-4</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -499,25 +497,25 @@
 					<key>Color</key>
 					<string>0,114,226</string>
 					<key>Position</key>
-					<integer>0</integer>
+					<integer>1</integer>
 				</dict>
 				<dict>
 					<key>Color</key>
 					<string>0,114,226</string>
 					<key>Position</key>
-					<real>0.499</real>
+					<real>0.5</real>
 				</dict>
 				<dict>
 					<key>Color</key>
 					<string>43,138,231</string>
 					<key>Position</key>
-					<real>0.5</real>
+					<real>0.499</real>
 				</dict>
 				<dict>
 					<key>Color</key>
 					<string>114,177,239</string>
 					<key>Position</key>
-					<integer>1</integer>
+					<integer>0</integer>
 				</dict>
 			</array>
 			<key>Stroke</key>
@@ -534,7 +532,7 @@
 				<key>Left</key>
 				<integer>-1</integer>
 				<key>Bottom</key>
-				<real>2.5</real>
+				<integer>1</integer>
 				<key>Right</key>
 				<integer>0</integer>
 			</dict>

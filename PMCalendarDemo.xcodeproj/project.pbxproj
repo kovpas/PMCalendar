@@ -10,6 +10,7 @@
 		3C0B37C415BAC09700D61F06 /* default.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C0B37C315BAC09700D61F06 /* default.plist */; };
 		3C1729DB15BBEAEB003138D9 /* PMThemeEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1729DA15BBEAEB003138D9 /* PMThemeEngine.m */; };
 		3C181BA215BD2DC500ED37A3 /* PMThemeShadow.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C181BA115BD2DC500ED37A3 /* PMThemeShadow.m */; };
+		3C335E4B15D69BE600ED2719 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C181BAD15BE06E700ED37A3 /* CoreText.framework */; };
 		3C504FED15B8B6C10064A435 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 3C504FEC15B8B6C10064A435 /* background.png */; };
 		3C73527C15B619260068E9B4 /* PMDimmingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C73527B15B619260068E9B4 /* PMDimmingView.m */; };
 		3CC833FE15B0ADCF00C07208 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CC833FD15B0ADCF00C07208 /* UIKit.framework */; };
@@ -78,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C335E4B15D69BE600ED2719 /* CoreText.framework in Frameworks */,
 				3CC833FE15B0ADCF00C07208 /* UIKit.framework in Frameworks */,
 				3CC8340015B0ADCF00C07208 /* Foundation.framework in Frameworks */,
 				3CC8340215B0ADCF00C07208 /* CoreGraphics.framework in Frameworks */,

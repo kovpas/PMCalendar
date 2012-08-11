@@ -115,11 +115,11 @@
             //// selectedRect Drawing
             CGRect rect = CGRectMake(innerPadding.width + floor(thisRowStartCell * hDiff)
                                      , innerPadding.height + headerHeight
-                                            + ceil((i + kPMThemeDayTitlesInHeaderIntOffset) * vDiff)
+                                            + floor((i + kPMThemeDayTitlesInHeaderIntOffset) * vDiff)
                                      , floor((thisRowEndCell - thisRowStartCell + 1) * hDiff)
-                                     , vDiff);
+                                     , floor(vDiff));
             rect = UIEdgeInsetsInsetRect(rect, rectInset);
-            
+            NSLog( @"%@", NSStringFromCGRect(rect) );
             UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect: rect
                                                                         cornerRadius: cornerRadius];
             [[PMThemeEngine sharedInstance] drawPath: selectedRectPath

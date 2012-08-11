@@ -149,13 +149,15 @@
     {
         NSInteger index = i + (_mondayFirstDayOfWeek?1:0);
         index = index % 7;
+        NSString *dayTitle = [dayTitles objectAtIndex:index];
         //// dayHeader Drawing
+        CGSize sz = [dayTitle sizeWithFont:dayFont];
         CGRect dayHeaderFrame = CGRectMake(floor(i * hDiff) - 1
-                                           , headerHeight + (kPMThemeDayTitlesInHeaderIntOffset * vDiff - self.font.pointSize) / 2
+                                           , headerHeight + (kPMThemeDayTitlesInHeaderIntOffset * vDiff - sz.height) / 2
                                            , hDiff
-                                           , 30);
+                                           , sz.height);
 
-        [[PMThemeEngine sharedInstance] drawString:[dayTitles objectAtIndex:index]
+        [[PMThemeEngine sharedInstance] drawString:dayTitle
                                           withFont:dayFont
                                             inRect:dayHeaderFrame
                                     forElementType:PMThemeDayTitlesElementType

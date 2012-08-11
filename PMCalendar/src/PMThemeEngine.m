@@ -8,9 +8,10 @@
 
 #import "PMThemeEngine.h"
 #import "PMCalendarHelpers.h"
+#import <CoreText/CoreText.h>
 
 static PMThemeEngine* sharedInstance;
-
+static UIImage *gradientImage;
 @interface PMThemeEngine ()
 
 @property (nonatomic, strong) NSDictionary *themeDict;
@@ -95,7 +96,7 @@ static PMThemeEngine* sharedInstance;
         NSString *color = [colElement elementInThemeDictOfGenericType:PMThemeColorGenericType];
         NSNumber *pos = [colElement elementInThemeDictOfGenericType:PMThemePositionGenericType];
         [gradientColorsArray addObject:(id)[PMThemeEngine colorFromString:color].CGColor];
-        gradientLocations[i] = pos.floatValue;
+        gradientLocations[i] = 1 - pos.floatValue;
         i++;
     }
     CGGradientRef gradient = CGGradientCreateWithColors(colorSpace
@@ -109,6 +110,38 @@ static PMThemeEngine* sharedInstance;
                                 , 0);
     CGGradientRelease(gradient);
 //    CGColorSpaceRelease(colorSpace);
+}
+
++ (UIImage *)gradientImageForColorObj:(NSArray *)colorsArray
+                              andSize:(CGSize)size
+{
+    CGFloat width = size.width;         // max 1024 due to Core Graphics limitations
+    CGFloat height = size.height;       // max 1024 due to Core Graphics limitations
+    
+    // create a new bitmap image context
+    UIGraphicsBeginImageContext(CGSizeMake(width, height));
+    
+    // get context
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    // push context to make it current (need to do this manually because we are not drawing in a UIView)
+    UIGraphicsPushContext(context);
+    
+    //draw gradient
+    [PMThemeEngine drawGradientInContext:context
+                                  inRect:CGRectMake(0, 0, size.width, size.height)
+                               fromArray:colorsArray];
+    
+    // pop context
+    UIGraphicsPopContext();
+    
+    // get a UIImage from the image context
+    gradientImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    // clean up drawing environment
+    UIGraphicsEndImageContext();
+
+    return  gradientImage;
 }
 
 + (NSString *) keyNameForElementType: (PMThemeElementType) type
@@ -320,57 +353,72 @@ static PMThemeEngine* sharedInstance;
     
     CGSize sz = [string sizeWithFont:usedFont];
     BOOL isGradient = ![colorObj isKindOfClass:[NSString class]];
-    
-    if (!isGradient) // plain color or tiled image
-    {
-        [[PMThemeEngine colorFromString:colorObj] setFill];
-    }
+    CGSize shadowOffset = CGSizeZero;
 
     CGContextSaveGState(context);
-    if (isGradient)
     {
-        CGContextTranslateCTM(context, realRect.origin.x, realRect.origin.y+realRect.size.height);
-        CGContextScaleCTM(context, 1.0f, -1.0f);
-
-        CGContextSelectFont(context
-                            , [usedFont.fontName UTF8String]
-                            , usedFont.pointSize
-                            , kCGEncodingMacRoman);
-        CGContextSetTextDrawingMode(context, kCGTextClip);
-        CGContextSetTextPosition(context, (realRect.size.width - sz.width) / 2, (realRect.size.height - sz.height) / 2);
-    }
-
-    if (shadowDict)
-    {
-        CGSize shadowOffset = [[shadowDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
-        UIColor *shadowColor = [PMThemeEngine colorFromString:[shadowDict elementInThemeDictOfGenericType:PMThemeColorGenericType]];
-        NSNumber *blurRadius = [shadowDict elementInThemeDictOfGenericType:PMThemeShadowBlurRadiusType];
-        CGContextSetShadowWithColor(context
-                                    , shadowOffset
-                                    , blurRadius?[blurRadius floatValue]:sharedInstance.shadowBlurRadius
-                                    , shadowColor.CGColor);
-        if (isGradient) // gradient color
+        if (shadowDict)
         {
-            [shadowColor setFill];
+            shadowOffset = [[shadowDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
+            UIColor *shadowColor = [PMThemeEngine colorFromString:[shadowDict elementInThemeDictOfGenericType:PMThemeColorGenericType]];
+            [shadowColor set];
+        }
+        
+        CGPoint textPoint = CGPointMake((int)(realRect.origin.x + (realRect.size.width - sz.width) / 2)
+                                        , (int)(realRect.origin.y + realRect.size.height - 1));
+
+        CTFontRef font = CTFontCreateWithName((__bridge CFStringRef)[usedFont fontName]
+                                              , usedFont.pointSize
+                                              , NULL);
+        
+        // Create an attributed string
+        CFStringRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
+        CFTypeRef values[] = { font, kCFBooleanTrue };
+        CFDictionaryRef attr = CFDictionaryCreate(NULL, (const void **)&keys, (const void **)&values,
+                                                  sizeof(keys) / sizeof(keys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        CFAttributedStringRef attrString = CFAttributedStringCreate(NULL, (__bridge CFStringRef)string, attr);
+        CFRelease(attr);
+        
+        // Draw the string
+        CTLineRef line = CTLineCreateWithAttributedString(attrString);
+        CGContextSetTextMatrix(context, CGAffineTransformIdentity);  //Use this one when using standard view coordinates
+        CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1.0, -1.0)); //Use this one if the view's coordinates are flipped
+        if (!CGSizeEqualToSize(shadowOffset, CGSizeZero))
+        {
+            CGContextSetTextPosition(context
+                                     , textPoint.x + shadowOffset.width
+                                     , textPoint.y + shadowOffset.height);
+            CGContextSetTextDrawingMode(context, kCGTextFill);
+            CTLineDraw(line, context);
+        }
+
+        CGContextSetTextPosition(context, textPoint.x, textPoint.y);
+
+        // Clean up
+        if (isGradient)
+        {
+            CGContextSetTextDrawingMode(context, kCGTextClip);
+            CTLineDraw(line, context);
+
+            [PMThemeEngine drawGradientInContext: context
+                                          inRect: CGRectMake(textPoint.x
+                                                             , textPoint.y - usedFont.pointSize + 1
+                                                             , sz.width
+                                                             , usedFont.pointSize)
+                                       fromArray: colorObj];
+
+            CFRelease(line);
+            CFRelease(attrString);
+            CFRelease(font);
+        }
+        else
+        {
+            CGContextSetTextDrawingMode(context, kCGTextFill);
+            [[PMThemeEngine colorFromString:colorObj] setFill];
+            
+            CTLineDraw(line, context);
         }
     }
-    
-    if (!isGradient)
-    {
-        [string drawInRect: realRect 
-                  withFont: usedFont 
-             lineBreakMode: UILineBreakModeWordWrap
-                 alignment: UITextAlignmentCenter];
-    }
-    else
-    {
-        CGContextShowText(context, [string UTF8String], strlen([string UTF8String]));
-        CGContextClip(context);
-        [PMThemeEngine drawGradientInContext: context 
-                                      inRect: CGRectMake(0, (realRect.size.height - sz.height) / 2 - 1, realRect.size.width, sz.height) 
-                                   fromArray: colorObj];
-    }
-    
     CGContextRestoreGState(context);
 }
 

@@ -16,9 +16,6 @@
 #import "PMDimmingView.h"
 #import "PMTheme.h"
 
-/*static CGSize defaultSize = kPMThemeDefaultSize;
-CGSize arrowSize = kPMThemeArrowSize;
-CGSize outerPadding = kPMThemeOuterPadding; // TBD*/
 NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 
 @interface PMCalendarController ()
@@ -124,6 +121,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     return [self init];
 }
 
+- (id) initWithThemeName:(NSString *) themeName andSize:(CGSize) size
+{
+    [PMThemeEngine sharedInstance].themeName = themeName;
+    return [self initWithSize:size];
+}
 
 #pragma mark - rotation handling -
 

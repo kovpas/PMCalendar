@@ -11,7 +11,11 @@ PMCalendar uses iOS' CoreGraphics and CoreText frameworks.
 
 It's definitely not bug-free, so if you're going to use PMCalendar in production, please test it hard ;)
 
-Feel free to concact me in case of any questions or suggestions. If you feel you know how to improve PMCalendar, don't hesitate to send a pull request.
+Feel free to concact me in case of any questions or suggestions. If you feel you know how to improve PMCalendar don't hesitate to contact me or send a pull request.
+
+Legal
+----------
+PMCalendar is released under the MIT License.
 
 Screenshots
 ----------

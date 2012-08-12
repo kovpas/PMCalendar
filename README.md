@@ -155,7 +155,7 @@ Implemented properties
 **Direction of the arrow (similar to UIPopoverController's arrowDirection)**
 
 ``` objective-c
-    @property (nonatomic, readonly) UIPopoverArrowDirection arrowDirection;
+    @property (nonatomic, readonly) PMCalendarArrowDirection arrowDirection;
 ```
 
 **Size of a calendar controller**

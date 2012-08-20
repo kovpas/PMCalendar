@@ -40,6 +40,11 @@
 - (id) initWithThemeName:(NSString *) themeName;
 
 /**
+ * Creates calendar controller with given theme name and specified size.
+ */
+- (id) initWithThemeName:(NSString *) themeName andSize:(CGSize) size;
+
+/**
  * Allows you to present a calendar from a rect in a particular view. 
  * "arrowDirections" is a bitfield which specifies what arrow directions are allowed 
  * when laying out the calendar.

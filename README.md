@@ -1,13 +1,21 @@
-PMCalendar v0.1
+PMCalendar v0.2
 ==========
 
 Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iPad) and higher.
 
 UI is inspired by [ocrickard](https://github.com/ocrickard)'s [OCCalendarController](https://github.com/ocrickard/OCCalendar). It's quite good component, but doesn't have some useful features which I wanted to see. Unfortunately [OCCalendarController](https://github.com/ocrickard/OCCalendar) very hard to maintain, so I decided to create my own implementation.
 
-PMCalendar supports selection of multiple dates within one or several months, appears as a popover (if you used UIPopoverController before, you'll find PMCalendar management very similar), supports orientation changes and does not require any third party frameworks.
+PMCalendar supports selection of multiple dates within one or several months, appears as a popover (if you used UIPopoverController before, you'll find PMCalendar management very similar), supports orientation changes out of the box and does not require any third party frameworks.
+
+PMCalendar uses iOS' CoreGraphics and CoreText frameworks.
 
 It's definitely not bug-free, so if you're going to use PMCalendar in production, please test it hard ;)
+
+Feel free to concact me in case of any questions or suggestions. If you feel you know how to improve PMCalendar don't hesitate to contact me or send a pull request.
+
+Legal
+----------
+PMCalendar is released under the MIT License.
 
 Screenshots
 ----------
@@ -18,18 +26,30 @@ Screenshots
 Usage
 ----------
 
- - Add PMCalendar directory to your Xcode project.
+ - Add PMCalendar directory to your Xcode project
+ - Add CoreGraphics and CoreText frameworks to your project
  - #import "PMCalendar.h"
- - Create instance of PMCalendarController with wanted size:
+ - Create instance of PMCalendarController with specific theme name (see below) and size:
 
 ``` objective-c
+        PMCalendarController *calendarController = [[PMCalendarController alloc] initWithThemeName:@"my super theme name" andSize:CGSizeMake(300, 200)];
+```
+
+ - Or use defaults:
+
+``` objective-c
+        // default theme name (default.plist) and size (see default.plist for details)
+        PMCalendarController *calendarController = [[PMCalendarController alloc] init];
+```
+
+``` objective-c
+        // default theme name (default.plist) and specific size
         PMCalendarController *calendarController = [[PMCalendarController alloc] initWithSize:CGSizeMake(300, 200)];
 ```
 
- - Or use default:
-
 ``` objective-c
-        PMCalendarController *calendarController = [[PMCalendarController alloc] init];
+        // specific theme name and default calendar size for this theme
+        PMCalendarController *calendarController = [[PMCalendarController alloc] initWithThemeName:@"my super theme name"];
 ```
 
 - Implement PMCalendarControllerDelegate methods to be aware of controller's state change:
@@ -135,7 +155,7 @@ Implemented properties
 **Direction of the arrow (similar to UIPopoverController's arrowDirection)**
 
 ``` objective-c
-    @property (nonatomic, readonly) UIPopoverArrowDirection arrowDirection;
+    @property (nonatomic, readonly) PMCalendarArrowDirection arrowDirection;
 ```
 
 **Size of a calendar controller**
@@ -144,12 +164,15 @@ Implemented properties
     @property (nonatomic, assign) CGSize size;
 ```
 
-Themes (pre-alpha! :))
+Themes (beta!)
 ----------
-You can play around with themes by enabling MIMIC_APPLE_THEME define in PMCalendarDemo-Prefix.pch.
 
-I'll add documentation as soon as the feature is ready.
+Themes allows you to create your own calendar component look without touching PMCalendar code. In theory... On practice current implementation is a compromise between flexibility and speed of drawing of the component. Therefore, some theme properties which you expect to be working does not work :).
 
-By setting up custom theme you can get something like this:
+However, current implementation is powerful enough to create for example something like this:
 
 ![Apple calendar theme 1](PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](PMCalendar/raw/master/screenshots/apple_theme_2.png)
+
+Themes documentation is in progress, so for now please use two examples ("default.plist" and "apple calendar.plist") as a refernce.
+
+If you wish to share theme you created for PMCalendar, please contact me, I'll add it together with a link to your project :).

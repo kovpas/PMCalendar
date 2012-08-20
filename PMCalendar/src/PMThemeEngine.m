@@ -112,38 +112,6 @@ static UIImage *gradientImage;
 //    CGColorSpaceRelease(colorSpace);
 }
 
-+ (UIImage *)gradientImageForColorObj:(NSArray *)colorsArray
-                              andSize:(CGSize)size
-{
-    CGFloat width = size.width;         // max 1024 due to Core Graphics limitations
-    CGFloat height = size.height;       // max 1024 due to Core Graphics limitations
-    
-    // create a new bitmap image context
-    UIGraphicsBeginImageContext(CGSizeMake(width, height));
-    
-    // get context
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    // push context to make it current (need to do this manually because we are not drawing in a UIView)
-    UIGraphicsPushContext(context);
-    
-    //draw gradient
-    [PMThemeEngine drawGradientInContext:context
-                                  inRect:CGRectMake(0, 0, size.width, size.height)
-                               fromArray:colorsArray];
-    
-    // pop context
-    UIGraphicsPopContext();
-    
-    // get a UIImage from the image context
-    gradientImage = UIGraphicsGetImageFromCurrentImageContext();
-    
-    // clean up drawing environment
-    UIGraphicsEndImageContext();
-
-    return  gradientImage;
-}
-
 + (NSString *) keyNameForElementType: (PMThemeElementType) type
 {
     NSString *result = nil;
@@ -308,6 +276,8 @@ static UIImage *gradientImage;
     
     NSString* filePath = [[NSBundle mainBundle] pathForResource:themeName ofType:@"plist"];
     self.themeDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    
+    NSAssert(self.themeDict, @"FATAL ERROR: Cannot initialize theme! Please check that you have at least default theme added to your project.");
     
     NSDictionary *generalSettings = [sharedInstance themeDictForType:PMThemeGeneralElementType
                                                              subtype:PMThemeNoSubtype];

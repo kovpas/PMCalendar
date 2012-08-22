@@ -193,57 +193,88 @@
 
     CGSize arrowSize = [arrowSizeDict pmThemeGenerateSize];
     CGSize arrowOffset = [arrowOffsetDict pmThemeGenerateSize];
+    BOOL showsLeftArrow = YES;
+    BOOL showsRightArrow = YES;
     
-    //// backArrow Drawing
-    UIBezierPath* backArrowPath = [UIBezierPath bezierPath];
-    [backArrowPath moveToPoint: CGPointMake(hDiff / 2
-                                            , headerHeight / 2)]; // left-center corner
-    [backArrowPath addLineToPoint: CGPointMake(arrowSize.width + hDiff / 2
-                                               , headerHeight / 2 + arrowSize.height / 2)]; // right-bottom corner
-    [backArrowPath addLineToPoint: CGPointMake( arrowSize.width + hDiff / 2
-                                               ,  headerHeight / 2 - arrowSize.height / 2)]; // right-top corner
-    [backArrowPath addLineToPoint: CGPointMake( hDiff / 2
-                                               ,  headerHeight / 2)];  // back to left-center corner
-    [backArrowPath closePath];
-    
-    CGAffineTransform transform = CGAffineTransformMakeTranslation(arrowOffset.width - shadowPadding.left
-                                                                   , arrowOffset.height);
-    [backArrowPath applyTransform:transform];
+    if (self.allowedPeriod)
+    {
+        if ([[_currentDate dateByAddingMonths:-1] isBefore:[self.allowedPeriod.startDate monthStartDate]])
+        {
+            showsLeftArrow = NO;
+        }
+        else if ([[_currentDate dateByAddingMonths:1] isAfter:self.allowedPeriod.endDate])
+        {
+            showsRightArrow = NO;
+        }
+    }
 
-    [[PMThemeEngine sharedInstance] drawPath:backArrowPath
-                              forElementType:PMThemeMonthArrowsElementType
-                                     subType:PMThemeMainSubtype
-                                   inContext:context];
-    leftArrowRect = CGRectInset(backArrowPath.bounds, -20, -20);
+    if (showsLeftArrow)
+    {
+        //// backArrow Drawing
+        UIBezierPath* backArrowPath = [UIBezierPath bezierPath];
+        [backArrowPath moveToPoint: CGPointMake(hDiff / 2
+                                                , headerHeight / 2)]; // left-center corner
+        [backArrowPath addLineToPoint: CGPointMake(arrowSize.width + hDiff / 2
+                                                   , headerHeight / 2 + arrowSize.height / 2)]; // right-bottom corner
+        [backArrowPath addLineToPoint: CGPointMake( arrowSize.width + hDiff / 2
+                                                   ,  headerHeight / 2 - arrowSize.height / 2)]; // right-top corner
+        [backArrowPath addLineToPoint: CGPointMake( hDiff / 2
+                                                   ,  headerHeight / 2)];  // back to left-center corner
+        [backArrowPath closePath];
+        
+        CGAffineTransform transform = CGAffineTransformMakeTranslation(arrowOffset.width - shadowPadding.left
+                                                                       , arrowOffset.height);
+        [backArrowPath applyTransform:transform];
 
-    //// forwardArrow Drawing
-    UIBezierPath* forwardArrowPath = [UIBezierPath bezierPath];
-    [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2
-                                               ,  headerHeight / 2)]; // right-center corner
-    [forwardArrowPath addLineToPoint: CGPointMake( -arrowSize.width + width - hDiff / 2
-                                                  , headerHeight / 2 + arrowSize.height / 2)];  // left-bottom corner
-    [forwardArrowPath addLineToPoint: CGPointMake(-arrowSize.width + width - hDiff / 2
-                                                   , headerHeight / 2 - arrowSize.height / 2)]; // left-top corner
-    [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2
-                                                  , headerHeight / 2)]; // back to right-center corner
-    [forwardArrowPath closePath];
-    
-    transform = CGAffineTransformMakeTranslation(-arrowOffset.width - shadowPadding.left, arrowOffset.height);
-    [forwardArrowPath applyTransform:transform];
+        [[PMThemeEngine sharedInstance] drawPath:backArrowPath
+                                  forElementType:PMThemeMonthArrowsElementType
+                                         subType:PMThemeMainSubtype
+                                       inContext:context];
+        leftArrowRect = CGRectInset(backArrowPath.bounds, -20, -20);
+    }
 
-    [[PMThemeEngine sharedInstance] drawPath:forwardArrowPath
-                              forElementType:PMThemeMonthArrowsElementType
-                                     subType:PMThemeMainSubtype
-                                   inContext:context];
-    rightArrowRect = CGRectInset(forwardArrowPath.bounds, -20, -20);
+    if (showsRightArrow)
+    {
+        //// forwardArrow Drawing
+        UIBezierPath* forwardArrowPath = [UIBezierPath bezierPath];
+        [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2
+                                                   ,  headerHeight / 2)]; // right-center corner
+        [forwardArrowPath addLineToPoint: CGPointMake( -arrowSize.width + width - hDiff / 2
+                                                      , headerHeight / 2 + arrowSize.height / 2)];  // left-bottom corner
+        [forwardArrowPath addLineToPoint: CGPointMake(-arrowSize.width + width - hDiff / 2
+                                                       , headerHeight / 2 - arrowSize.height / 2)]; // left-top corner
+        [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2
+                                                      , headerHeight / 2)]; // back to right-center corner
+        [forwardArrowPath closePath];
+        
+        CGAffineTransform transform = CGAffineTransformMakeTranslation(-arrowOffset.width - shadowPadding.left, arrowOffset.height);
+        [forwardArrowPath applyTransform:transform];
+
+        [[PMThemeEngine sharedInstance] drawPath:forwardArrowPath
+                                  forElementType:PMThemeMonthArrowsElementType
+                                         subType:PMThemeMainSubtype
+                                       inContext:context];
+        rightArrowRect = CGRectInset(forwardArrowPath.bounds, -20, -20);
+    }
 }
 
 - (void) setCurrentDate:(NSDate *)currentDate
 {
-    _currentDate = currentDate;
+    if (self.allowedPeriod)
+    {
+        if (([currentDate isBefore:[self.allowedPeriod.startDate monthStartDate]])
+            || ([currentDate isAfter:self.allowedPeriod.endDate]))
+        {
+            return;
+        }
+    }
+    
+    _currentDate = [currentDate monthStartDate];
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *eComponents = [gregorian components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit 
+    NSDateComponents *eComponents = [gregorian components:NSDayCalendarUnit
+                                                             | NSMonthCalendarUnit
+                                                             | NSYearCalendarUnit
                                                  fromDate:_currentDate];
     
     BOOL needsRedraw = NO;
@@ -325,11 +356,44 @@
     self.daysView.selectedPeriod = _period;
     [self.daysView redrawComponent];
 }
+
+- (void)setAllowedPeriod:(PMPeriod *)allowedPeriod
+{
+    if (allowedPeriod != _allowedPeriod)
+    {
+        _allowedPeriod = allowedPeriod;
+        _allowedPeriod.startDate = [_allowedPeriod.startDate midnightDate];
+        _allowedPeriod.endDate = [_allowedPeriod.endDate midnightDate];
+    }
+}
+
 - (void)setPeriod:(PMPeriod *)period
 {
-    if (![_period isEqual:period])
+    PMPeriod *localPeriod = [period copy];
+    if (self.allowedPeriod)
     {
-        _period = period;
+        if ([localPeriod.startDate isBefore:self.allowedPeriod.startDate])
+        {
+            localPeriod.startDate = self.allowedPeriod.startDate;
+        }
+        else if ([localPeriod.startDate isAfter:self.allowedPeriod.endDate])
+        {
+            localPeriod.startDate = self.allowedPeriod.endDate;
+        }
+
+        if ([localPeriod.endDate isBefore:self.allowedPeriod.startDate])
+        {
+            localPeriod.endDate = self.allowedPeriod.startDate;
+        }
+        else if ([localPeriod.endDate isAfter:self.allowedPeriod.endDate])
+        {
+            localPeriod.endDate = self.allowedPeriod.endDate;
+        }
+    }
+
+    if (![_period isEqual:localPeriod])
+    {
+        _period = localPeriod;
         
         if (!_currentDate)
         {
@@ -708,7 +772,6 @@
                                          inContext:context];
     }
 
-	int finalRow    = 0;
 	int day         = 1;
 
 	for (int i = 0; i < 6; i++) 
@@ -800,8 +863,6 @@
                                                    subType:PMThemeMainSubtype
                                                  inContext:context];
                 
-                finalRow = i;
-                
 				++day;
 			}
 		}
@@ -844,7 +905,6 @@
                                              inContext:context];
         }
     }
-    PMLog( @"End" );
 }
 
 - (void) setCurrentDate:(NSDate *)currentDate

@@ -12,7 +12,7 @@
  * PMPeriod is a simple class which represents a period of time.
  * PMPeriod has start and end date which could be the same in order to represent one-day period.
  */
-@interface PMPeriod : NSObject
+@interface PMPeriod : NSObject <NSCopying>
 
 @property (nonatomic, strong) NSDate *startDate;
 @property (nonatomic, strong) NSDate *endDate;

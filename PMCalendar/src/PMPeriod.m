@@ -87,4 +87,13 @@
     return NO;
 }
 
+- (id) copyWithZone:(NSZone *) zone
+{
+    PMPeriod *copiedPeriod = [[PMPeriod alloc] init];
+    copiedPeriod.startDate = [_startDate copyWithZone: zone];
+    copiedPeriod.endDate = [_endDate copyWithZone: zone];
+    
+    return copiedPeriod;
+}
+
 @end

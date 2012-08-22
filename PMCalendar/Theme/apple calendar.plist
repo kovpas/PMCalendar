@@ -9,10 +9,10 @@
 			<key>Width</key>
 			<integer>320</integer>
 			<key>Height</key>
-			<integer>310</integer>
+			<integer>309</integer>
 		</dict>
 		<key>Header height</key>
-		<integer>46</integer>
+		<integer>45</integer>
 		<key>Outer padding</key>
 		<dict>
 			<key>Height</key>
@@ -45,21 +45,6 @@
 	<dict>
 		<key>Background</key>
 		<dict>
-			<key> grad</key>
-			<array>
-				<dict>
-					<key>Color</key>
-					<string>226,226,228</string>
-					<key>Position</key>
-					<integer>0</integer>
-				</dict>
-				<dict>
-					<key>Color</key>
-					<string>204,203,208</string>
-					<key>Position</key>
-					<integer>1</integer>
-				</dict>
-			</array>
 			<key>Color</key>
 			<string>background.png</string>
 			<key>Shadow</key>
@@ -69,12 +54,12 @@
 				<key>Offset</key>
 				<dict>
 					<key>Width</key>
-					<integer>1</integer>
+					<integer>0</integer>
 					<key>Height</key>
 					<integer>1</integer>
 				</dict>
 				<key>Blur radius</key>
-				<integer>2</integer>
+				<integer>9</integer>
 			</dict>
 		</dict>
 	</dict>
@@ -160,6 +145,8 @@
 			<string>115,137,165</string>
 			<key>Shadow</key>
 			<dict>
+				<key>Type</key>
+				<string>inner</string>
 				<key>Color</key>
 				<string>0,0,0</string>
 				<key>Offset</key>
@@ -182,11 +169,11 @@
 			<key>Insets</key>
 			<dict>
 				<key>Top</key>
-				<integer>-2</integer>
+				<integer>-1</integer>
 				<key>Left</key>
 				<integer>-1</integer>
 				<key>Bottom</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>Right</key>
 				<integer>0</integer>
 			</dict>
@@ -226,6 +213,8 @@
 			<string>25,128,229</string>
 			<key>Shadow</key>
 			<dict>
+				<key>Type</key>
+				<string>inner</string>
 				<key>Color</key>
 				<string>0,0,0</string>
 				<key>Offset</key>
@@ -248,11 +237,11 @@
 			<key>Insets</key>
 			<dict>
 				<key>Top</key>
-				<integer>-2</integer>
+				<integer>-1</integer>
 				<key>Left</key>
 				<integer>-1</integer>
 				<key>Bottom</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>Right</key>
 				<integer>0</integer>
 			</dict>
@@ -528,11 +517,11 @@
 			<key>Insets</key>
 			<dict>
 				<key>Top</key>
-				<integer>-2</integer>
+				<integer>-1</integer>
 				<key>Left</key>
 				<integer>-1</integer>
 				<key>Bottom</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>Right</key>
 				<integer>0</integer>
 			</dict>

@@ -19,29 +19,3 @@
 #define kPMThemeCornerRadius [PMThemeEngine sharedInstance].cornerRadius
 #define kPMThemeArrowSize [PMThemeEngine sharedInstance].arrowSize
 #define kPMThemeOuterPadding [PMThemeEngine sharedInstance].outerPadding
-
-
-#ifdef MIMIC_APPLE_THEME
-
-// 226,226,228 (0)
-// 204,203,208 (1)
-
-
-#define kPMThemeBackgroundTodayColor UIColorMakeRGB(115, 137, 165)
-#define kPMThemeBackgroundTodayStrokeWidth 2
-#define kPMThemeBackgroundTodayStrokeColor UIColorMakeRGB(54, 79, 114)
-#define kPMThemeBackgroundTodayOffset (UIOffset){0, -1}
-#define kPMThemeBackgroundTodaySizeInset (CGSize){1, 1}
-#define kPMThemeBackgroundTodayInnerShadowColor UIColorMakeRGB(0, 0, 0)
-#define kPMThemeBackgroundTodayInnerShadowOffset (UIOffset){1, 1}
-#define kPMThemeBackgroundTodayInnerShadowBlurRadius 5
-
-
-#define kPMThemeCalendarDigitsTodayColor [UIColor whiteColor]
-#define kPMThemeCalendarDigitsTodayShadowColor UIColorMakeRGB(35, 76, 117)
-#define kPMThemeCalendarDigitsTodayShadowOffset (UIOffset){0, 1}
-
-
-#define kPMThemeSelectionCeilCoordinates YES
-
-#endif

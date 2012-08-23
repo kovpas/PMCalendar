@@ -166,6 +166,12 @@ Implemented properties
     @property (nonatomic, assign) CGSize size;
 ```
 
+**Returns whether the popover is visible (presented) or not**
+
+``` objective-c
+    @property (nonatomic, assign, readonly, getter = isCalendarVisible) BOOL calendarVisible;
+```
+
 Themes (beta!)
 ----------
 

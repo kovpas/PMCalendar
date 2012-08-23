@@ -1,4 +1,4 @@
-PMCalendar v0.2
+PMCalendar v0.3
 ==========
 
 Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iPad) and higher.

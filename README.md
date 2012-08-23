@@ -130,7 +130,7 @@ Implemented properties
     @property (nonatomic, strong) PMPeriod *period;
 ```
 
-*TBI!* **Period allowed for selection**
+**Period allowed for selection**
 
 ``` objective-c
     @property (nonatomic, strong) PMPeriod *allowedPeriod;

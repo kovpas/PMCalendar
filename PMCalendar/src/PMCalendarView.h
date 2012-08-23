@@ -45,6 +45,8 @@
 @property (nonatomic, assign) BOOL allowsLongPressMonthChange;
 @property (nonatomic, assign) id<PMCalendarViewDelegate> delegate;
 
+@property (nonatomic, strong) NSDate *currentDate;
+
 @end
 
 @protocol PMCalendarViewDelegate <NSObject>

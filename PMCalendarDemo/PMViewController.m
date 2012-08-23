@@ -60,6 +60,7 @@
                                   animated:YES];
     }
 
+    self.pmCC.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];
     [self calendarController:pmCC didChangePeriod:pmCC.period];
 }
 

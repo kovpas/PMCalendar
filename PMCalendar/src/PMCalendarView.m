@@ -18,10 +18,11 @@
 @interface PMDaysView : UIView
 
 @property (nonatomic, strong) UIFont *font;
-@property (nonatomic, strong) NSDate *currentDate;
+@property (nonatomic, strong) NSDate *currentDate; // month to show
 @property (nonatomic, strong) PMPeriod *selectedPeriod;
 @property (nonatomic, strong) NSArray *rects;
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
+@property (nonatomic, assign) CGRect initialFrame;
 
 - (void) redrawComponent;
 
@@ -38,7 +39,7 @@
 @property (nonatomic, assign) CGPoint panPoint;
 @property (nonatomic, strong) PMDaysView *daysView;
 @property (nonatomic, strong) PMSelectionView *selectionView;
-@property (nonatomic, strong) NSDate *currentDate; // month to show
+@property (nonatomic, assign) CGRect initialFrame;
 
 - (NSInteger) indexForDate: (NSDate *)date;
 - (NSDate *) dateForPoint: (CGPoint)point;
@@ -70,6 +71,7 @@
 @synthesize selectionView = _selectionView;
 @synthesize allowsPeriodSelection = _allowsPeriodSelection;
 @synthesize allowsLongPressMonthChange = _allowsLongPressMonthChange;
+@synthesize initialFrame = _initialFrame;
 
 - (void)dealloc
 {
@@ -82,7 +84,8 @@
     {
         return nil;
     }
-    
+    self.initialFrame = frame;
+
     self.backgroundColor = [UIColor clearColor];
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.mondayFirstDayOfWeek = NO;
@@ -103,6 +106,7 @@
     [self addSubview:self.selectionView];
 
     self.daysView = [[PMDaysView alloc] initWithFrame:self.bounds];
+    self.daysView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:self.daysView];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -133,8 +137,8 @@
     CGFloat headerHeight = kPMThemeHeaderHeight;
     UIEdgeInsets shadowPadding = kPMThemeShadowPadding;
 
-    CGFloat width = self.frame.size.width + shadowPadding.left + shadowPadding.right;
-    CGFloat height = self.frame.size.height;
+    CGFloat width = _initialFrame.size.width + shadowPadding.left + shadowPadding.right;
+    CGFloat height = _initialFrame.size.height;
     CGFloat hDiff  = width / 7;
     CGFloat vDiff  = (height - headerHeight) / (kPMThemeDayTitlesInHeaderIntOffset + 5);
     
@@ -321,7 +325,7 @@
 
 - (UIFont *) font
 {
-    NSInteger newFontSize = self.frame.size.width / 20;
+    NSInteger newFontSize = _initialFrame.size.width / 20;
     if (!_font || fontSize == 0 || fontSize != newFontSize)
     {
         _font = [UIFont fontWithName: @"Helvetica" size: newFontSize];
@@ -423,8 +427,8 @@
 
 - (NSDate *) dateForPoint: (CGPoint)point
 {
-    CGFloat width  = self.frame.size.width;
-    CGFloat height = self.frame.size.height;
+    CGFloat width  = _initialFrame.size.width;
+    CGFloat height = _initialFrame.size.height;
     CGFloat hDiff  = width / 7;
     CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
     
@@ -483,7 +487,7 @@
 {
     CGPoint point  = [recognizer locationInView:self];
     
-    CGFloat height = self.frame.size.height;
+    CGFloat height = _initialFrame.size.height;
     CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
     
     if (point.y > kPMThemeHeaderHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
@@ -494,7 +498,7 @@
         }
         else if (([recognizer state] == UIGestureRecognizerStateChanged) && (recognizer.numberOfTouches == 1))
         {
-            if ((point.x < 20) || (point.x > self.frame.size.width - 20))
+            if ((point.x < 20) || (point.x > _initialFrame.size.width - 20))
             {
                 self.panPoint = point;
                 if (self.panTimer)
@@ -537,7 +541,7 @@
 {
     CGPoint point  = [recognizer locationInView:self];
     
-    CGFloat height = self.frame.size.height;
+    CGFloat height = _initialFrame.size.height;
     CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
 
     if (point.y > kPMThemeHeaderHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
@@ -574,7 +578,7 @@
         }
 
         CGPoint point = [recognizer locationInView:self];
-        CGFloat height = self.frame.size.height;
+        CGFloat height = _initialFrame.size.height;
         CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
         
         if (point.y > kPMThemeHeaderHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
@@ -655,6 +659,7 @@
 @synthesize selectedPeriod = _selectedPeriod;
 @synthesize mondayFirstDayOfWeek = _mondayFirstDayOfWeek;
 @synthesize rects;
+@synthesize initialFrame = _initialFrame;
 
 - (void)dealloc
 {
@@ -672,7 +677,8 @@
     {
         return nil;
     }
-    
+    self.initialFrame = frame;
+
     self.backgroundColor = [UIColor clearColor];
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
@@ -686,9 +692,9 @@
     CGFloat headerHeight       = kPMThemeHeaderHeight;
     UIFont *calendarFont       = kPMThemeDefaultFont;
 
-    CGFloat width  = self.frame.size.width + shadowPadding.left + shadowPadding.right;
+    CGFloat width  = _initialFrame.size.width + shadowPadding.left + shadowPadding.right;
     CGFloat hDiff  = width / 7;
-    CGFloat height = self.frame.size.height;
+    CGFloat height = _initialFrame.size.height;
     CGFloat vDiff  = (height - headerHeight) / (kPMThemeDayTitlesInHeaderIntOffset + 6);
     CGSize shadow2Offset = CGSizeMake(1, 1); // TODO: remove!
 
@@ -793,8 +799,8 @@
                     if (todayBGDict)
                     {
 
-                        CGFloat width  = self.frame.size.width + shadowPadding.left + shadowPadding.right;
-                        CGFloat height = self.frame.size.height;
+                        CGFloat width  = _initialFrame.size.width + shadowPadding.left + shadowPadding.right;
+                        CGFloat height = _initialFrame.size.height;
                         CGFloat hDiff = (width + shadowPadding.left + shadowPadding.right - kPMThemeInnerPadding.width * 2) / 7;
                         CGFloat vDiff = (height - kPMThemeHeaderHeight - kPMThemeInnerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7);
                         CGSize bgOffset = [[todayBGDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];

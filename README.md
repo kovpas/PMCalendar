@@ -71,7 +71,7 @@ Usage
 ``` objective-c
          [calendarController presentCalendarFromView:pressedButton
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
-					   isPopover:YES
+                                           isPopover:YES
                                             animated:YES];
 ```
 
@@ -81,7 +81,7 @@ Usage
          [calendarController presentCalendarFromRect:CGRectMake(100, 100, 10, 10)
                                               inView:self.view
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
-					   isPopover:NO
+                                           isPopover:YES
                                             animated:YES];
 ```
 
@@ -173,7 +173,7 @@ Themes allows you to create your own calendar component look without touching PM
 
 However, current implementation is powerful enough to create for example something like this:
 
-![Apple calendar theme 1](PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](PMCalendar/raw/master/screenshots/apple_theme_2.png)
+![Apple calendar theme 1](http://github.com/kovpas/PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](http://github.com/kovpas/PMCalendar/raw/master/screenshots/apple_theme_2.png)
 
 Themes documentation is in progress, so for now please use two examples ("default.plist" and "apple calendar.plist") as a refernce.
 

@@ -19,9 +19,9 @@ PMCalendar is released under the MIT License.
 
 Screenshots
 ----------
-![Screenshot 1](PMCalendar/raw/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](PMCalendar/raw/master/screenshots/screenshot_2.png)
+![Screenshot 1](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_2.png)
 
-![Screenshot 3](PMCalendar/raw/master/screenshots/screenshot_3.png)
+![Screenshot 3](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_3.png)
 
 Usage
 ----------
@@ -71,6 +71,7 @@ Usage
 ``` objective-c
          [calendarController presentCalendarFromView:pressedButton
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
+					   isPopover:YES
                                             animated:YES];
 ```
 
@@ -80,6 +81,7 @@ Usage
          [calendarController presentCalendarFromRect:CGRectMake(100, 100, 10, 10)
                                               inView:self.view
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
+					   isPopover:NO
                                             animated:YES];
 ```
 

@@ -655,7 +655,7 @@
 	int weekdayOfFirst = ([dateOnFirst weekday] + (_mondayFirstDayOfWeek?5:6)) % 7 + 1;
 	int numDaysInMonth = [dateOnFirst numberOfDaysInMonth];
     NSDate *monthStartDate = [_currentDate monthStartDate];
-    int todayIndex  = [[[NSDate date] dateWithoutTime] daysSinceDate:monthStartDate];
+    int todayIndex = [[[NSDate date] dateWithoutTime] daysSinceDate:monthStartDate] + weekdayOfFirst - 1;
 
     //Find number of days in previous month
     NSDate *prevDateOnFirst = [[_currentDate dateByAddingMonths:-1] monthStartDate];

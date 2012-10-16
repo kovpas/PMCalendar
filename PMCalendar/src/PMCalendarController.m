@@ -127,6 +127,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     return [self initWithSize:size];
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - rotation handling -
 
 - (void)didRotate:(NSNotification *) notice

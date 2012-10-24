@@ -11,7 +11,6 @@
 #import <CoreText/CoreText.h>
 
 static PMThemeEngine* sharedInstance;
-static UIImage *gradientImage;
 @interface PMThemeEngine ()
 
 @property (nonatomic, strong) NSDictionary *themeDict;

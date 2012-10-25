@@ -350,6 +350,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     void (^completionBlock)(BOOL) = ^(BOOL finished){
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         [self.view removeFromSuperview];
+        self.mainView.transform = CGAffineTransformMakeScale(1.0, 1.0);
         if ([self.delegate respondsToSelector:@selector(calendarControllerDidDismissCalendar:)])
         {
             [self.delegate calendarControllerDidDismissCalendar:self];

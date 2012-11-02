@@ -375,10 +375,6 @@ static PMThemeEngine* sharedInstance;
                                                              , sz.width
                                                              , usedFont.pointSize)
                                        fromArray: colorObj];
-
-            CFRelease(line);
-            CFRelease(attrString);
-            CFRelease(font);
         }
         else
         {
@@ -387,6 +383,10 @@ static PMThemeEngine* sharedInstance;
             
             CTLineDraw(line, context);
         }
+        
+        CFRelease(line);
+        CFRelease(attrString);
+        CFRelease(font);
     }
     CGContextRestoreGState(context);
 }

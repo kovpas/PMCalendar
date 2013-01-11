@@ -59,6 +59,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 @synthesize size = _size;
 @synthesize savedArrowPosition = _savedArrowPosition;
 
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - object initializers -
 
 - (void) initializeWithSize:(CGSize) size

@@ -18,10 +18,11 @@
 @interface PMDaysView : UIView
 
 @property (nonatomic, strong) UIFont *font;
-@property (nonatomic, strong) NSDate *currentDate;
+@property (nonatomic, strong) NSDate *currentDate; // month to show
 @property (nonatomic, strong) PMPeriod *selectedPeriod;
 @property (nonatomic, strong) NSArray *rects;
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
+@property (nonatomic, assign) CGRect initialFrame;
 
 - (void) redrawComponent;
 
@@ -38,7 +39,7 @@
 @property (nonatomic, assign) CGPoint panPoint;
 @property (nonatomic, strong) PMDaysView *daysView;
 @property (nonatomic, strong) PMSelectionView *selectionView;
-@property (nonatomic, strong) NSDate *currentDate; // month to show
+@property (nonatomic, assign) CGRect initialFrame;
 
 - (NSInteger) indexForDate: (NSDate *)date;
 - (NSDate *) dateForPoint: (CGPoint)point;
@@ -70,6 +71,7 @@
 @synthesize selectionView = _selectionView;
 @synthesize allowsPeriodSelection = _allowsPeriodSelection;
 @synthesize allowsLongPressMonthChange = _allowsLongPressMonthChange;
+@synthesize initialFrame = _initialFrame;
 
 - (void)dealloc
 {
@@ -82,7 +84,8 @@
     {
         return nil;
     }
-    
+    self.initialFrame = frame;
+
     self.backgroundColor = [UIColor clearColor];
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.mondayFirstDayOfWeek = NO;
@@ -103,6 +106,7 @@
     [self addSubview:self.selectionView];
 
     self.daysView = [[PMDaysView alloc] initWithFrame:self.bounds];
+    self.daysView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:self.daysView];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -133,8 +137,8 @@
     CGFloat headerHeight = kPMThemeHeaderHeight;
     UIEdgeInsets shadowPadding = kPMThemeShadowPadding;
 
-    CGFloat width = self.frame.size.width + shadowPadding.left + shadowPadding.right;
-    CGFloat height = self.frame.size.height;
+    CGFloat width = _initialFrame.size.width + shadowPadding.left + shadowPadding.right;
+    CGFloat height = _initialFrame.size.height;
     CGFloat hDiff  = width / 7;
     CGFloat vDiff  = (height - headerHeight) / (kPMThemeDayTitlesInHeaderIntOffset + 5);
     
@@ -193,57 +197,88 @@
 
     CGSize arrowSize = [arrowSizeDict pmThemeGenerateSize];
     CGSize arrowOffset = [arrowOffsetDict pmThemeGenerateSize];
+    BOOL showsLeftArrow = YES;
+    BOOL showsRightArrow = YES;
     
-    //// backArrow Drawing
-    UIBezierPath* backArrowPath = [UIBezierPath bezierPath];
-    [backArrowPath moveToPoint: CGPointMake(hDiff / 2
-                                            , headerHeight / 2)]; // left-center corner
-    [backArrowPath addLineToPoint: CGPointMake(arrowSize.width + hDiff / 2
-                                               , headerHeight / 2 + arrowSize.height / 2)]; // right-bottom corner
-    [backArrowPath addLineToPoint: CGPointMake( arrowSize.width + hDiff / 2
-                                               ,  headerHeight / 2 - arrowSize.height / 2)]; // right-top corner
-    [backArrowPath addLineToPoint: CGPointMake( hDiff / 2
-                                               ,  headerHeight / 2)];  // back to left-center corner
-    [backArrowPath closePath];
-    
-    CGAffineTransform transform = CGAffineTransformMakeTranslation(arrowOffset.width - shadowPadding.left
-                                                                   , arrowOffset.height);
-    [backArrowPath applyTransform:transform];
+    if (self.allowedPeriod)
+    {
+        if ([[_currentDate dateByAddingMonths:-1] isBefore:[self.allowedPeriod.startDate monthStartDate]])
+        {
+            showsLeftArrow = NO;
+        }
+        else if ([[_currentDate dateByAddingMonths:1] isAfter:self.allowedPeriod.endDate])
+        {
+            showsRightArrow = NO;
+        }
+    }
 
-    [[PMThemeEngine sharedInstance] drawPath:backArrowPath
-                              forElementType:PMThemeMonthArrowsElementType
-                                     subType:PMThemeMainSubtype
-                                   inContext:context];
-    leftArrowRect = CGRectInset(backArrowPath.bounds, -20, -20);
+    if (showsLeftArrow)
+    {
+        //// backArrow Drawing
+        UIBezierPath* backArrowPath = [UIBezierPath bezierPath];
+        [backArrowPath moveToPoint: CGPointMake(hDiff / 2
+                                                , headerHeight / 2)]; // left-center corner
+        [backArrowPath addLineToPoint: CGPointMake(arrowSize.width + hDiff / 2
+                                                   , headerHeight / 2 + arrowSize.height / 2)]; // right-bottom corner
+        [backArrowPath addLineToPoint: CGPointMake( arrowSize.width + hDiff / 2
+                                                   ,  headerHeight / 2 - arrowSize.height / 2)]; // right-top corner
+        [backArrowPath addLineToPoint: CGPointMake( hDiff / 2
+                                                   ,  headerHeight / 2)];  // back to left-center corner
+        [backArrowPath closePath];
+        
+        CGAffineTransform transform = CGAffineTransformMakeTranslation(arrowOffset.width - shadowPadding.left
+                                                                       , arrowOffset.height);
+        [backArrowPath applyTransform:transform];
 
-    //// forwardArrow Drawing
-    UIBezierPath* forwardArrowPath = [UIBezierPath bezierPath];
-    [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2
-                                               ,  headerHeight / 2)]; // right-center corner
-    [forwardArrowPath addLineToPoint: CGPointMake( -arrowSize.width + width - hDiff / 2
-                                                  , headerHeight / 2 + arrowSize.height / 2)];  // left-bottom corner
-    [forwardArrowPath addLineToPoint: CGPointMake(-arrowSize.width + width - hDiff / 2
-                                                   , headerHeight / 2 - arrowSize.height / 2)]; // left-top corner
-    [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2
-                                                  , headerHeight / 2)]; // back to right-center corner
-    [forwardArrowPath closePath];
-    
-    transform = CGAffineTransformMakeTranslation(-arrowOffset.width - shadowPadding.left, arrowOffset.height);
-    [forwardArrowPath applyTransform:transform];
+        [[PMThemeEngine sharedInstance] drawPath:backArrowPath
+                                  forElementType:PMThemeMonthArrowsElementType
+                                         subType:PMThemeMainSubtype
+                                       inContext:context];
+        leftArrowRect = CGRectInset(backArrowPath.bounds, -20, -20);
+    }
 
-    [[PMThemeEngine sharedInstance] drawPath:forwardArrowPath
-                              forElementType:PMThemeMonthArrowsElementType
-                                     subType:PMThemeMainSubtype
-                                   inContext:context];
-    rightArrowRect = CGRectInset(forwardArrowPath.bounds, -20, -20);
+    if (showsRightArrow)
+    {
+        //// forwardArrow Drawing
+        UIBezierPath* forwardArrowPath = [UIBezierPath bezierPath];
+        [forwardArrowPath moveToPoint: CGPointMake( width - hDiff / 2
+                                                   ,  headerHeight / 2)]; // right-center corner
+        [forwardArrowPath addLineToPoint: CGPointMake( -arrowSize.width + width - hDiff / 2
+                                                      , headerHeight / 2 + arrowSize.height / 2)];  // left-bottom corner
+        [forwardArrowPath addLineToPoint: CGPointMake(-arrowSize.width + width - hDiff / 2
+                                                       , headerHeight / 2 - arrowSize.height / 2)]; // left-top corner
+        [forwardArrowPath addLineToPoint: CGPointMake( width - hDiff / 2
+                                                      , headerHeight / 2)]; // back to right-center corner
+        [forwardArrowPath closePath];
+        
+        CGAffineTransform transform = CGAffineTransformMakeTranslation(-arrowOffset.width - shadowPadding.left, arrowOffset.height);
+        [forwardArrowPath applyTransform:transform];
+
+        [[PMThemeEngine sharedInstance] drawPath:forwardArrowPath
+                                  forElementType:PMThemeMonthArrowsElementType
+                                         subType:PMThemeMainSubtype
+                                       inContext:context];
+        rightArrowRect = CGRectInset(forwardArrowPath.bounds, -20, -20);
+    }
 }
 
 - (void) setCurrentDate:(NSDate *)currentDate
 {
-    _currentDate = currentDate;
+    if (self.allowedPeriod)
+    {
+        if (([currentDate isBefore:[self.allowedPeriod.startDate monthStartDate]])
+            || ([currentDate isAfter:self.allowedPeriod.endDate]))
+        {
+            return;
+        }
+    }
+    
+    _currentDate = [currentDate monthStartDate];
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *eComponents = [gregorian components:NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit 
+    NSDateComponents *eComponents = [gregorian components:NSDayCalendarUnit
+                                                             | NSMonthCalendarUnit
+                                                             | NSYearCalendarUnit
                                                  fromDate:_currentDate];
     
     BOOL needsRedraw = NO;
@@ -290,7 +325,7 @@
 
 - (UIFont *) font
 {
-    NSInteger newFontSize = self.frame.size.width / 20;
+    NSInteger newFontSize = _initialFrame.size.width / 20;
     if (!_font || fontSize == 0 || fontSize != newFontSize)
     {
         _font = [UIFont fontWithName: @"Helvetica" size: newFontSize];
@@ -325,11 +360,44 @@
     self.daysView.selectedPeriod = _period;
     [self.daysView redrawComponent];
 }
+
+- (void)setAllowedPeriod:(PMPeriod *)allowedPeriod
+{
+    if (allowedPeriod != _allowedPeriod)
+    {
+        _allowedPeriod = allowedPeriod;
+        _allowedPeriod.startDate = [_allowedPeriod.startDate midnightDate];
+        _allowedPeriod.endDate = [_allowedPeriod.endDate midnightDate];
+    }
+}
+
 - (void)setPeriod:(PMPeriod *)period
 {
-    if (![_period isEqual:period])
+    PMPeriod *localPeriod = [period copy];
+    if (self.allowedPeriod)
     {
-        _period = period;
+        if ([localPeriod.startDate isBefore:self.allowedPeriod.startDate])
+        {
+            localPeriod.startDate = self.allowedPeriod.startDate;
+        }
+        else if ([localPeriod.startDate isAfter:self.allowedPeriod.endDate])
+        {
+            localPeriod.startDate = self.allowedPeriod.endDate;
+        }
+
+        if ([localPeriod.endDate isBefore:self.allowedPeriod.startDate])
+        {
+            localPeriod.endDate = self.allowedPeriod.startDate;
+        }
+        else if ([localPeriod.endDate isAfter:self.allowedPeriod.endDate])
+        {
+            localPeriod.endDate = self.allowedPeriod.endDate;
+        }
+    }
+
+    if (![_period isEqual:localPeriod])
+    {
+        _period = localPeriod;
         
         if (!_currentDate)
         {
@@ -359,8 +427,8 @@
 
 - (NSDate *) dateForPoint: (CGPoint)point
 {
-    CGFloat width  = self.frame.size.width;
-    CGFloat height = self.frame.size.height;
+    CGFloat width  = _initialFrame.size.width;
+    CGFloat height = _initialFrame.size.height;
     CGFloat hDiff  = width / 7;
     CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
     
@@ -419,7 +487,7 @@
 {
     CGPoint point  = [recognizer locationInView:self];
     
-    CGFloat height = self.frame.size.height;
+    CGFloat height = _initialFrame.size.height;
     CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
     
     if (point.y > kPMThemeHeaderHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
@@ -430,7 +498,7 @@
         }
         else if (([recognizer state] == UIGestureRecognizerStateChanged) && (recognizer.numberOfTouches == 1))
         {
-            if ((point.x < 20) || (point.x > self.frame.size.width - 20))
+            if ((point.x < 20) || (point.x > _initialFrame.size.width - 20))
             {
                 self.panPoint = point;
                 if (self.panTimer)
@@ -473,7 +541,7 @@
 {
     CGPoint point  = [recognizer locationInView:self];
     
-    CGFloat height = self.frame.size.height;
+    CGFloat height = _initialFrame.size.height;
     CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
 
     if (point.y > kPMThemeHeaderHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
@@ -510,7 +578,7 @@
         }
 
         CGPoint point = [recognizer locationInView:self];
-        CGFloat height = self.frame.size.height;
+        CGFloat height = _initialFrame.size.height;
         CGFloat vDiff  = (height - kPMThemeHeaderHeight) / ((kPMThemeDayTitlesInHeader)?6:7);
         
         if (point.y > kPMThemeHeaderHeight + ((kPMThemeDayTitlesInHeader)?0:vDiff)) // select date in calendar
@@ -591,6 +659,7 @@
 @synthesize selectedPeriod = _selectedPeriod;
 @synthesize mondayFirstDayOfWeek = _mondayFirstDayOfWeek;
 @synthesize rects;
+@synthesize initialFrame = _initialFrame;
 
 - (void)dealloc
 {
@@ -608,7 +677,8 @@
     {
         return nil;
     }
-    
+    self.initialFrame = frame;
+
     self.backgroundColor = [UIColor clearColor];
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
@@ -622,9 +692,9 @@
     CGFloat headerHeight       = kPMThemeHeaderHeight;
     UIFont *calendarFont       = kPMThemeDefaultFont;
 
-    CGFloat width  = self.frame.size.width + shadowPadding.left + shadowPadding.right;
+    CGFloat width  = _initialFrame.size.width + shadowPadding.left + shadowPadding.right;
     CGFloat hDiff  = width / 7;
-    CGFloat height = self.frame.size.height;
+    CGFloat height = _initialFrame.size.height;
     CGFloat vDiff  = (height - headerHeight) / (kPMThemeDayTitlesInHeaderIntOffset + 6);
     CGSize shadow2Offset = CGSizeMake(1, 1); // TODO: remove!
 
@@ -708,7 +778,6 @@
                                          inContext:context];
     }
 
-	int finalRow    = 0;
 	int day         = 1;
 
 	for (int i = 0; i < 6; i++) 
@@ -722,7 +791,7 @@
                 NSString *string = [NSString stringWithFormat:@"%d", day];
                 CGRect dayHeader2Frame = CGRectFromString([self.rects objectAtIndex:dayNumber]);
                 BOOL selected = (dayNumber >= selectionStartIndex) && (dayNumber <= selectionEndIndex);
-                BOOL isToday = (dayNumber == todayIndex);
+                BOOL isToday = (dayNumber == (todayIndex + weekdayOfFirst - 1));
 
                 if(isToday) 
                 {
@@ -730,8 +799,8 @@
                     if (todayBGDict)
                     {
 
-                        CGFloat width  = self.frame.size.width + shadowPadding.left + shadowPadding.right;
-                        CGFloat height = self.frame.size.height;
+                        CGFloat width  = _initialFrame.size.width + shadowPadding.left + shadowPadding.right;
+                        CGFloat height = _initialFrame.size.height;
                         CGFloat hDiff = (width + shadowPadding.left + shadowPadding.right - kPMThemeInnerPadding.width * 2) / 7;
                         CGFloat vDiff = (height - kPMThemeHeaderHeight - kPMThemeInnerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7);
                         CGSize bgOffset = [[todayBGDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
@@ -800,8 +869,6 @@
                                                    subType:PMThemeMainSubtype
                                                  inContext:context];
                 
-                finalRow = i;
-                
 				++day;
 			}
 		}
@@ -844,7 +911,6 @@
                                              inContext:context];
         }
     }
-    PMLog( @"End" );
 }
 
 - (void) setCurrentDate:(NSDate *)currentDate

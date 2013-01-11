@@ -12,12 +12,15 @@
 
 @interface PMSelectionView ()
 
+@property (nonatomic, assign) CGRect initialFrame;
+
 @end
 
 @implementation PMSelectionView
 
 @synthesize startIndex = _startIndex;
 @synthesize endIndex = _endIndex;
+@synthesize initialFrame = _initialFrame;
 
 - (void)dealloc
 {
@@ -43,6 +46,7 @@
                                                  name:kPMCalendarRedrawNotification
                                                object:nil];
     self.backgroundColor = [UIColor clearColor];
+    self.initialFrame = frame;
     
     return self;
 }
@@ -61,8 +65,8 @@
         CGSize innerPadding        = kPMThemeInnerPadding;
         CGFloat headerHeight       = kPMThemeHeaderHeight;
         
-        CGFloat width  = self.frame.size.width;
-        CGFloat height = self.frame.size.height;
+        CGFloat width  = _initialFrame.size.width;
+        CGFloat height = _initialFrame.size.height;
         CGFloat hDiff = (width + shadowPadding.left + shadowPadding.right - innerPadding.width * 2) / 7;
         CGFloat vDiff = (height - headerHeight - innerPadding.height * 2) / (kPMThemeDayTitlesInHeaderIntOffset + 6);
 
@@ -119,7 +123,7 @@
                                      , floor((thisRowEndCell - thisRowStartCell + 1) * hDiff)
                                      , floor(vDiff));
             rect = UIEdgeInsetsInsetRect(rect, rectInset);
-            NSLog( @"%@", NSStringFromCGRect(rect) );
+
             UIBezierPath* selectedRectPath = [UIBezierPath bezierPathWithRoundedRect: rect
                                                                         cornerRadius: cornerRadius];
             [[PMThemeEngine sharedInstance] drawPath: selectedRectPath

@@ -1,4 +1,4 @@
-PMCalendar v0.2
+PMCalendar v0.3
 ==========
 
 Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iPad) and higher.
@@ -19,9 +19,9 @@ PMCalendar is released under the MIT License.
 
 Screenshots
 ----------
-![Screenshot 1](PMCalendar/raw/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](PMCalendar/raw/master/screenshots/screenshot_2.png)
+![Screenshot 1](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_2.png)
 
-![Screenshot 3](PMCalendar/raw/master/screenshots/screenshot_3.png)
+![Screenshot 3](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_3.png)
 
 Usage
 ----------
@@ -71,6 +71,7 @@ Usage
 ``` objective-c
          [calendarController presentCalendarFromView:pressedButton
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
+                                           isPopover:YES
                                             animated:YES];
 ```
 
@@ -80,6 +81,7 @@ Usage
          [calendarController presentCalendarFromRect:CGRectMake(100, 100, 10, 10)
                                               inView:self.view
                             permittedArrowDirections:PMCalendarArrowDirectionUp | PMCalendarArrowDirectionLeft
+                                           isPopover:YES
                                             animated:YES];
 ```
 
@@ -128,7 +130,7 @@ Implemented properties
     @property (nonatomic, strong) PMPeriod *period;
 ```
 
-*TBI!* **Period allowed for selection**
+**Period allowed for selection**
 
 ``` objective-c
     @property (nonatomic, strong) PMPeriod *allowedPeriod;
@@ -164,6 +166,12 @@ Implemented properties
     @property (nonatomic, assign) CGSize size;
 ```
 
+**Returns whether the popover is visible (presented) or not**
+
+``` objective-c
+    @property (nonatomic, assign, readonly, getter = isCalendarVisible) BOOL calendarVisible;
+```
+
 Themes (beta!)
 ----------
 
@@ -171,7 +179,7 @@ Themes allows you to create your own calendar component look without touching PM
 
 However, current implementation is powerful enough to create for example something like this:
 
-![Apple calendar theme 1](PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](PMCalendar/raw/master/screenshots/apple_theme_2.png)
+![Apple calendar theme 1](http://github.com/kovpas/PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](http://github.com/kovpas/PMCalendar/raw/master/screenshots/apple_theme_2.png)
 
 Themes documentation is in progress, so for now please use two examples ("default.plist" and "apple calendar.plist") as a refernce.
 

@@ -11,6 +11,7 @@
 #import <CoreText/CoreText.h>
 
 static PMThemeEngine* sharedInstance;
+
 @interface PMThemeEngine ()
 
 @property (nonatomic, strong) NSDictionary *themeDict;
@@ -400,45 +401,59 @@ static PMThemeEngine* sharedInstance;
                                                                              subtype:themeElementSubtype];
     id colorObj = [themeDictionary elementInThemeDictOfGenericType:PMThemeColorGenericType];
 
-    CGContextSaveGState(context);
     NSDictionary *shadowDict = [themeDictionary elementInThemeDictOfGenericType:PMThemeShadowGenericType];
-    
-    if (shadowDict)
+    CGContextSaveGState(context);
     {
-        CGSize shadowOffset = [[shadowDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
-        UIColor *shadowColor = [PMThemeEngine colorFromString:[shadowDict elementInThemeDictOfGenericType:PMThemeColorGenericType]];
-        NSNumber *blurRadius = [shadowDict elementInThemeDictOfGenericType:PMThemeShadowBlurRadiusType];
-        CGContextSetShadowWithColor(context
-                                    , shadowOffset
-                                    , blurRadius?[blurRadius floatValue]:sharedInstance.shadowBlurRadius
-                                    , shadowColor.CGColor);
+        if (shadowDict)
+        {
+            CGSize shadowOffset = [[shadowDict elementInThemeDictOfGenericType:PMThemeOffsetGenericType] pmThemeGenerateSize];
+            UIColor *shadowColor = [PMThemeEngine colorFromString:[shadowDict elementInThemeDictOfGenericType:PMThemeColorGenericType]];
+            NSNumber *blurRadius = [shadowDict elementInThemeDictOfGenericType:PMThemeShadowBlurRadiusType];
+            CGContextSetShadowWithColor(context
+                                        , shadowOffset
+                                        , blurRadius?[blurRadius floatValue]:sharedInstance.shadowBlurRadius
+                                        , shadowColor.CGColor);
+            if (![shadowDict objectForKey:@"Type"])
+            {
+                [shadowColor setFill];
+                [path fill];
+            }
+        }
     }
-    [path addClip];
-
-    if ([colorObj isKindOfClass:[NSString class]]) // plain color
+    if (![shadowDict objectForKey:@"Type"])
     {
-        [[PMThemeEngine colorFromString:colorObj] setFill];
+        CGContextRestoreGState(context);
+
+        CGContextSaveGState(context);
+    }
+    {
+        [path addClip];
+
+        if ([colorObj isKindOfClass:[NSString class]]) // plain color
+        {
+            [[PMThemeEngine colorFromString:colorObj] setFill];
+            
+            [path fill];
+        }
+        else
+        {
+            [PMThemeEngine drawGradientInContext:context
+                                          inRect:path.bounds
+                                       fromArray:colorObj];
+        }
+
+        NSDictionary *stroke = [themeDictionary elementInThemeDictOfGenericType:PMThemeStrokeGenericType];
         
-        [path fill];
-    }
-    else
-    {
-        [PMThemeEngine drawGradientInContext:context
-                                      inRect:path.bounds
-                                   fromArray:colorObj];
-    }
+        if (stroke)
+        {
+            NSString *strokeColorStr = [stroke elementInThemeDictOfGenericType:PMThemeColorGenericType];
+            UIColor *strokeColor = [PMThemeEngine colorFromString:strokeColorStr];
+            [strokeColor setStroke];
+            path.lineWidth = [[stroke elementInThemeDictOfGenericType:PMThemeSizeWidthGenericType] floatValue]; // TODO: make separate stroke width generic type
 
-    NSDictionary *stroke = [themeDictionary elementInThemeDictOfGenericType:PMThemeStrokeGenericType];
-    
-    if (stroke)
-    {
-        NSString *strokeColorStr = [stroke elementInThemeDictOfGenericType:PMThemeColorGenericType];
-        UIColor *strokeColor = [PMThemeEngine colorFromString:strokeColorStr];
-        [strokeColor setStroke];
-        path.lineWidth = [[stroke elementInThemeDictOfGenericType:PMThemeSizeWidthGenericType] floatValue]; // TODO: make separate stroke width generic type
-        [path stroke];
+            [path stroke];
+        }
     }
-    
     CGContextRestoreGState(context);
 }
 

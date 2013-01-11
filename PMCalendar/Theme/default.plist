@@ -318,20 +318,20 @@
 				<key>Bottom</key>
 				<integer>2</integer>
 				<key>Right</key>
-				<integer>3</integer>
+				<integer>4</integer>
 			</dict>
 			<key>Shadow</key>
 			<dict>
 				<key>Blur radius</key>
-				<integer>5</integer>
+				<integer>3</integer>
 				<key>Color</key>
 				<string>0,0,0</string>
 				<key>Offset</key>
 				<dict>
 					<key>Width</key>
-					<integer>2</integer>
+					<integer>1</integer>
 					<key>Height</key>
-					<integer>3</integer>
+					<integer>1</integer>
 				</dict>
 			</dict>
 		</dict>

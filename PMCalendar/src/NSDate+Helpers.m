@@ -59,6 +59,17 @@
 	return monthStartDate;
 }
 
+- (NSDate *) midnightDate
+{
+    NSDate *midnightDate = nil;
+	[[NSCalendar currentCalendar] rangeOfUnit:NSDayCalendarUnit
+                                    startDate:&midnightDate
+                                     interval:NULL
+                                      forDate:self];
+    
+	return midnightDate;
+}
+
 - (NSUInteger) numberOfDaysInMonth
 {
     return [[NSCalendar currentCalendar] rangeOfUnit:NSDayCalendarUnit 
@@ -86,6 +97,16 @@
 - (NSInteger) daysSinceDate:(NSDate *) date
 {
     return [self timeIntervalSinceDate:date] / (60 * 60 * 24);
+}
+
+- (BOOL) isBefore:(NSDate *) date
+{
+	return [self timeIntervalSinceDate:date] < 0;
+}
+
+- (BOOL) isAfter:(NSDate *) date
+{
+	return [self timeIntervalSinceDate:date] > 0;
 }
 
 @end

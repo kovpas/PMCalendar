@@ -30,11 +30,13 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 @property (nonatomic, assign) PMCalendarArrowDirection calendarArrowDirection;
 @property (nonatomic, assign) CGPoint savedArrowPosition;
 @property (nonatomic, assign) UIDeviceOrientation currentOrientation;
+@property (nonatomic, assign) CGRect initialFrame;
 
 @end
 
 @implementation PMCalendarController
 
+@synthesize initialFrame = _initialFrame;
 @synthesize position = _position;
 @synthesize delegate = _delegate;
 
@@ -46,6 +48,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 
 @synthesize calendarArrowDirection = _calendarArrowDirection;
 @synthesize currentOrientation = _currentOrientation;
+@synthesize calendarVisible = _calendarVisible;
 
 @synthesize mainView = _mainView;
 @synthesize anchorView = _anchorView;
@@ -56,6 +59,11 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 @synthesize size = _size;
 @synthesize savedArrowPosition = _savedArrowPosition;
 
+- (void) dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 #pragma mark - object initializers -
 
 - (void) initializeWithSize:(CGSize) size
@@ -64,32 +72,30 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     CGSize outerPadding = kPMThemeOuterPadding;
     self.calendarArrowDirection = PMCalendarArrowDirectionUnknown;
     
-    CGRect calendarRect = CGRectMake(0
-                                     , 0
-                                     , size.width + kPMThemeShadowPadding.left + kPMThemeShadowPadding.right
-                                     , size.height + kPMThemeShadowPadding.top + kPMThemeShadowPadding.bottom);
-    self.calendarView = [[UIView alloc] initWithFrame:calendarRect];
+    self.initialFrame = CGRectMake(0
+                                 , 0
+                                 , size.width + kPMThemeShadowPadding.left + kPMThemeShadowPadding.right
+                                 , size.height + kPMThemeShadowPadding.top + kPMThemeShadowPadding.bottom);
+    self.calendarView = [[UIView alloc] initWithFrame:_initialFrame];
     self.calendarView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 
     //Make insets from two sides of a calendar to have place for arrow
     CGRect calendarRectWithArrowInsets = CGRectMake(0, 0
-                                                    , calendarRect.size.width + arrowSize.height
-                                                    , calendarRect.size.height + arrowSize.height);
+                                                    , _initialFrame.size.width + arrowSize.height
+                                                    , _initialFrame.size.height + arrowSize.height);
     self.mainView = [[UIView alloc] initWithFrame:calendarRectWithArrowInsets];
-    
+
     self.backgroundView = [[PMCalendarBackgroundView alloc] initWithFrame:CGRectInset(calendarRectWithArrowInsets
                                                                                       , outerPadding.width
                                                                                       , outerPadding.height)];
-    UIEdgeInsetsInsetRect(calendarRect, kPMThemeShadowPadding);
     self.backgroundView.clipsToBounds = NO;
     [self.mainView addSubview:self.backgroundView];
     
-    self.digitsView = [[PMCalendarView alloc] initWithFrame:UIEdgeInsetsInsetRect(CGRectInset(calendarRect
+    self.digitsView = [[PMCalendarView alloc] initWithFrame:UIEdgeInsetsInsetRect(CGRectInset(_initialFrame
                                                                                               , kPMThemeInnerPadding.width
                                                                                               , kPMThemeInnerPadding.height)
                                                                                   , kPMThemeShadowPadding)];
     self.digitsView.delegate = self;
-    self.digitsView.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];    
 
     [self.calendarView addSubview:self.digitsView];
     [self.mainView addSubview:self.calendarView];
@@ -105,6 +111,10 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
         return nil;
     }
     
+    if (![PMThemeEngine sharedInstance].themeName)
+    {
+        [PMThemeEngine sharedInstance].themeName = @"default";
+    }
     [self initializeWithSize: size];
     
     return self;
@@ -125,11 +135,6 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 {
     [PMThemeEngine sharedInstance].themeName = themeName;
     return [self initWithSize:size];
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - rotation handling -
@@ -298,9 +303,60 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     self.savedArrowPosition = arrowPosition;
 }
 
-- (void) presentCalendarFromView:(UIView *) anchorView 
-        permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
-                        animated:(BOOL) animated
+
+- (void)presentCalendarFromRect:(CGRect) rect
+                         inView:(UIView *) view
+       permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
+                      isPopover:(BOOL) isPopover
+                       animated:(BOOL) animated
+{
+    if (!isPopover)
+    {
+        self.view = self.mainView;
+    }
+    else
+    {
+        self.view = [[PMDimmingView alloc] initWithFrame:view.bounds
+                                              controller:self];
+        self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        [self.view addSubview:self.mainView];
+    }
+
+    [view addSubview:self.view];
+
+    CGRect rectInAppWindow = [self.view convertRect:rect fromView:view];
+    [self adjustCalendarPositionForPermittedArrowDirections:arrowDirections
+                                          arrowPointsToRect:rectInAppWindow];
+    self.initialFrame = self.mainView.frame;
+    [self fullRedraw];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didRotate:)
+                                                 name:UIDeviceOrientationDidChangeNotification
+                                               object:nil];
+    
+    if (animated)
+    {
+        self.mainView.alpha = 0;
+        
+        [UIView animateWithDuration:0.2
+                         animations:^{
+                             self.mainView.alpha = 1;
+                         }];
+    }
+
+    if (!_digitsView.period)
+    {
+        self.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];
+    }
+    
+    _calendarVisible = YES;
+}
+
+- (void)presentCalendarFromView:(UIView *) anchorView
+       permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
+                      isPopover:(BOOL) isPopover
+                       animated:(BOOL) animated
 {
     self.anchorView = anchorView;
     self.savedPermittedArrowDirections = arrowDirections;
@@ -308,40 +364,8 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     [self presentCalendarFromRect:anchorView.frame
                            inView:self.anchorView.superview
          permittedArrowDirections:arrowDirections
+                        isPopover:isPopover
                          animated:animated];
-}
-
-- (void) presentCalendarFromRect:(CGRect) rect 
-                          inView:(UIView *) view
-        permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
-                        animated:(BOOL) animated
-{
-    self.view = [[PMDimmingView alloc] initWithFrame:view.bounds
-                                          controller:self];
-    self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    [self.view addSubview:self.mainView];
-    [view addSubview:self.view];
-
-    CGRect rectInAppWindow = [self.view convertRect:rect fromView:view];
-    [self adjustCalendarPositionForPermittedArrowDirections:arrowDirections
-                                          arrowPointsToRect:rectInAppWindow];
-
-    [self fullRedraw];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(didRotate:) 
-                                                 name:UIDeviceOrientationDidChangeNotification
-                                               object:nil];
-
-    if (animated)
-    {
-        self.mainView.alpha = 0;
-
-        [UIView animateWithDuration:0.2
-                         animations:^{
-                             self.mainView.alpha = 1;
-                         }];
-    }
 }
 
 - (void) dismissCalendarAnimated:(BOOL) animated
@@ -350,7 +374,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
     void (^completionBlock)(BOOL) = ^(BOOL finished){
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         [self.view removeFromSuperview];
-        self.mainView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        _calendarVisible = NO;
         if ([self.delegate respondsToSelector:@selector(calendarControllerDidDismissCalendar:)])
         {
             [self.delegate calendarControllerDidDismissCalendar:self];
@@ -425,6 +449,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 - (void) setPeriod:(PMPeriod *) period
 {
     self.digitsView.period = period;
+    self.digitsView.currentDate = period.startDate;
 }
 
 - (PMPeriod *) allowedPeriod
@@ -455,19 +480,16 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 	int numDaysInMonth      = [currentDate numberOfDaysInMonth];
     NSInteger monthStartDay = [[currentDate monthStartDate] weekday];
     numDaysInMonth         += (monthStartDay + (self.digitsView.mondayFirstDayOfWeek?5:6)) % 7;
-    CGFloat height          = self.mainView.frame.size.height - outerPadding.height * 2 - arrowSize.height;
-    CGFloat vDiff           = (height - kPMThemeHeaderHeight - kPMThemeInnerPadding.height * 2) / ((kPMThemeDayTitlesInHeader)?6:7);
-    CGRect frm              = CGRectInset(self.mainView.bounds, outerPadding.width, outerPadding.height);
+    CGFloat height          = _initialFrame.size.height - outerPadding.height * 2 - arrowSize.height;
+    CGFloat vDiff           = (height - kPMThemeHeaderHeight - kPMThemeInnerPadding.height * 2 - kPMThemeShadowPadding.bottom - kPMThemeShadowPadding.top) / ((kPMThemeDayTitlesInHeader)?6:7);
+    CGRect frm              = CGRectInset(_initialFrame, outerPadding.width, outerPadding.height);
     int numberOfRows        = ceil((CGFloat)numDaysInMonth / 7);
-    frm.size.height         = ceil(((numberOfRows + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff) + kPMThemeHeaderHeight + kPMThemeInnerPadding.height * 2 + arrowSize.height);
+    frm.size.height         = ceil(((numberOfRows + ((kPMThemeDayTitlesInHeader)?0:1)) * vDiff) + kPMThemeHeaderHeight + kPMThemeInnerPadding.height * 2 + arrowSize.height) + kPMThemeShadowPadding.bottom + kPMThemeShadowPadding.top;
     
     
     if (self.calendarArrowDirection == PMCalendarArrowDirectionDown)
     {
-        CGRect calendarViewFrame = self.calendarView.frame;
-        frm.origin.y = self.mainView.bounds.size.height - frm.size.height;
-        calendarViewFrame.origin.y = frm.origin.y;
-        self.calendarView.frame = calendarViewFrame;
+        frm.origin.y += _initialFrame.size.height - frm.size.height;
     }
     
     // TODO: recalculate arrow position for left & right
@@ -478,7 +500,7 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 //        self.backgroundView.arrowPosition = 
 //    }
     
-    self.backgroundView.frame = frm;
+    self.mainView.frame = frm;
     [self fullRedraw];
 }
 
@@ -498,6 +520,30 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return YES;
+}
+
+#pragma mark - Deprecated methods -
+
+- (void) presentCalendarFromRect:(CGRect) rect
+                          inView:(UIView *) view
+        permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
+                        animated:(BOOL) animated
+{
+    [self presentCalendarFromRect:rect
+                           inView:view
+         permittedArrowDirections:arrowDirections
+                        isPopover:YES
+                         animated:animated];
+}
+
+- (void) presentCalendarFromView:(UIView *) anchorView
+        permittedArrowDirections:(PMCalendarArrowDirection) arrowDirections
+                        animated:(BOOL) animated
+{
+    [self presentCalendarFromView:anchorView
+         permittedArrowDirections:arrowDirections
+                        isPopover:YES
+                         animated:animated];
 }
 
 @end

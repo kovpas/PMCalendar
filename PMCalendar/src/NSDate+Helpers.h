@@ -44,6 +44,11 @@
 - (NSDate *) monthStartDate;
 
 /**
+ * Returns start of day for the current (self) date.
+ */
+- (NSDate *) midnightDate;
+
+/**
  * Returns the number of days in the current (self) month.
  */
 - (NSUInteger) numberOfDaysInMonth;
@@ -66,5 +71,11 @@
  * i.e. "dd-MM-yyyy" will return "14-07-2012"
  */
 - (NSString *) dateStringWithFormat:(NSString *) format;
+
+/**
+ * Checks if a given date is before or after the current (self) date.
+ */
+- (BOOL) isBefore:(NSDate *) date;
+- (BOOL) isAfter:(NSDate *) date;
 
 @end

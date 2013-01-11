@@ -18,36 +18,49 @@
 @implementation PMViewController
 
 @synthesize pmCC;
-
 @synthesize periodLabel;
 
 - (IBAction)showCalendar:(id)sender
 {
+    if ([self.pmCC isCalendarVisible])
+    {
+        [self.pmCC dismissCalendarAnimated:NO];
+    }
+    
+    BOOL isPopover = YES;
     if ([sender tag] == 10)
     {
+        isPopover = NO;
         self.pmCC = [[PMCalendarController alloc] initWithThemeName:@"apple calendar"];
+        // limit apple calendar to 2 months before and 2 months after current date
+//        self.pmCC.allowedPeriod = [PMPeriod periodWithStartDate:[[NSDate date] dateByAddingMonths:-2]
+//                                                        endDate:[[NSDate date] dateByAddingMonths:2]];
     }
     else
     {
         self.pmCC = [[PMCalendarController alloc] initWithThemeName:@"default"];
     }
-    pmCC.delegate = self;
-    pmCC.mondayFirstDayOfWeek = NO;
+    
+    self.pmCC.delegate = self;
+    self.pmCC.mondayFirstDayOfWeek = NO;
 
     if ([sender tag] == 10)
     {
-        [pmCC presentCalendarFromRect:CGRectZero
-                               inView:[sender superview]
-             permittedArrowDirections:PMCalendarArrowDirectionAny
-                             animated:YES];
+        [self.pmCC presentCalendarFromRect:CGRectZero
+                                    inView:[sender superview]
+                  permittedArrowDirections:PMCalendarArrowDirectionAny
+                                 isPopover:isPopover
+                                  animated:YES];
     }
     else
     {
-        [pmCC presentCalendarFromView:sender
-             permittedArrowDirections:PMCalendarArrowDirectionAny 
-                             animated:YES];
+        [self.pmCC presentCalendarFromView:sender
+                  permittedArrowDirections:PMCalendarArrowDirectionAny
+                                 isPopover:isPopover
+                                  animated:YES];
     }
 
+    self.pmCC.period = [PMPeriod oneDayPeriodWithDate:[NSDate date]];
     [self calendarController:pmCC didChangePeriod:pmCC.period];
 }
 

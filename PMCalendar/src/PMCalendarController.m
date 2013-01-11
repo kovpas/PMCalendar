@@ -106,6 +106,10 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
         return nil;
     }
     
+    if (![PMThemeEngine sharedInstance].themeName)
+    {
+        [PMThemeEngine sharedInstance].themeName = @"default";
+    }
     [self initializeWithSize: size];
     
     return self;

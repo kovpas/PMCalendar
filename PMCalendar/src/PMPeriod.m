@@ -48,7 +48,7 @@
 
 - (NSInteger) lengthInDays
 {
-    return [self.endDate timeIntervalSinceDate:self.startDate] / (60 * 60 * 24);
+    return [self.endDate daysSinceDate:self.startDate];
 }
 
 - (NSString *) description

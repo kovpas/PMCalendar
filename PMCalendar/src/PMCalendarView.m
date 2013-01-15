@@ -791,7 +791,7 @@
                 NSString *string = [NSString stringWithFormat:@"%d", day];
                 CGRect dayHeader2Frame = CGRectFromString([self.rects objectAtIndex:dayNumber]);
                 BOOL selected = (dayNumber >= selectionStartIndex) && (dayNumber <= selectionEndIndex);
-                BOOL isToday = (dayNumber == (todayIndex + weekdayOfFirst - 1));
+                BOOL isToday = (dayNumber == todayIndex);
 
                 if(isToday) 
                 {

@@ -421,7 +421,7 @@
     NSInteger monthStartDay = [monthStartDate weekday];
     monthStartDay           = (monthStartDay + (self.mondayFirstDayOfWeek?5:6)) % 7;
 
-    NSInteger daysSinceMonthStart = [date timeIntervalSinceDate:monthStartDate] / (60 * 60 *24);
+    NSInteger daysSinceMonthStart = [date daysSinceDate:monthStartDate];
     return daysSinceMonthStart + monthStartDay;
 }
 
@@ -730,10 +730,10 @@
     //Find number of days in previous month
     NSDate *prevDateOnFirst = [[_currentDate dateByAddingMonths:-1] monthStartDate];
     int numDaysInPrevMonth = [prevDateOnFirst numberOfDaysInMonth];
-    NSDate *firstDateInCal = [monthStartDate dateByAddingDays:(-weekdayOfFirst + 2)];
+    NSDate *firstDateInCal = [monthStartDate dateByAddingDays:(-weekdayOfFirst + 1)];
     
-    int selectionStartIndex = [[self.selectedPeriod normalizedPeriod].startDate daysSinceDate:firstDateInCal] + 1;
-    int selectionEndIndex = [[self.selectedPeriod normalizedPeriod].endDate daysSinceDate:firstDateInCal] + 1;
+    int selectionStartIndex = [[self.selectedPeriod normalizedPeriod].startDate daysSinceDate:firstDateInCal];
+    int selectionEndIndex = [[self.selectedPeriod normalizedPeriod].endDate daysSinceDate:firstDateInCal];
     NSDictionary *todayBGDict = [[PMThemeEngine sharedInstance] themeDictForType:PMThemeCalendarDigitsTodayElementType
                                                                          subtype:PMThemeBackgroundSubtype];
     NSDictionary *todaySelectedBGDict = [[PMThemeEngine sharedInstance] themeDictForType:PMThemeCalendarDigitsTodaySelectedElementType

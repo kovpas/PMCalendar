@@ -883,7 +883,7 @@
         {
             int index = numDaysInMonth + weekdayOfFirst + i - weekdayOfNextFirst - 1;
             int day = i - weekdayOfNextFirst + 1;
-            BOOL isToday = (numDaysInMonth + day - 1 == todayIndex);
+            BOOL isToday = (numDaysInMonth + (weekdayOfFirst - 1) + day - 1 == todayIndex);
             BOOL selected = (index >= selectionStartIndex) && (index <= selectionEndIndex);
             NSString *string = [NSString stringWithFormat:@"%d", day];
             CGRect dayHeader2Frame = CGRectFromString([self.rects objectAtIndex:index]);

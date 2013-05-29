@@ -778,7 +778,7 @@
                                          inContext:context];
     }
 
-	int day         = 1;
+	int day = 1;
 
 	for (int i = 0; i < 6; i++) 
     {

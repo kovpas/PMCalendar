@@ -1,5 +1,7 @@
-PMCalendar v0.3
+PMCalendar v0.3.2
 ==========
+[![platform](http://cocoapod-badges.herokuapp.com/p/PMCalendar/badge.png)](http://cocoadocs.org/docsets/PMCalendar)
+[![version](http://cocoapod-badges.herokuapp.com/v/PMCalendar/badge.png)](http://cocoadocs.org/docsets/PMCalendar)
 
 Yet another calendar component for iOS. Compatible with iOS 4.0 (iPhone &amp; iPad) and higher.
 
@@ -26,7 +28,7 @@ Screenshots
 Usage
 ----------
 
- - Add PMCalendar directory to your Xcode project
+ - Add PMCalendar directory to your Xcode project 
  - Add CoreGraphics and CoreText frameworks to your project
  - #import "PMCalendar.h"
  - Create instance of PMCalendarController with specific theme name (see below) and size:

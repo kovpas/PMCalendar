@@ -12,7 +12,6 @@
 #import "NSDate+Helpers.h"
 #import "PMSelectionView.h"
 #import "PMTheme.h"
-
 #import "PMThemeEngine.h"
 
 @interface PMDaysView : UIView
@@ -23,6 +22,7 @@
 @property (nonatomic, strong) NSArray *rects;
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
 @property (nonatomic, assign) CGRect initialFrame;
+@property (nonatomic, assign) BOOL showOnlyCurrentMonth;
 
 - (void) redrawComponent;
 
@@ -106,6 +106,7 @@
     [self addSubview:self.selectionView];
 
     self.daysView = [[PMDaysView alloc] initWithFrame:self.bounds];
+   
     self.daysView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:self.daysView];
     
@@ -115,6 +116,10 @@
                                                object:nil];
     
     return self;
+}
+
+- (void)setDisplayCurrentMonthOnly {
+    self.daysView.showOnlyCurrentMonth = self.showOnlyCurrentMonth;
 }
 
 -(void)setFrame:(CGRect)frame
@@ -155,7 +160,15 @@
         index = index % 7;
         NSString *dayTitle = [dayTitles objectAtIndex:index];
         //// dayHeader Drawing
-        CGSize sz = [dayTitle sizeWithFont:dayFont];
+
+        NSAssert(dayFont != nil, @"Please provide proper font either in theme file or in a code.");
+        
+        CGSize sz = CGSizeZero;
+        if(dayFont)
+        {
+            sz = [dayTitle sizeWithAttributes:@{NSFontAttributeName:dayFont}];
+        }
+        
         CGRect dayHeaderFrame = CGRectMake(floor(i * hDiff) - 1
                                            , headerHeight + (kPMThemeDayTitlesInHeaderIntOffset * vDiff - sz.height) / 2
                                            , hDiff
@@ -174,8 +187,9 @@
     
 	NSString *monthTitle = [NSString stringWithFormat:@"%@ %d", [monthTitles objectAtIndex:(month - 1)], year];
     //// Month Header Drawing
+    //[monthTitle sizeWithFont:monthFont]
     CGRect textFrame = CGRectMake(0
-                                  , (headerHeight - [monthTitle sizeWithFont:monthFont].height) / 2
+                                  , (headerHeight - [monthTitle sizeWithAttributes:@{NSFontAttributeName:monthFont}].height) / 2
                                   , width
                                   , monthFont.pointSize);
     
@@ -194,13 +208,19 @@
     NSDictionary *arrowOffsetDict = [[PMThemeEngine sharedInstance] elementOfGenericType:PMThemeOffsetGenericType
                                                                                  subtype:PMThemeMainSubtype
                                                                                     type:PMThemeMonthArrowsElementType];
-
+    
     CGSize arrowSize = [arrowSizeDict pmThemeGenerateSize];
     CGSize arrowOffset = [arrowOffsetDict pmThemeGenerateSize];
     BOOL showsLeftArrow = YES;
     BOOL showsRightArrow = YES;
     
-    if (self.allowedPeriod)
+    if(self.showOnlyCurrentMonth)
+    {
+        showsLeftArrow = NO;
+        showsRightArrow = NO;
+        [self setAllowsLongPressMonthChange:NO];
+    }
+    else if (self.allowedPeriod)
     {
         if ([[_currentDate dateByAddingMonths:-1] isBefore:[self.allowedPeriod.startDate monthStartDate]])
         {
@@ -457,17 +477,36 @@
 
 - (void) periodSelectionStarted: (CGPoint) point
 {
-    self.period = [PMPeriod oneDayPeriodWithDate:[self dateForPoint:point]];
+    PMPeriod* calcPeriod = [PMPeriod oneDayPeriodWithDate:[self dateForPoint:point]];
+    
+    NSCalendar *gregorian = [NSCalendar currentCalendar];
+    NSDateComponents *dateComponents = [gregorian components:(NSDayCalendarUnit|NSMonthCalendarUnit|NSYearCalendarUnit) fromDate:calcPeriod.startDate];
+    NSInteger month = [dateComponents month];
+    
+    if(month != currentMonth)
+    {
+        return;
+    }
+    
+    self.period = calcPeriod;
 }
 
 - (void) periodSelectionChanged: (CGPoint) point
 {
     NSDate *newDate = [self dateForPoint:point];
     
+    NSCalendar *gregorian = [NSCalendar currentCalendar];
+    NSDateComponents *dateComponents = [gregorian components:(NSDayCalendarUnit|NSMonthCalendarUnit|NSYearCalendarUnit) fromDate:newDate];
+    NSInteger month = [dateComponents month];
+    
+    if(month != currentMonth)
+    {
+        return;
+    }
+    
     if (_allowsPeriodSelection)
     {
-        self.period = [PMPeriod periodWithStartDate:self.period.startDate 
-                                            endDate:newDate];
+        self.period = [PMPeriod periodWithStartDate:self.period.startDate endDate:newDate];
     }
     else
     {
@@ -512,11 +551,14 @@
                     increment = [NSNumber numberWithInt:-1];
                 }
                 
-                self.panTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                if(!self.showOnlyCurrentMonth)
+                {
+                    self.panTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
                                                                  target:self 
                                                                selector:@selector(panTimerCallback:)
                                                                userInfo:increment
                                                                 repeats:YES];
+                }
             }
             else
             {
@@ -550,16 +592,25 @@
         return;
     }
     
-    if(CGRectContainsPoint(leftArrowRect, point)) 
+    if ([self.delegate respondsToSelector:@selector(periodChanged:)])
     {
-        //User tapped the prevMonth button
-        [self setCurrentDate:[self.currentDate dateByAddingMonths:-1]];
-    } 
-    else if(CGRectContainsPoint(rightArrowRect, point)) 
-    {
-        //User tapped the nextMonth button
-        [self setCurrentDate:[self.currentDate dateByAddingMonths:1]];
+        [self.delegate periodChanged:_period];
     }
+    
+    if(!self.showOnlyCurrentMonth)
+    {
+        if(CGRectContainsPoint(leftArrowRect, point))
+        {
+            //User tapped the prevMonth button
+            [self setCurrentDate:[self.currentDate dateByAddingMonths:-1]];
+        }
+        else if(CGRectContainsPoint(rightArrowRect, point))
+        {
+            //User tapped the nextMonth button
+            [self setCurrentDate:[self.currentDate dateByAddingMonths:1]];
+        }
+    }
+    
 }
 
 - (void) longPressTimerCallback: (NSTimer *)timer
@@ -660,6 +711,7 @@
 @synthesize mondayFirstDayOfWeek = _mondayFirstDayOfWeek;
 @synthesize rects;
 @synthesize initialFrame = _initialFrame;
+@synthesize showOnlyCurrentMonth = _showOnlyCurrentMonth;
 
 - (void)dealloc
 {
@@ -677,6 +729,7 @@
     {
         return nil;
     }
+
     self.initialFrame = frame;
 
     self.backgroundColor = [UIColor clearColor];
@@ -770,12 +823,15 @@
             type = PMThemeCalendarDigitsInactiveSelectedElementType;
         }
 
-        [[PMThemeEngine sharedInstance] drawString:string
-                                          withFont:calendarFont
-                                            inRect:dayHeader2Frame
-                                    forElementType:type
-                                           subType:PMThemeMainSubtype
-                                         inContext:context];
+        if(!self.showOnlyCurrentMonth)
+        {
+            [[PMThemeEngine sharedInstance] drawString:string
+                                              withFont:calendarFont
+                                                inRect:dayHeader2Frame
+                                        forElementType:type
+                                               subType:PMThemeMainSubtype
+                                             inContext:context];
+        }
     }
 
 	int day = 1;
@@ -903,12 +959,16 @@
                 type = PMThemeCalendarDigitsInactiveSelectedElementType;
             }
             
-            [[PMThemeEngine sharedInstance] drawString:string
-                                              withFont:calendarFont
-                                                inRect:dayHeader2Frame
-                                        forElementType:type
-                                               subType:PMThemeMainSubtype
-                                             inContext:context];
+            if(!self.showOnlyCurrentMonth)
+            {
+            
+                [[PMThemeEngine sharedInstance] drawString:string
+                                                  withFont:calendarFont
+                                                    inRect:dayHeader2Frame
+                                            forElementType:type
+                                                   subType:PMThemeMainSubtype
+                                                 inContext:context];
+            }
         }
     }
 }

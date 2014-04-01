@@ -30,6 +30,11 @@
 @property (nonatomic, strong) PMPeriod *allowedPeriod;
 
 /**
+ *Set to only display current month's days
+ */
+@property(nonatomic, assign) BOOL showOnlyCurrentMonth;
+
+/**
  * Is monday a first day of week. See PMCalendarController for more information.
  */
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
@@ -46,6 +51,8 @@
 @property (nonatomic, assign) id<PMCalendarViewDelegate> delegate;
 
 @property (nonatomic, strong) NSDate *currentDate;
+
+- (void)setDisplayCurrentMonthOnly;
 
 @end
 

@@ -43,6 +43,7 @@
     
     self.pmCC.delegate = self;
     self.pmCC.mondayFirstDayOfWeek = NO;
+    //self.pmCC.showOnlyCurrentMonth = YES; //Only show days in current month
 
     if ([sender tag] == 10)
     {

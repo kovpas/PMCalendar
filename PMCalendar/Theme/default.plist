@@ -166,6 +166,13 @@
 	<dict>
 		<key>Main</key>
 		<dict>
+			<key>Font</key>
+			<dict>
+				<key>Name</key>
+				<string>Helvetica</string>
+				<key>Size</key>
+				<integer>14</integer>
+			</dict>
 			<key>Type</key>
 			<string>PMText</string>
 			<key>Color</key>

@@ -321,7 +321,7 @@ static PMThemeEngine* sharedInstance;
 
     NSAssert(usedFont != nil, @"Please provide proper font either in theme file or in a code.");
     
-    CGSize sz;
+    CGSize sz = CGSizeZero;
     if(usedFont)
     {
         sz = [string sizeWithAttributes:@{NSFontAttributeName:usedFont}];

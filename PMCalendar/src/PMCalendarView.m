@@ -161,7 +161,9 @@
         NSString *dayTitle = [dayTitles objectAtIndex:index];
         //// dayHeader Drawing
 
-        CGSize sz;
+        NSAssert(dayFont != nil, @"Please provide proper font either in theme file or in a code.");
+        
+        CGSize sz = CGSizeZero;
         if(dayFont)
         {
             sz = [dayTitle sizeWithAttributes:@{NSFontAttributeName:dayFont}];

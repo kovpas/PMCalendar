@@ -107,6 +107,11 @@
 @property (nonatomic, assign) BOOL allowsPeriodSelection;
 
 /**
+ *If set to YES, then calendar only shows days in the current month
+ */
+@property (nonatomic, assign, getter = isShowOnlyCurrentMonth) BOOL showOnlyCurrentMonth;
+
+/**
  * If set to YES, the calendar allows to long press on a month change arrow
  * in order to fast iterate through months.
  * If set to NO, long press does nothing.

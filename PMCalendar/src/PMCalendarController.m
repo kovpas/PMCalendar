@@ -98,7 +98,8 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
                                                                                               , kPMThemeInnerPadding.height)
                                                                                   , kPMThemeShadowPadding)];
     self.digitsView.delegate = self;
-
+    
+    
     [self.calendarView addSubview:self.digitsView];
     [self.mainView addSubview:self.calendarView];
     
@@ -421,6 +422,17 @@ NSString *kPMCalendarRedrawNotification = @"kPMCalendarRedrawNotification";
 - (void)setMondayFirstDayOfWeek:(BOOL)mondayFirstDayOfWeek
 {
     self.digitsView.mondayFirstDayOfWeek = mondayFirstDayOfWeek;
+}
+
+- (BOOL)showOnlyCurrentMonth
+{
+    return  self.digitsView.showOnlyCurrentMonth;
+}
+
+- (void)setShowOnlyCurrentMonth:(BOOL)showOnlyCurrentMonth
+{
+    self.digitsView.showOnlyCurrentMonth = showOnlyCurrentMonth;
+    [self.digitsView setDisplayCurrentMonthOnly];
 }
 
 - (BOOL)allowsPeriodSelection

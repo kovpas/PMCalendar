@@ -24,7 +24,7 @@
     return result;
 }
 
-+ (id) oneDayPeriodWithDate:(NSDate *) date
++ (PMPeriod*) oneDayPeriodWithDate:(NSDate *) date
 {
     PMPeriod *result = [[PMPeriod alloc] init];
     

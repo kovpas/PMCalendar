@@ -23,7 +23,7 @@
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
 @property (nonatomic, assign) CGRect initialFrame;
 @property (nonatomic, assign) BOOL showOnlyCurrentMonth;
-@property (nonatomic, weak) PMCalendarView *calendarView;
+@property (nonatomic, unsafe_unretained) PMCalendarView *calendarView;
 
 - (void) redrawComponent;
 

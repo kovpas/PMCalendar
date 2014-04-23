@@ -266,6 +266,35 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>Calendar digits not allowed</key>
+	<dict>
+		<key>Main</key>
+		<dict>
+			<key>Type</key>
+			<string>PMText</string>
+			<key>Color</key>
+			<string>153,153,153</string>
+			<key>Shadow</key>
+			<dict>
+				<key>Color</key>
+				<string>0,0,0</string>
+				<key>Offset</key>
+				<dict>
+					<key>Width</key>
+					<integer>1</integer>
+					<key>Height</key>
+					<integer>1</integer>
+				</dict>
+			</dict>
+			<key>Offset</key>
+			<dict>
+				<key>Width</key>
+				<integer>-1</integer>
+				<key>Height</key>
+				<integer>0</integer>
+			</dict>
+		</dict>
+	</dict>
 	<key>Month arrows</key>
 	<dict>
 		<key>Main</key>

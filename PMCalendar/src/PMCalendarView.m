@@ -930,7 +930,7 @@
                 }
                 else if (isBeforeBeginningOfAllowedPeriod || isAfterEndOfAllowedPeriod)
                 {
-                    type = PMThemeCalendarDigitsInactiveElementType;
+                    type = PMThemeCalendarDigitsNotAllowedElementType;
                 }
 
                 [[PMThemeEngine sharedInstance] drawString:string

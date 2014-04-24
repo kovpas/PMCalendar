@@ -150,6 +150,9 @@ static PMThemeEngine* sharedInstance;
         case PMThemeCalendarDigitsTodaySelectedElementType:
             result = @"Calendar digits today selected";
             break;
+        case PMThemeCalendarDigitsNotAllowedElementType:
+            result = @"Calendar digits not allowed";
+            break;
         case PMThemeMonthArrowsElementType:
             result = @"Month arrows";
             break;

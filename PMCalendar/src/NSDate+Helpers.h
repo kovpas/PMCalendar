@@ -78,4 +78,9 @@
 - (BOOL) isBefore:(NSDate *) date;
 - (BOOL) isAfter:(NSDate *) date;
 
+/**
+ * Checks if a given date is during the current (self) month.
+ */
+- (BOOL) isCurrentMonth:(NSDate *)date;
+
 @end

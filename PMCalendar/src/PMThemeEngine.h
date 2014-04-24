@@ -21,6 +21,7 @@ typedef enum PMThemeElementType {
     PMThemeCalendarDigitsInactiveSelectedElementType,
     PMThemeCalendarDigitsTodayElementType,
     PMThemeCalendarDigitsTodaySelectedElementType,
+    PMThemeCalendarDigitsNotAllowedElementType,
     PMThemeSelectionElementType,
 } PMThemeElementType;
 

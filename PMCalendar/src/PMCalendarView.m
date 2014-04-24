@@ -23,6 +23,7 @@
 @property (nonatomic, assign) BOOL mondayFirstDayOfWeek;
 @property (nonatomic, assign) CGRect initialFrame;
 @property (nonatomic, assign) BOOL showOnlyCurrentMonth;
+@property (nonatomic, unsafe_unretained) PMCalendarView *calendarView;
 
 - (void) redrawComponent;
 
@@ -108,6 +109,7 @@
     self.daysView = [[PMDaysView alloc] initWithFrame:self.bounds];
    
     self.daysView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.daysView.calendarView = self;
     [self addSubview:self.daysView];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -834,6 +836,12 @@
         }
     }
 
+    int startIndex = [[self.calendarView.allowedPeriod.startDate dateWithoutTime] daysSinceDate:monthStartDate] + weekdayOfFirst - 1;
+    int endIndex   = [[self.calendarView.allowedPeriod.endDate dateWithoutTime] daysSinceDate:monthStartDate] + weekdayOfFirst - 1;
+    
+    BOOL isStartSameAsCurrentMonth = [self.calendarView.allowedPeriod.startDate isCurrentMonth:_currentDate];
+    BOOL isEndSameAsCurrentMonth   = [self.calendarView.allowedPeriod.endDate isCurrentMonth:_currentDate];
+    
 	int day = 1;
 
 	for (int i = 0; i < 6; i++) 
@@ -903,6 +911,9 @@
                     }
                 }
                 
+                BOOL isBeforeBeginningOfAllowedPeriod = (dayNumber < startIndex && isStartSameAsCurrentMonth);
+                BOOL isAfterEndOfAllowedPeriod = (dayNumber > endIndex && isEndSameAsCurrentMonth);
+                
                 PMThemeElementType type = PMThemeCalendarDigitsActiveElementType;
                 
                 if (isToday)
@@ -916,6 +927,10 @@
                 else if (selected && activeSelectedDict)
                 {
                     type = PMThemeCalendarDigitsActiveSelectedElementType;
+                }
+                else if (isBeforeBeginningOfAllowedPeriod || isAfterEndOfAllowedPeriod)
+                {
+                    type = PMThemeCalendarDigitsNotAllowedElementType;
                 }
 
                 [[PMThemeEngine sharedInstance] drawString:string

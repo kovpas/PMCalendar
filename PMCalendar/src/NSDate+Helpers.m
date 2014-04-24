@@ -109,4 +109,14 @@
 	return [self timeIntervalSinceDate:date] > 0;
 }
 
+- (BOOL) isCurrentMonth:(NSDate *)date
+{
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    
+    NSDateComponents* comp1 = [calendar components:NSMonthCalendarUnit fromDate:self];
+    NSDateComponents* comp2 = [calendar components:NSMonthCalendarUnit fromDate:date];
+    
+    return ([comp1 month] == [comp2 month]);
+}
+
 @end

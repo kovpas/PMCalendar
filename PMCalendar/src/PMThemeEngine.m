@@ -327,7 +327,13 @@ static PMThemeEngine* sharedInstance;
     CGSize sz = CGSizeZero;
     if(usedFont)
     {
-        sz = [string sizeWithAttributes:@{NSFontAttributeName:usedFont}];
+        if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
+        
+            sz = [string sizeWithAttributes:@{NSFontAttributeName:usedFont}];
+        } else {
+            
+            sz = [string sizeWithFont:usedFont];
+        }
     }
     
     

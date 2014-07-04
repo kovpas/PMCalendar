@@ -168,7 +168,13 @@
         CGSize sz = CGSizeZero;
         if(dayFont)
         {
-            sz = [dayTitle sizeWithAttributes:@{NSFontAttributeName:dayFont}];
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
+                
+                sz = [dayTitle sizeWithAttributes:@{NSFontAttributeName:dayFont}];
+            }
+            else {
+                sz = [dayTitle sizeWithFont:dayFont constrainedToSize:(CGSize){width, CGFLOAT_MAX}];
+            }
         }
         
         CGRect dayHeaderFrame = CGRectMake(floor(i * hDiff) - 1
@@ -186,12 +192,25 @@
     
     int month = currentMonth;
     int year = currentYear;
+
     
 	NSString *monthTitle = [NSString stringWithFormat:@"%@ %d", [monthTitles objectAtIndex:(month - 1)], year];
     //// Month Header Drawing
     //[monthTitle sizeWithFont:monthFont]
+    
+    CGSize monthTitleSize;
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
+        
+        monthTitleSize = [monthTitle sizeWithAttributes:@{NSFontAttributeName:monthFont}];
+        
+    } else {
+        
+        monthTitleSize = [monthTitle sizeWithFont:monthFont];
+    }
+    
     CGRect textFrame = CGRectMake(0
-                                  , (headerHeight - [monthTitle sizeWithAttributes:@{NSFontAttributeName:monthFont}].height) / 2
+                                  , (headerHeight - monthTitleSize.height) / 2
                                   , width
                                   , monthFont.pointSize);
     

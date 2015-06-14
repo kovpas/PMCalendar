@@ -21,9 +21,9 @@ PMCalendar is released under the MIT License.
 
 Screenshots
 ----------
-![Screenshot 1](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_2.png)
+![Screenshot 1](https://raw.githubusercontent.com/kovpas/PMCalendar/master/screenshots/screenshot_1.png)&nbsp;&nbsp;![Screenshot 2](https://raw.githubusercontent.com/kovpas/PMCalendar/master/screenshots/screenshot_2.png)
 
-![Screenshot 3](http://github.com/kovpas/PMCalendar/raw/master/screenshots/screenshot_3.png)
+![Screenshot 3](https://raw.githubusercontent.com/kovpas/PMCalendar/master/screenshots/screenshot_3.png)
 
 Usage
 ----------

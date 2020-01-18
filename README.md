@@ -183,6 +183,6 @@ However, current implementation is powerful enough to create for example somethi
 
 ![Apple calendar theme 1](http://github.com/kovpas/PMCalendar/raw/master/screenshots/apple_theme_1.png)&nbsp;![Apple calendar theme 2](http://github.com/kovpas/PMCalendar/raw/master/screenshots/apple_theme_2.png)
 
-Themes documentation is in progress, so for now please use two examples ("default.plist" and "apple calendar.plist") as a refernce.
+Themes documentation is in progress, so for now please use two examples ("default.plist" and "apple calendar.plist") as a reference.
 
 If you wish to share theme you created for PMCalendar, please contact me, I'll add it together with a link to your project :).
